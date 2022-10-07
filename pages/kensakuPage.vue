@@ -204,7 +204,7 @@
       group: null,
       itemsBuhin:[1,2,3,],
       selectBuhin:"",
-      itemsSeihin:["-",1,2,3,],
+      itemsSeihin:["-:All","1:EV","2:ESC","3:CP",],
       selectSeihin:"-",
     }),
   }
