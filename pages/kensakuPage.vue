@@ -24,7 +24,6 @@
             <v-navigation-drawer
                 v-model="drawer"
                 :mini-variant.sync="mini"
-                bottom
                 floating
                 clipped
                 width=40vh
