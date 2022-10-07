@@ -23,6 +23,7 @@
             </v-app-bar>
             <v-navigation-drawer
                 v-model="drawer"
+                :mini-variant.sync="mini"
                 bottom
                 floating
                 clipped
@@ -41,6 +42,12 @@
                          v-model="valid"
                          lazy-validation
                         >
+                             <v-btn class = "mb-2"
+                             icon
+                            @click.stop="mini = !mini"
+                            >
+                             <v-icon>mdi-step-backward</v-icon>
+                            </v-btn>検索条件
                             <!-- 半角 -->
                             <p class="ma-0">部品コード</p>
                             <v-text-field
@@ -288,8 +295,7 @@
                     </v-list-item-group>
                 </v-list>
             </v-navigation-drawer>
-        </v-card>
-        
+        </v-card>   
     </div>
 </template>
 
@@ -297,6 +303,7 @@
   export default {
     data: () => ({
       drawer: false,
+      mini:false,
       group: null,
       itemsBuhin:[1,2,3,],
       selectBuhin:"",
