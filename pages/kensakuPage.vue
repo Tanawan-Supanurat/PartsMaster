@@ -4,6 +4,7 @@
             class="mx-auto overflow-hidden"
             height=96vh
         >
+        <!-- スライドバー -->
             <v-app-bar
             color="light-blue lighten-1"
             dense
@@ -18,9 +19,7 @@
             <v-btn icon absolute right >
             <v-icon large>mdi-cog</v-icon>
             </v-btn>
-
             </v-app-bar>
-
             <v-navigation-drawer
                 v-model="drawer"
                 bottom
@@ -41,14 +40,18 @@
                          v-model="valid"
                          lazy-validation
                         >
+                            <!-- 半角 -->
                             <p>部品コード</p>
                             <v-text-field
                                 v-model="buhincode"
                                 outlined
                                 dense
+                                placeholder="最大30文字"
+                                counter="30"
                                 required
                             >
                             </v-text-field>
+                            <!-- jiyuu -->
                             <p>部品名</p>
                             <v-row>
                                 <v-col cols ="6">
@@ -56,6 +59,8 @@
                                     v-model="buhinmei"
                                     outlined
                                     dense
+                                    placeholder="最大200文字"
+                                    counter="200"
                                     required
                                     ></v-text-field>
                                 </v-col>
