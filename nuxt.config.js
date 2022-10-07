@@ -7,6 +7,10 @@ export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
 
+  router:{
+    base: '/PartsMaster',
+  },
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - PartsMaster',
@@ -22,7 +26,10 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    ],
+    base:{
+      href: 'router.base',
+    }
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
