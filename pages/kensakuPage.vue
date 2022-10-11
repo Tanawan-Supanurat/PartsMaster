@@ -16,8 +16,11 @@
             <v-toolbar-title ><br>Fujitec<br> Parts Master</v-toolbar-title>
             <v-spacer></v-spacer>
             
-            <v-menu :close-on-content-click="false" >
-                <template v-slot:activator="{ on, attrs } ">
+            <v-dialog
+                v-model="setttingDialog"
+                max-width = "100vh"
+            >
+                <template v-slot:activator="{ on, attrs }">
                     <v-btn
                      icon
                      right
@@ -27,12 +30,13 @@
                         <v-icon class = "mr-6 mt-7" size = 70>mdi-cog</v-icon>
                     </v-btn>
                 </template>
-                <v-card  height=90vh width=100vh>
+                <v-card height="90vh">
                     <v-list>
 
                     </v-list>
                 </v-card>
-            </v-menu>
+             </v-dialog>
+
             </v-app-bar>
             <v-row
                 class="fill-height"
@@ -65,7 +69,7 @@
                              <v-icon>mdi-step-backward</v-icon>
                             </v-btn>検索条件
                             <v-content class ="pl-10">
-                                <!-- 半角 -->
+                                <!-- 半角入力 -->
                                 <p class="ma-0">部品コード</p>
                                 <v-text-field
                                     v-model="buhincode"
@@ -76,7 +80,7 @@
                                     required
                                 >
                                 </v-text-field>
-                                <!-- jiyuu -->
+                                <!-- 自由入力 -->
                                 <p class="ma-0">部品名</p>
                                 <v-row no-gutters>
                                     <v-col cols ="7" sm ="7" >
@@ -292,9 +296,10 @@
                                         </v-btn>
                                     </v-col>
                                 </v-row>
-                                <v-menu 
-                                 v-model="shousaiMenu"
-                                 :close-on-content-click="false" 
+
+                                <v-dialog
+                                 v-model="shousaiDialog"
+                                 max-width="100vH"
                                 >
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-col col= "10">
@@ -315,11 +320,12 @@
                                             </v-btn>
                                         </v-col>
                                     </template>
+
                                     <v-card height=90vh width=100vh tile> 
                                         <v-system-bar height="30">
                                             <v-toolbar-title>詳細検索画面</v-toolbar-title>
                                             <v-spacer></v-spacer>
-                                            <v-btn small elevation="0" right  text @click="shousaiMenu = false"> 
+                                            <v-btn small elevation="0" right  text @click="shousaiDialog = false"> 
                                                 <v-icon>mdi-close</v-icon>
                                             </v-btn>
                                         </v-system-bar>
@@ -447,7 +453,7 @@
                                         </v-row>
                                         </v-form>
                                     </v-card>  
-                                </v-menu>
+                                </v-dialog>
                             </v-content>
                         </v-form>
                     </v-list-item-group>
@@ -499,7 +505,7 @@
       kirikaeMenu2: false,
 
       //shousai from value
-      shousaiMenu:false,
+      shousaiDialog:false,
       shousaiItemsBuhin:[1,2,3],
       shousaiSelectBuhin:"",
       shousaiItemsBuhinmei:[1,2,3],
@@ -508,6 +514,10 @@
       shousaiSelectHoshu:"",
       shousaiItemsZuban:[1,2,3],
       shousaiSelectZuban:"",
+
+      //setting
+      setttingDialog:false,
+
     }),
   }
 </script>
