@@ -299,6 +299,7 @@
 
                                 <v-dialog
                                  v-model="shousaiDialog"
+                                 persistent
                                  max-width="100vH"
                                 >
                                     <template v-slot:activator="{ on, attrs }">
@@ -427,6 +428,33 @@
                                                                 dense
                                                             >
                                                             </v-combobox>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <p class="ma-0">・標準図発行日</p>
+                                                    <v-row no-gutters justify="end">
+                                                        <v-col cols="3" sm="3" >
+                                                            <v-text-field
+                                                                v-model="shousai_zubann"
+                                                                outlined
+                                                                dense
+                                                                required
+                                                            >
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col class="ml-3" cols="1" sm="1" >
+                                                            <p>~</p>
+                                                        </v-col>
+                                                        <v-col cols="3" sm="3" >
+                                                            <v-text-field
+                                                                v-model="shousai_zubann"
+                                                                outlined
+                                                                dense
+                                                                required
+                                                            >
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col class="ml-3" cols="3" sm="3" >
+                                                            <v-btn></v-btn><v-btn></v-btn><v-btn></v-btn>
                                                         </v-col>
                                                     </v-row>
                                                 </v-col>
