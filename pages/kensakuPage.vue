@@ -4,8 +4,6 @@
             class="mx-auto overflow-hidden"
             height=100vh
         >
-        <!-- スライドバー -->
-
             <v-app-bar
             color="light-blue lighten-1"
             dense
@@ -14,13 +12,27 @@
             clipped-left
             dark 
             >
-            <v-app-bar-nav-icon class  @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-app-bar-nav-icon class = "mt-5" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             <v-toolbar-title ><br>Fujitec<br> Parts Master</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn icon absolute right >
-            <v-icon large>mdi-cog</v-icon>
-            </v-btn>
+            
+            <v-menu left bottom>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                     icon
+                     right
+                     v-bind="attrs"
+                     v-on="on"
+                    >
+                        <v-icon class = "mr-6 mt-7" size = 70>mdi-cog</v-icon>
+                    </v-btn>
+                </template>
+            </v-menu>
             </v-app-bar>
+            <v-row
+                class="fill-height"
+                no-gutters
+            >
             <v-navigation-drawer
                 v-model="drawer"
                 :mini-variant.sync="mini"
@@ -80,9 +92,7 @@
                                         outlined
                                         ></v-combobox>
                                     </v-col>
-                                    <v-col cols ="1" sm="1">
-                                    </v-col>
-                                    <v-col cols ="1" sm="1">
+                                    <v-col cols ="1" sm="1" class = "ml-4">
                                         <v-btn
                                         elevation="2"
                                         icon
@@ -297,6 +307,29 @@
                     </v-list-item-group>
                 </v-list>
             </v-navigation-drawer>
+            <v-navigation-drawer
+                v-model="drawer"
+                :mini-variant.sync="mini2"
+                mini-variant-width = 40
+                floating
+                clipped
+                width=44vh
+            >
+                <v-list
+                 nav
+                 dense
+                 >
+                    <v-btn class = "mb-2"
+                        icon
+                        @click.stop="mini2 = !mini2"
+                        >
+                        <v-icon>mdi-step-backward</v-icon>
+                        </v-btn>検索結果
+
+
+                </v-list>
+            </v-navigation-drawer>
+            </v-row>
         </v-card>   
     </div>
 </template>
@@ -306,6 +339,7 @@
     data: () => ({
       drawer: false,
       mini:false,
+      mini2:false,
       group: null,
       itemsBuhin:[1,2,3,],
       selectBuhin:"",
