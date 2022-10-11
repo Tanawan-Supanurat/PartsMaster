@@ -292,30 +292,34 @@
                                         </v-btn>
                                     </v-col>
                                 </v-row>
-                                <v-menu :close-on-content-click="false" >
-                                    <template v-slot:activator="{ on, attrs } ">
+                                <v-menu 
+                                 v-model="shousaiMenu"
+                                 :close-on-content-click="false" 
+                                >
+                                    <template v-slot:activator="{ on, attrs }">
                                         <v-col col= "10">
                                             <v-btn
                                             block
-                                            elevation="2">
+                                            elevation="2"
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            >
                                                 <v-icon
                                                  left
                                                  color = blue
                                                  large
-                                                 v-bind="attrs"
-                                                 v-on="on"
                                                 >
                                                 mdi-plus-circle-outline
                                                 </v-icon>
-                                            追加で検索条件入力
+                                                追加で検索条件入力
                                             </v-btn>
                                         </v-col>
                                     </template>
-                                    <v-card  height=90vh width=100vh tile>
+                                    <v-card height=90vh width=100vh tile> 
                                         <v-system-bar height="30">
                                             <v-toolbar-title>詳細検索画面</v-toolbar-title>
                                             <v-spacer></v-spacer>
-                                            <v-btn small elevation="0" right> 
+                                            <v-btn small elevation="0" right  text @click="shousaiMenu = false"> 
                                                 <v-icon>mdi-close</v-icon>
                                             </v-btn>
                                         </v-system-bar>
@@ -337,7 +341,7 @@
                                                 <v-col>
                                                     <p class="ma-0">・部品コード</p>
                                                     <v-row no-gutters justify="end">
-                                                        <v-col cols="7" sm="7" >
+                                                        <v-col class="ma-0" cols="7" sm="7" >
                                                             <v-text-field
                                                                 v-model="shousai_buhincode"
                                                                 outlined
@@ -346,7 +350,7 @@
                                                             >
                                                             </v-text-field>
                                                         </v-col>
-                                                        <v-col class="" cols="3" sm="3">
+                                                        <v-col class="ma-0" cols="3" sm="3">
                                                             <v-combobox
                                                                 v-model="shousaiSelectBuhin"
                                                                 :items="shousaiItemsBuhin"
@@ -371,6 +375,48 @@
                                                             <v-combobox
                                                                 v-model="shousaiSelectBuhinmei"
                                                                 :items="shousaiItemsBuhinmei"
+                                                                outlined
+                                                                dense
+                                                            >
+                                                            </v-combobox>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <p class="ma-0">・保守品名</p>
+                                                    <v-row no-gutters justify="end">
+                                                        <v-col cols="7" sm="7" >
+                                                            <v-text-field
+                                                                v-model="shousai_hoshuu"
+                                                                outlined
+                                                                dense
+                                                                required
+                                                            >
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col class="" cols="3" sm="3">
+                                                            <v-combobox
+                                                                v-model="shousaiSelectHoshu"
+                                                                :items="shousaiItemsHoshu"
+                                                                outlined
+                                                                dense
+                                                            >
+                                                            </v-combobox>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <p class="ma-0">・図番</p>
+                                                    <v-row no-gutters justify="end">
+                                                        <v-col cols="7" sm="7" >
+                                                            <v-text-field
+                                                                v-model="shousai_zubann"
+                                                                outlined
+                                                                dense
+                                                                required
+                                                            >
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col class="" cols="3" sm="3">
+                                                            <v-combobox
+                                                                v-model="shousaiSelectZuban"
+                                                                :items="shousaiItemsZuban"
                                                                 outlined
                                                                 dense
                                                             >
@@ -453,14 +499,15 @@
       kirikaeMenu2: false,
 
       //shousai from value
+      shousaiMenu:false,
       shousaiItemsBuhin:[1,2,3],
       shousaiSelectBuhin:"",
       shousaiItemsBuhinmei:[1,2,3],
       shousaiSelectBuhinmei:"",
       shousaiItemsHoshu:[1,2,3],
       shousaiSelectHoshu:"",
-      shousaiZuban:[1,2,3],
-      shousaiZuban:"",
+      shousaiItemsZuban:[1,2,3],
+      shousaiSelectZuban:"",
     }),
   }
 </script>
