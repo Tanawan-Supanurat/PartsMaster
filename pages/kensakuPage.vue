@@ -16,8 +16,8 @@
             <v-toolbar-title ><br>Fujitec<br> Parts Master</v-toolbar-title>
             <v-spacer></v-spacer>
             
-            <v-menu left bottom>
-                <template v-slot:activator="{ on, attrs }">
+            <v-menu :close-on-content-click="false" >
+                <template v-slot:activator="{ on, attrs } ">
                     <v-btn
                      icon
                      right
@@ -27,6 +27,11 @@
                         <v-icon class = "mr-6 mt-7" size = 70>mdi-cog</v-icon>
                     </v-btn>
                 </template>
+                <v-card  height=90vh width=100vh>
+                    <v-list>
+
+                    </v-list>
+                </v-card>
             </v-menu>
             </v-app-bar>
             <v-row
@@ -287,22 +292,117 @@
                                         </v-btn>
                                     </v-col>
                                 </v-row>
-                                <v-col col= "10">
-                                    <v-btn
-                                    block
-                                    elevation="2">
-                                    <v-icon
-                                    left
-                                    color = blue
-                                    large
-                                    >
-                                        mdi-plus-circle-outline
-                                    </v-icon>
-                                    追加で検索条件入力
-                                </v-btn>
-                                </v-col>
-                                </v-content>
-                            
+                                <v-menu :close-on-content-click="false" >
+                                    <template v-slot:activator="{ on, attrs } ">
+                                        <v-col col= "10">
+                                            <v-btn
+                                            block
+                                            elevation="2">
+                                                <v-icon
+                                                 left
+                                                 color = blue
+                                                 large
+                                                 v-bind="attrs"
+                                                 v-on="on"
+                                                >
+                                                mdi-plus-circle-outline
+                                                </v-icon>
+                                            追加で検索条件入力
+                                            </v-btn>
+                                        </v-col>
+                                    </template>
+                                    <v-card  height=90vh width=100vh tile>
+                                        <v-system-bar height="30">
+                                            <v-toolbar-title>詳細検索画面</v-toolbar-title>
+                                            <v-spacer></v-spacer>
+                                            <v-btn small elevation="0" right> 
+                                                <v-icon>mdi-close</v-icon>
+                                            </v-btn>
+                                        </v-system-bar>
+                                        <v-row no-gutters>
+                                            <v-col cols="1" class="m-auto">
+                                                <v-icon class="ml-5" size =50> mdi-magnify </v-icon>
+                                            </v-col>
+                                            <v-col cols="11">
+                                            <v-card-text>
+                                                詳細検索画面
+                                            </v-card-text>
+                                            </v-col>
+                                        </v-row>
+                                        <v-form
+                                            ref="shousai_form"
+                                            v-model="valid"
+                                        >
+                                            <v-row no-gutters>
+                                                <v-col>
+                                                    <p class="ma-0">・部品コード</p>
+                                                    <v-row no-gutters justify="end">
+                                                        <v-col cols="7" sm="7" >
+                                                            <v-text-field
+                                                                v-model="shousai_buhincode"
+                                                                outlined
+                                                                dense
+                                                                required
+                                                            >
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col class="" cols="3" sm="3">
+                                                            <v-combobox
+                                                                v-model="shousaiSelectBuhin"
+                                                                :items="shousaiItemsBuhin"
+                                                                outlined
+                                                                dense
+                                                            >
+                                                            </v-combobox>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <p class="ma-0">・部品名</p>
+                                                    <v-row no-gutters justify="end">
+                                                        <v-col cols="7" sm="7" >
+                                                            <v-text-field
+                                                                v-model="shousai_buhinname"
+                                                                outlined
+                                                                dense
+                                                                required
+                                                            >
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col class="" cols="3" sm="3">
+                                                            <v-combobox
+                                                                v-model="shousaiSelectBuhinmei"
+                                                                :items="shousaiItemsBuhinmei"
+                                                                outlined
+                                                                dense
+                                                            >
+                                                            </v-combobox>
+                                                        </v-col>
+                                                    </v-row>
+                                                </v-col>
+                                            <v-col>
+                                                 <v-row no-gutters>
+                                                    <v-col>
+                                                        <p>・工場区分</p>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <p>・置場/棚番</p>
+                                                    </v-col>
+                                                 </v-row>
+                                            </v-col>
+                                            <v-col>
+                                                <v-row no-gutters>
+                                                    <v-col>
+                                                        <p>・在庫数</p>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <p>・在庫0ではない。</p>
+                                                    </v-col>
+                                                 </v-row>
+                                            </v-col>
+                                        </v-row>
+                                        </v-form>
+                                    </v-card>  
+                                </v-menu>
+                            </v-content>
                         </v-form>
                     </v-list-item-group>
                 </v-list>
@@ -325,8 +425,6 @@
                         >
                         <v-icon>mdi-step-backward</v-icon>
                         </v-btn>検索結果
-
-
                 </v-list>
             </v-navigation-drawer>
             </v-row>
@@ -353,6 +451,16 @@
       hakkouMenu2: false,
       kirikaeMenu1: false,
       kirikaeMenu2: false,
+
+      //shousai from value
+      shousaiItemsBuhin:[1,2,3],
+      shousaiSelectBuhin:"",
+      shousaiItemsBuhinmei:[1,2,3],
+      shousaiSelectBuhinmei:"",
+      shousaiItemsHoshu:[1,2,3],
+      shousaiSelectHoshu:"",
+      shousaiZuban:[1,2,3],
+      shousaiZuban:"",
     }),
   }
 </script>
