@@ -940,7 +940,7 @@
                                                         </v-checkbox>
                                                     </v-col>
                                                 </v-row>
-                                                <v-row class="ma-0" justify="space-betwee" no-gutters>
+                                                <v-row class="ma-0" no-gutters>
                                                     <v-col col="5" sm="5">
                                                         <v-menu
                                                         ref="menu"
@@ -1018,7 +1018,7 @@
                                                         </v-checkbox>
                                                     </v-col>
                                                 </v-row>
-                                                <v-row class="ma-0" justify="space-betwee" no-gutters>
+                                                <v-row class="ma-0"  no-gutters>
                                                     <v-col col="5" sm="5">
                                                         <v-menu
                                                         ref="menu"
@@ -1087,7 +1087,7 @@
                                                         <p class ="ma-0">・貯蔵開始日</p>
                                                     </v-col>
                                                 </v-row>
-                                                <v-row class="ma-0" justify="space-betwee" no-gutters>
+                                                <v-row class="ma-0" no-gutters>
                                                     <v-col col="5" sm="5">
                                                         <v-menu
                                                         ref="menu"
@@ -1150,7 +1150,119 @@
                                                             </v-date-picker>
                                                         </v-menu>
                                                         </v-col>
-                                                </v-row>
+                                                    </v-row>
+                                                    <v-row no-gutters> 
+                                                        <v-col>
+                                                            <p class ="ma-0 mt-2">・貯蔵中し止予定</p>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <v-row no-gutters>
+                                                        <v-col>
+                                                            <v-radio-group class="ma-0" v-model="shousaiChoushiYoutei" row >
+                                                                <v-radio
+                                                                 label="含む"
+                                                                 value="含む"
+                                                                ></v-radio>
+                                                                <v-radio
+                                                                 label="除く"
+                                                                 value="除く"
+                                                                ></v-radio>
+                                                                <v-radio
+                                                                 label="中止予定のみ"
+                                                                 value="中止予定のみ"
+                                                                ></v-radio>
+                                                            </v-radio-group>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <v-row no-gutters> 
+                                                        <v-col>
+                                                            <p class ="ma-0">・貯蔵止め部品</p>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <v-row no-gutters>
+                                                        <v-col>
+                                                            <v-radio-group class="ma-0" v-model="shousaiChoushi" row >
+                                                                <v-radio
+                                                                 label="含む"
+                                                                 value="含む"
+                                                                ></v-radio>
+                                                                <v-radio
+                                                                 label="除く"
+                                                                 value="除く"
+                                                                ></v-radio>
+                                                                <v-radio
+                                                                 label="貯蔵中止のみ"
+                                                                 value="貯蔵中止のみ"
+                                                                ></v-radio>
+                                                            </v-radio-group>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <v-row class="mt-n3">
+                                                        <v-col>
+                                                            <p class = "ma-0">・取引先コード</p>
+                                                        </v-col>
+                                                        <v-col>
+                                                            <p class= "ma-0">・工程コード</p>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <v-row class="ma-0">
+                                                        <v-col>
+                                                            <v-combobox
+                                                             class="mt-n3 mb-n5"
+                                                             dense outlined>
+                                                            </v-combobox>
+                                                        </v-col>
+                                                        <v-col>
+                                                            <v-text-field 
+                                                             class="mt-n3 mb-n5"
+                                                             dense outlined>
+                                                            </v-text-field>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <v-row class="mt-n3">
+                                                        <v-col>
+                                                            <p class = "my-n2">・作業コード</p>
+                                                        </v-col>
+                                                        <v-col>
+                                                            <p class= "my-n2">・部位（保守マスタ）</p>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <v-row class ="ma-0">
+                                                        <v-col>
+                                                            <v-text-field
+                                                             class="mt-n1 mb-n5"
+                                                             dense outlined>
+                                                            </v-text-field>
+                                                        </v-col>
+                                                        <v-col>
+                                                            <v-text-field 
+                                                             class="mt-n1 mb-n5"
+                                                             dense outlined>
+                                                            </v-text-field>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <v-row class="mt-0 mb-n6">
+                                                        <v-col>
+                                                            <p class = "my-n5">・価格設定</p>
+                                                        </v-col>
+                                                        <v-col>
+                                                            <p class= "my-n5">・保守判定</p>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <v-row class="ma-0" >
+                                                        <v-col>
+                                                            <v-combobox 
+                                                             class="mt-1"
+                                                             dense outlined>
+                                                            </v-combobox>
+                                                        </v-col>
+                                                        <v-col>
+                                                            <v-combobox 
+                                                            class="mt-1"
+                                                             dense outlined>
+                                                            </v-combobox>
+                                                        </v-col>
+                                                    </v-row>
 
                                             </v-col>
                                         </v-row>
@@ -1262,6 +1374,8 @@
       shousaiZaikouKingaku2:"",
       shousaihyoujunTanka1:"",
       shousaihyoujunTanka2:"",
+      shousaiChoushiYoutei:"",
+      shousaiChoushi:"",
       shousaiNyuukoubiCheck:false,
       shousaiShukkobiCheck:false,
       shousaiZaikoZero:false,
