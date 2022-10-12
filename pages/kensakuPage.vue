@@ -425,8 +425,9 @@
                                                 <v-col>
                                                     <p class="ma-0">・部品コード</p>
                                                     <v-row no-gutters justify="end">
-                                                        <v-col class="my-0" cols="7" sm="7" >
+                                                        <v-col cols="9" sm="9" >
                                                             <v-text-field 
+                                                                class="mb-n4 mr-1"
                                                                 v-model="shousaiBuhincode"
                                                                 outlined
                                                                 dense
@@ -434,8 +435,9 @@
                                                             >
                                                             </v-text-field>
                                                         </v-col>
-                                                        <v-col class="my-0" cols="2" sm="2">
+                                                        <v-col cols="2" sm="2">
                                                             <v-combobox
+                                                                class="mb-n4"
                                                                 v-model="shousaiSelectBuhin"
                                                                 :items="shousaiItemsBuhin"
                                                                 outlined
@@ -446,8 +448,9 @@
                                                     </v-row>
                                                     <p class="my-0">・部品名</p>
                                                     <v-row no-gutters justify="end">
-                                                        <v-col cols="7" sm="7" >
+                                                        <v-col cols="9" sm="9" >
                                                             <v-text-field
+                                                                class="mb-n4 mr-1"
                                                                 v-model="shousaiBuhinmei"
                                                                 outlined
                                                                 dense
@@ -457,6 +460,7 @@
                                                         </v-col>
                                                         <v-col cols="2" sm="2">
                                                             <v-combobox
+                                                                class="mb-n4"
                                                                 v-model="shousaiSelectBuhinmei"
                                                                 :items="shousaiItemsBuhinmei"
                                                                 outlined
@@ -467,8 +471,9 @@
                                                     </v-row>
                                                     <p class="ma-0">・保守品名</p>
                                                     <v-row no-gutters justify="end">
-                                                        <v-col cols="7" sm="7" >
+                                                        <v-col cols="9" sm="9" >
                                                             <v-text-field
+                                                                class="mb-n4 mr-1"
                                                                 v-model="shousaiHoshuu"
                                                                 outlined
                                                                 dense
@@ -478,6 +483,7 @@
                                                         </v-col>
                                                         <v-col cols="2" sm="2">
                                                             <v-combobox
+                                                                class="mb-n4"
                                                                 v-model="shousaiSelectHoshu"
                                                                 :items="shousaiItemsHoshu"
                                                                 outlined
@@ -488,8 +494,9 @@
                                                     </v-row>
                                                     <p class="ma-0">・図番</p>
                                                     <v-row no-gutters justify="end">
-                                                        <v-col cols="7" sm="7" >
+                                                        <v-col cols="9" sm="9" >
                                                             <v-text-field
+                                                                class="mb-n4 mr-1"
                                                                 v-model="shousaiZuban"
                                                                 outlined
                                                                 dense
@@ -499,6 +506,7 @@
                                                         </v-col>
                                                         <v-col cols="2" sm="2">
                                                             <v-combobox
+                                                                class="mb-n4"
                                                                 v-model="shousaiSelectZuban"
                                                                 :items="shousaiItemsZuban"
                                                                 outlined
@@ -521,6 +529,7 @@
                                                         >
                                                             <template v-slot:activator="{ on, attrs }">
                                                             <v-text-field
+                                                                class="mb-n4"
                                                                 v-model="shousaihyoujunDate1"
                                                                 label="YYYY/MM/DD"
                                                                 append-icon="mdi-calendar"
@@ -538,7 +547,7 @@
                                                             </v-date-picker>
                                                         </v-menu>
                                                     </v-col>
-                                                    <v-col><p>~</p></v-col>
+                                                    <v-col><p class="ml-2">~</p></v-col>
                                                     <v-col sm="4">
                                                         <v-menu
                                                         ref="menu"
@@ -551,6 +560,7 @@
                                                         >
                                                             <template v-slot:activator="{ on, attrs }">
                                                             <v-text-field
+                                                                class="mb-n4"
                                                                 v-model="shousaihyoujunDate2"
                                                                 label="YYYY/MM/DD"
                                                                 append-icon="mdi-calendar"
@@ -591,6 +601,7 @@
                                                  <v-row  no-gutters justify="space-between">
                                                     <v-col class="ml-10" col="2" sm="2">
                                                         <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiKoban"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -599,6 +610,7 @@
                                                     </v-col>
                                                     <v-col class="my-0 mr-3" col="5" sm="5">
                                                         <v-text-field 
+                                                         class="mb-n4"
                                                          v-model="shousaiTanban"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -607,6 +619,7 @@
                                                  <v-row  no-gutters>
                                                     <v-col class="ml-10" col="10" sm="10">
                                                         <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiSoukotantou"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -622,11 +635,13 @@
                                                  <v-row  no-gutters justify="space-between">
                                                     <v-col class="ml-10" col="4" sm="4">
                                                         <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiPStenkai"
                                                          dense outlined></v-text-field>
                                                     </v-col>
                                                     <v-col class="my-0 mr-12" col="4" sm="4">
                                                         <v-text-field 
+                                                         class="mb-n4"
                                                          v-model="shousaiJidouKounyuu"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -642,6 +657,7 @@
                                                  <v-row  no-gutters justify="space-between">
                                                     <v-col class="ml-10" col="2" sm="2">
                                                         <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiSeihinbunruiCode"
                                                          dense outlined>
                                                          </v-text-field>
@@ -651,6 +667,7 @@
                                                     </v-col>
                                                     <v-col class="my-0 mr-8 mr-auto" col="2" sm="2">
                                                         <v-text-field 
+                                                         class="mb-n4"
                                                          v-model="shousaiSeihinkubun"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -669,6 +686,7 @@
                                                  <v-row  no-gutters justify="space-between">
                                                     <v-col class="ml-10" col="2" sm="2">
                                                         <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiPDM"
                                                          dense outlined>
                                                          </v-text-field>
@@ -677,7 +695,8 @@
                                                         <v-btn class="ml-2 mt-2" x-small>...</v-btn>
                                                     </v-col>
                                                     <v-col class="my-0 mr-8 mr-auto" col="2" sm="2">
-                                                        <v-text-field 
+                                                        <v-text-field
+                                                         class="mb-n4" 
                                                          v-model="shousaikishuu"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -689,6 +708,7 @@
                                                  <v-row  no-gutters>
                                                     <v-col class="ml-10" col="10" sm="10">
                                                         <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiMakerKataban"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -704,6 +724,7 @@
                                                  <v-row  no-gutters>
                                                     <v-col class="ml-10" col="2" sm="2">
                                                         <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiNaigai"
                                                          dense outlined>
                                                          </v-text-field>
@@ -712,7 +733,8 @@
                                                         <v-btn class="ml-2 mt-2" x-small>...</v-btn>
                                                     </v-col>
                                                     <v-col class="my-0 " col="2" sm="2">
-                                                        <v-text-field 
+                                                        <v-text-field
+                                                         class="mb-n4" 
                                                          v-model="shousaiChozou"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -730,14 +752,15 @@
                                                  <v-row no-gutters>
                                                     <v-col class= "ml-10" col="2" sm="2">
                                                         <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiKanriTenshou"
                                                          dense outlined></v-text-field>
                                                     </v-col>
                                                     <v-col class="ml-3" sm="1">
-
                                                     </v-col>
                                                     <v-col class="offset-sm-2" col="2" sm="2">
                                                          <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiZaikoTantou"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -753,6 +776,7 @@
                                                  <v-row no-gutters>
                                                     <v-col class= "ml-10" col="2" sm="2">
                                                         <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiHachuTenshou"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -761,6 +785,7 @@
                                                     </v-col>
                                                     <v-col class="offset-sm-2" col="2" sm="2">
                                                          <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiHachuTantou"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -776,6 +801,7 @@
                                                  <v-row no-gutters>
                                                     <v-col class= "ml-10" col="2" sm="2">
                                                         <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiBacker"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -784,6 +810,7 @@
                                                     </v-col>
                                                     <v-col class="offset-sm-2" col="2" sm="2">
                                                          <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiKanriKijun"
                                                          dense outlined></v-text-field>
                                                     </v-col>
@@ -802,6 +829,7 @@
                                                  <v-row  no-gutters>
                                                     <v-col class="ml-10" col="2" sm="2">
                                                         <v-text-field
+                                                         class="mb-n4"
                                                          v-model="shousaiABCKanriCodeKubun"
                                                          dense outlined>
                                                          </v-text-field>
@@ -820,31 +848,61 @@
                                                  
                                             </v-col>
                                             <v-col>
-                                                <v-row no-gutters>
+                                                <v-row no-gutters> 
                                                     <v-col>
-                                                        <p class ="ma-0">・在庫数</p>
+                                                        <p class ="my-0">・在庫数</p>
                                                     </v-col>
-                                                    
-                                                 </v-row>
-                                                 <v-row no-gutters>
+                                                    <v-col>
+                                                        <v-checkbox 
+                                                         class ="mt-n1 mb-n5"
+                                                         v-model="shousaiZaikoZero"
+                                                         label="在庫0ではない。"
+                                                         dense
+                                                         >
+                                                        </v-checkbox>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row no-gutters>
                                                     <v-col class="ml-8" col="3" sm="3">
                                                         <v-text-field
-                                                         class ="ma-0"
+                                                         class ="mb-n4"
                                                          v-model="shousaiZaikousuu1"
                                                          dense outlined
                                                          ></v-text-field>
                                                     </v-col>
                                                      <v-col class="ml-2" col="2" sm="2" >
-                                                        <p class="ma-0">≦数量≦</p>
+                                                        <p class="mt-2">≦数量≦</p>
                                                     </v-col>
                                                      <v-col col="3" sm="3">
                                                         <v-text-field
-                                                         class ="ma-0"
+                                                         class ="mb-n4"
                                                          v-model="shousaiZaikousuu2"
                                                          dense outlined></v-text-field>
                                                     </v-col>
-                                                 </v-row>
-
+                                                </v-row>
+                                                <v-row no-gutters> 
+                                                    <v-col>
+                                                        <p class ="ma-0">・在庫金額</p>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row no-gutters>
+                                                    <v-col class="ml-8" col="3" sm="3">
+                                                        <v-text-field
+                                                         class ="mb-n4"
+                                                         v-model="shousaiZaikouKingaku1"
+                                                         dense outlined
+                                                         ></v-text-field>
+                                                    </v-col>
+                                                     <v-col class="ml-2" col="2" sm="2" >
+                                                        <p class="mt-2">≦金額≦</p>
+                                                    </v-col>
+                                                     <v-col col="3" sm="3">
+                                                        <v-text-field
+                                                         class ="mb-n4"
+                                                         v-model="shousaiZaikouKingaku2"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                </v-row>
                                             </v-col>
                                         </v-row>
                                         <v-divider></v-divider>
@@ -951,6 +1009,8 @@
       shousaiZaikoKanriCode:"",
       shousaiZaikousuu1:"",
       shousaiZaikousuu2:"",
+      shousaiZaikouKingaku1:"",
+      shousaiZaikouKingaku2:"",
       shousaiZaikoZero:false,
       shousaiDialog:false,
       shousaiItemsBuhin:[1,2,3],
