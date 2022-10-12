@@ -1208,12 +1208,14 @@
                                                     <v-row class="ma-0">
                                                         <v-col>
                                                             <v-combobox
+                                                             v-model="shousaiTorisakiCode"
                                                              class="mt-n3 mb-n5"
                                                              dense outlined>
                                                             </v-combobox>
                                                         </v-col>
                                                         <v-col>
                                                             <v-text-field 
+                                                             v-model="shousaiKoteiCode"
                                                              class="mt-n3 mb-n5"
                                                              dense outlined>
                                                             </v-text-field>
@@ -1230,12 +1232,14 @@
                                                     <v-row class ="ma-0">
                                                         <v-col>
                                                             <v-text-field
+                                                             v-model="shousaiSagyouCode"
                                                              class="mt-n1 mb-n5"
                                                              dense outlined>
                                                             </v-text-field>
                                                         </v-col>
                                                         <v-col>
                                                             <v-text-field 
+                                                             v-model="shousaiBui"
                                                              class="mt-n1 mb-n5"
                                                              dense outlined>
                                                             </v-text-field>
@@ -1252,13 +1256,15 @@
                                                     <v-row class="ma-0" >
                                                         <v-col>
                                                             <v-combobox 
+                                                             v-model="shousaiKakakuSetttei"
                                                              class="mt-1"
                                                              dense outlined>
                                                             </v-combobox>
                                                         </v-col>
                                                         <v-col>
                                                             <v-combobox 
-                                                            class="mt-1"
+                                                             v-model="shousaiHoshuHantei"
+                                                             class="mt-1"
                                                              dense outlined>
                                                             </v-combobox>
                                                         </v-col>
@@ -1376,6 +1382,12 @@
       shousaihyoujunTanka2:"",
       shousaiChoushiYoutei:"",
       shousaiChoushi:"",
+      shousaiTorisakiCode:"",
+      shousaiKoteiCode:"",
+      shousaiSagyouCode:"",
+      shousaiBui:"",
+      shousaiKakakuSetttei:"",
+      shousaiHoshuHantei:"",
       shousaiNyuukoubiCheck:false,
       shousaiShukkobiCheck:false,
       shousaiZaikoZero:false,
