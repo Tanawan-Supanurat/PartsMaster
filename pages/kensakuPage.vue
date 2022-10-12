@@ -903,6 +903,255 @@
                                                          dense outlined></v-text-field>
                                                     </v-col>
                                                 </v-row>
+                                                <v-row no-gutters> 
+                                                    <v-col>
+                                                        <p class ="ma-0">・標準単価（ゼロの抜き出しは0以上0以下）</p>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row no-gutters>
+                                                    <v-col class="ml-8" col="3" sm="3">
+                                                        <v-text-field
+                                                         class ="mb-n4"
+                                                         v-model="shousaihyoujunTanka1"
+                                                         dense outlined
+                                                         ></v-text-field>
+                                                    </v-col>
+                                                     <v-col class="ml-2" col="2" sm="2" >
+                                                        <p class="mt-2">≦単価≦</p>
+                                                    </v-col>
+                                                     <v-col col="3" sm="3">
+                                                        <v-text-field
+                                                         class ="mb-n4"
+                                                         v-model="shousaihyoujunTanka2"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row no-gutters> 
+                                                    <v-col>
+                                                        <p class ="my-0">・最終入庫日</p>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-checkbox 
+                                                         class ="mt-n1 mb-n5"
+                                                         v-model="shousaiNyuukoubiCheck"
+                                                         label="入庫履歴なし"
+                                                         dense
+                                                         >
+                                                        </v-checkbox>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row class="ma-0" justify="space-betwee" no-gutters>
+                                                    <v-col col="5" sm="5">
+                                                        <v-menu
+                                                        ref="menu"
+                                                        v-model="shousaiNyuukoMenu1"
+                                                        :close-on-content-click="false"
+                                                        :nudge-right="40"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        min-width="auto"
+                                                        >
+                                                            <template v-slot:activator="{ on, attrs }">
+                                                            <v-text-field
+                                                                class="mb-n6 mt-1"
+                                                                v-model="shousaiNyuukoDate1"
+                                                                label="YYYY/MM/DD"
+                                                                append-icon="mdi-calendar"
+                                                                dense
+                                                                outlined
+                                                                readonly
+                                                                v-bind="attrs"
+                                                                v-on="on"
+                                                            ></v-text-field>
+                                                            </template>
+                                                            <v-date-picker
+                                                            v-model="shousaiNyuukoDate1"
+                                                            @input="shousaiNyuukoMenu1 = false"
+                                                            >
+                                                            </v-date-picker>
+                                                        </v-menu>
+                                                    </v-col>
+                                                    <v-col col="1" sm ="1"><p class="ml-2 mt-2">～</p></v-col>
+                                                    <v-col col="5" sm="5">
+                                                        <v-menu
+                                                        ref="menu"
+                                                        v-model="shousaiNyuukoMenu2"
+                                                        :close-on-content-click="false"
+                                                        :nudge-right="40"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        left
+                                                        min-width="auto"
+                                                        >
+                                                            <template v-slot:activator="{ on, attrs }">
+                                                            <v-text-field
+                                                                class="mb-n6 mt-1"
+                                                                v-model="shousaiNyuukoDate2"
+                                                                label="YYYY/MM/DD"
+                                                                append-icon="mdi-calendar"
+                                                                dense
+                                                                outlined
+                                                                readonly
+                                                                v-bind="attrs"
+                                                                v-on="on"
+                                                            ></v-text-field>
+                                                            </template>
+                                                            <v-date-picker
+                                                            v-model="shousaiNyuukoDate2"
+                                                            @input="shousaiNyuukoMenu2 = false"
+                                                            >
+                                                            </v-date-picker>
+                                                        </v-menu>
+                                                        </v-col>
+                                                </v-row>
+                                                <v-row no-gutters> 
+                                                    <v-col>
+                                                        <p class ="my-0">・最終出庫日</p>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-checkbox 
+                                                         class ="mt-n1 mb-n5"
+                                                         v-model="shousaiShukkobiCheck"
+                                                         label="出庫履歴なし"
+                                                         dense
+                                                         >
+                                                        </v-checkbox>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row class="ma-0" justify="space-betwee" no-gutters>
+                                                    <v-col col="5" sm="5">
+                                                        <v-menu
+                                                        ref="menu"
+                                                        v-model="shousaiShukkokoMenu1"
+                                                        :close-on-content-click="false"
+                                                        :nudge-right="40"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        min-width="auto"
+                                                        >
+                                                            <template v-slot:activator="{ on, attrs }">
+                                                            <v-text-field
+                                                                class="mb-n6 mt-1"
+                                                                v-model="shousaiShukkokoDate1"
+                                                                label="YYYY/MM/DD"
+                                                                append-icon="mdi-calendar"
+                                                                dense
+                                                                outlined
+                                                                readonly
+                                                                v-bind="attrs"
+                                                                v-on="on"
+                                                            ></v-text-field>
+                                                            </template>
+                                                            <v-date-picker
+                                                            v-model="shousaiShukkokoDate1"
+                                                            @input="shousaiShukkokoMenu1 = false"
+                                                            >
+                                                            </v-date-picker>
+                                                        </v-menu>
+                                                    </v-col>
+                                                    <v-col col="1" sm ="1"><p class="ml-2 mt-2">～</p></v-col>
+                                                    <v-col col="5" sm="5">
+                                                        <v-menu
+                                                        ref="menu"
+                                                        v-model="shousaiShukkokoMenu2"
+                                                        :close-on-content-click="false"
+                                                        :nudge-right="40"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        left
+                                                        min-width="auto"
+                                                        >
+                                                            <template v-slot:activator="{ on, attrs }">
+                                                            <v-text-field
+                                                                class="mb-n6 mt-1"
+                                                                v-model="shousaiShukkokoDate2"
+                                                                label="YYYY/MM/DD"
+                                                                append-icon="mdi-calendar"
+                                                                dense
+                                                                outlined
+                                                                readonly
+                                                                v-bind="attrs"
+                                                                v-on="on"
+                                                            ></v-text-field>
+                                                            </template>
+                                                            <v-date-picker
+                                                            v-model="shousaiShukkokoDate2"
+                                                            @input="shousaiShukkokoMenu2 = false"
+                                                            >
+                                                            </v-date-picker>
+                                                        </v-menu>
+                                                        </v-col>
+                                                </v-row>
+                                                <v-row no-gutters> 
+                                                    <v-col>
+                                                        <p class ="ma-0">・貯蔵開始日</p>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row class="ma-0" justify="space-betwee" no-gutters>
+                                                    <v-col col="5" sm="5">
+                                                        <v-menu
+                                                        ref="menu"
+                                                        v-model="shousaiChozouKaishiMenu1"
+                                                        :close-on-content-click="false"
+                                                        :nudge-right="40"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        min-width="auto"
+                                                        >
+                                                            <template v-slot:activator="{ on, attrs }">
+                                                            <v-text-field
+                                                                class="mb-n6 mt-1"
+                                                                v-model="shousaiChozouKaishiDate1"
+                                                                label="YYYY/MM/DD"
+                                                                append-icon="mdi-calendar"
+                                                                dense
+                                                                outlined
+                                                                readonly
+                                                                v-bind="attrs"
+                                                                v-on="on"
+                                                            ></v-text-field>
+                                                            </template>
+                                                            <v-date-picker
+                                                            v-model="shousaiChozouKaishiDate1"
+                                                            @input="shousaiChozouKaishiMenu1 = false"
+                                                            >
+                                                            </v-date-picker>
+                                                        </v-menu>
+                                                    </v-col>
+                                                    <v-col col="1" sm ="1"><p class="ml-2 mt-2">～</p></v-col>
+                                                    <v-col col="5" sm="5">
+                                                        <v-menu
+                                                        ref="menu"
+                                                        v-model="shousaiChozouKaishiMenu2"
+                                                        :close-on-content-click="false"
+                                                        :nudge-right="40"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        left
+                                                        min-width="auto"
+                                                        >
+                                                            <template v-slot:activator="{ on, attrs }">
+                                                            <v-text-field
+                                                                class="mb-n6 mt-1"
+                                                                v-model="shousaiChozouKaishiDate2"
+                                                                label="YYYY/MM/DD"
+                                                                append-icon="mdi-calendar"
+                                                                dense
+                                                                outlined
+                                                                readonly
+                                                                v-bind="attrs"
+                                                                v-on="on"
+                                                            ></v-text-field>
+                                                            </template>
+                                                            <v-date-picker
+                                                            v-model="shousaiChozouKaishiDate2"
+                                                            @input="shousaiChozouKaishiMenu2 = false"
+                                                            >
+                                                            </v-date-picker>
+                                                        </v-menu>
+                                                        </v-col>
+                                                </v-row>
+
                                             </v-col>
                                         </v-row>
                                         <v-divider></v-divider>
@@ -1011,6 +1260,10 @@
       shousaiZaikousuu2:"",
       shousaiZaikouKingaku1:"",
       shousaiZaikouKingaku2:"",
+      shousaihyoujunTanka1:"",
+      shousaihyoujunTanka2:"",
+      shousaiNyuukoubiCheck:false,
+      shousaiShukkobiCheck:false,
       shousaiZaikoZero:false,
       shousaiDialog:false,
       shousaiItemsBuhin:[1,2,3],
@@ -1023,9 +1276,20 @@
       shousaiSelectZuban:"",
       shousaihyoujunDate1:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       shousaihyoujunDate2:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      shousaiNyuukoDate1:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      shousaiNyuukoDate2:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      shousaiShukkokoDate1:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      shousaiShukkokoDate2:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      shousaiChozouKaishiDate1:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      shousaiChozouKaishiDate2:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       shousaihyoujunMenu1: false,
       shousaihyoujunMenu2: false,
-
+      shousaiNyuukoMenu1:false,
+      shousaiNyuukoMenu2:false,
+      shousaiShukkokoMenu1:false,
+      shousaiShukkokoMenu2:false,
+      shousaiChozouKaishiMenu1:false,
+      shousaiChozouKaishiMenu2:false,
       //setting
       setttingDialog:false,
     
