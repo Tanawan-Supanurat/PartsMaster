@@ -399,7 +399,7 @@
                                         </v-col>
                                     </template>
 
-                                    <v-card height=90vh width=100vh tile> 
+                                    <v-card tile> 
                                         <v-system-bar height="30">
                                             <v-toolbar-title>詳細検索画面</v-toolbar-title>
                                             <v-spacer></v-spacer>
@@ -568,7 +568,7 @@
                                                             </v-date-picker>
                                                         </v-menu>
                                                         </v-col>
-                                                        <v-col class="ml-2" sm="3" >
+                                                        <v-col class="ml-2 mr-auto" sm="3" >
                                                             <v-btn-toggle v-model="toggle_none">
                                                                 <v-btn small icon tile outlined></v-btn><v-btn small icon tile outlined></v-btn><v-btn small icon tile outlined></v-btn>
                                                             </v-btn-toggle>
@@ -597,27 +597,259 @@
                                                     <v-col>
                                                         <p class="ml-2 mt-2">1,2,3,4,5,6</p>
                                                     </v-col>
-                                                    <v-col class="my-0" col="5" sm="5">
+                                                    <v-col class="my-0 mr-3" col="5" sm="5">
                                                         <v-text-field 
                                                          v-model="shousaiTanban"
                                                          dense outlined></v-text-field>
                                                     </v-col>
                                                  </v-row>
+                                                 <p class="ma-0">・倉庫担当</p>
+                                                 <v-row  no-gutters>
+                                                    <v-col class="ml-10" col="10" sm="10">
+                                                        <v-text-field
+                                                         v-model="shousaiSoukotantou"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                 </v-row>
+                                                  <v-row no-gutters justify="space-between">
+                                                    <v-col>
+                                                        <p class="ma-0">・P/S展開区分</p>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <p class="ma-0">・自動購入指示</p>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row  no-gutters justify="space-between">
+                                                    <v-col class="ml-10" col="4" sm="4">
+                                                        <v-text-field
+                                                         v-model="shousaiPStenkai"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                    <v-col class="my-0 mr-12" col="4" sm="4">
+                                                        <v-text-field 
+                                                         v-model="shousaiJidouKounyuu"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row no-gutters justify="space-between">
+                                                    <v-col>
+                                                        <p class="ma-0">・製品分類コード</p>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <p class="ma-0">・部品区分</p>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row  no-gutters justify="space-between">
+                                                    <v-col class="ml-10" col="2" sm="2">
+                                                        <v-text-field
+                                                         v-model="shousaiSeihinbunruiCode"
+                                                         dense outlined>
+                                                         </v-text-field>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-btn class="ml-2 mt-2" x-small>...</v-btn>
+                                                    </v-col>
+                                                    <v-col class="my-0 mr-8 mr-auto" col="2" sm="2">
+                                                        <v-text-field 
+                                                         v-model="shousaiSeihinkubun"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-btn class = "ml-2 mt-2" x-small>...</v-btn>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row no-gutters justify="space-between">
+                                                    <v-col>
+                                                        <p class="ma-0">・PDM判定</p>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <p class="ma-0">・機種</p>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row  no-gutters justify="space-between">
+                                                    <v-col class="ml-10" col="2" sm="2">
+                                                        <v-text-field
+                                                         v-model="shousaiPDM"
+                                                         dense outlined>
+                                                         </v-text-field>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-btn class="ml-2 mt-2" x-small>...</v-btn>
+                                                    </v-col>
+                                                    <v-col class="my-0 mr-8 mr-auto" col="2" sm="2">
+                                                        <v-text-field 
+                                                         v-model="shousaikishuu"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-btn class = "ml-2 mt-2" x-small>...</v-btn>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <p class="ma-0">・メーカー型番</p>
+                                                 <v-row  no-gutters>
+                                                    <v-col class="ml-10" col="10" sm="10">
+                                                        <v-text-field
+                                                         v-model="shousaiMakerKataban"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row no-gutters justify="space-between">
+                                                    <v-col>
+                                                        <p class="ma-0">・内外作区分</p>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <p class="ma-0">・貯蔵区分</p>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row  no-gutters>
+                                                    <v-col class="ml-10" col="2" sm="2">
+                                                        <v-text-field
+                                                         v-model="shousaiNaigai"
+                                                         dense outlined>
+                                                         </v-text-field>
+                                                    </v-col>
+                                                    <v-col col="1">
+                                                        <v-btn class="ml-2 mt-2" x-small>...</v-btn>
+                                                    </v-col>
+                                                    <v-col class="my-0 " col="2" sm="2">
+                                                        <v-text-field 
+                                                         v-model="shousaiChozou"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                    <v-col>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row no-gutters >
+                                                    <v-col>
+                                                        <p class="ma-0">・管理点所</p>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <p class ="ma-0">・在庫担当</p>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row no-gutters>
+                                                    <v-col class= "ml-10" col="2" sm="2">
+                                                        <v-text-field
+                                                         v-model="shousaiKanriTenshou"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                    <v-col class="ml-3" sm="1">
+
+                                                    </v-col>
+                                                    <v-col class="offset-sm-2" col="2" sm="2">
+                                                         <v-text-field
+                                                         v-model="shousaiZaikoTantou"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row no-gutters >
+                                                    <v-col>
+                                                        <p class="ma-0">・発注店所</p>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <p class ="ma-0">・発注担当</p>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row no-gutters>
+                                                    <v-col class= "ml-10" col="2" sm="2">
+                                                        <v-text-field
+                                                         v-model="shousaiHachuTenshou"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                    <v-col class="ml-3" sm="1">
+
+                                                    </v-col>
+                                                    <v-col class="offset-sm-2" col="2" sm="2">
+                                                         <v-text-field
+                                                         v-model="shousaiHachuTantou"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row no-gutters >
+                                                    <v-col>
+                                                        <p class="ma-0">・パッケト</p>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <p class ="ma-0">・管理基準</p>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row no-gutters>
+                                                    <v-col class= "ml-10" col="2" sm="2">
+                                                        <v-text-field
+                                                         v-model="shousaiBacker"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                    <v-col class="ml-3" sm="1">
+
+                                                    </v-col>
+                                                    <v-col class="offset-sm-2" col="2" sm="2">
+                                                         <v-text-field
+                                                         v-model="shousaiKanriKijun"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                    <v-col col="1">
+                                                        <v-btn class="ml-2 mt-2" x-small>...</v-btn>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row no-gutters justify="space-between">
+                                                    <v-col>
+                                                        <p class="ma-0">・ABC区分</p>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <p class="ma-0">・在庫管理コード</p>
+                                                    </v-col>
+                                                 </v-row>
+                                                 <v-row  no-gutters>
+                                                    <v-col class="ml-10" col="2" sm="2">
+                                                        <v-text-field
+                                                         v-model="shousaiABCKanriCodeKubun"
+                                                         dense outlined>
+                                                         </v-text-field>
+                                                    </v-col>
+                                                    <v-col col="1">
+                                                        <v-btn class="ml-2 mt-2" x-small>...</v-btn>
+                                                    </v-col>
+                                                    <v-col class="my-0 " col="2" sm="2">
+                                                        <v-text-field 
+                                                         v-model="shousaiZaikoKanriCode"
+                                                         dense outlined></v-text-field>
+                                                    </v-col>
+                                                    <v-col>
+                                                    </v-col>
+                                                 </v-row>
+                                                 
                                             </v-col>
                                             <v-col>
                                                 <v-row no-gutters>
                                                     <v-col>
-                                                        <p>・在庫数</p>
+                                                        <p class ="ma-0">・在庫数</p>
                                                     </v-col>
-                                                    <v-col>
-                                                        <p>・在庫0ではない。</p>
+                                                    
+                                                 </v-row>
+                                                 <v-row no-gutters>
+                                                    <v-col class="ml-8" col="3" sm="3">
+                                                        <v-text-field
+                                                         class ="ma-0"
+                                                         v-model="shousaiZaikousuu1"
+                                                         dense outlined
+                                                         ></v-text-field>
+                                                    </v-col>
+                                                     <v-col class="ml-2" col="2" sm="2" >
+                                                        <p class="ma-0">≦数量≦</p>
+                                                    </v-col>
+                                                     <v-col col="3" sm="3">
+                                                        <v-text-field
+                                                         class ="ma-0"
+                                                         v-model="shousaiZaikousuu2"
+                                                         dense outlined></v-text-field>
                                                     </v-col>
                                                  </v-row>
+
                                             </v-col>
                                         </v-row>
                                         <v-divider></v-divider>
                                         <v-row class="mt-2" no-gutters justify="space-between">
-                                            <v-col>
+                                            <v-col class=ml-2>
                                                 <v-btn color="primary">
                                                     <v-icon>mdi-magnify</v-icon>
                                                     SQLを表示する。
@@ -638,6 +870,7 @@
                                                 </v-btn>
                                             </v-col>
                                             </v-row>
+                                            <br>
                                         </v-form>
                                     </v-card>  
                                 </v-dialog>
@@ -698,6 +931,27 @@
       shousaiZuban:"",
       shousaiKoban:"",
       shousaiTanban:"",
+      shousaiSoukotantou:"",
+      shousaiPStenkai:"",
+      shousaiJidouKounyuu:"",
+      shousaiSeihinbunruiCode:"",
+      shousaiSeihinkubun:"",
+      shousaiPDM:"",
+      shousaikishuu:"",
+      shousaiMakerKataban:"",
+      shousaiNaigai:"",
+      shousaiChozou:"",
+      shousaiKanriTenshou:"",
+      shousaiZaikoTantou:"",
+      shousaiHachuTenshou:"",
+      shousaiHachuTantou:"",
+      shousaiBacker:"",
+      shousaiKanriKijun:"",
+      shousaiABCKanriCodeKubun:"",
+      shousaiZaikoKanriCode:"",
+      shousaiZaikousuu1:"",
+      shousaiZaikousuu2:"",
+      shousaiZaikoZero:false,
       shousaiDialog:false,
       shousaiItemsBuhin:[1,2,3],
       shousaiSelectBuhin:"",
