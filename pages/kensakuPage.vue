@@ -580,7 +580,9 @@
                                                         </v-col>
                                                         <v-col class="ml-2 mr-auto" sm="3" >
                                                             <v-btn-toggle v-model="toggle_none">
-                                                                <v-btn small icon tile outlined></v-btn><v-btn small icon tile outlined></v-btn><v-btn small icon tile outlined></v-btn>
+                                                                <v-btn small icon tile outlined></v-btn>
+                                                                <v-btn small icon tile outlined></v-btn>
+                                                                <v-btn small icon tile outlined></v-btn>
                                                             </v-btn-toggle>
                                                         </v-col>
 
@@ -1272,6 +1274,50 @@
 
                                             </v-col>
                                         </v-row>
+                                        <v-row  justify="end" no-gutters>
+                                            <v-col col=4 sm=4>
+                                                <v-checkbox
+                                                 class="ma-0"
+                                                 v-model="shousaiCheckBox1"
+                                                 label="図面発行後二次情報が変更されていない"
+                                                ></v-checkbox>
+                                            </v-col>
+                                            <v-col col=4 sm=4>
+                                                <v-checkbox
+                                                 class="ma-0"
+                                                 v-model="shousaiCheckBox2"
+                                                 label="製造原価登録済且つ販売価格未登録部品"
+                                                ></v-checkbox>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row justify="end" no-gutters>
+                                            <v-col col=3 sm=2>
+                                                <v-checkbox
+                                                 class="ma-0"
+                                                 v-model="shousaiCheckBox3"
+                                                 label="修理提案書使用済"
+                                                ></v-checkbox>
+                                            </v-col>
+                                            <v-col col=3 sm=3>
+                                                <v-checkbox
+                                                 class="ma-0"
+                                                 v-model="shousaiCheckBox4"
+                                                 label="部品説明or取替理由が未登録"
+                                                ></v-checkbox>
+                                            </v-col>
+                                            <v-col col=3 sm=3>
+                                                <v-checkbox
+                                                 class="ma-0"
+                                                 v-model="shousaiCheckBox5"
+                                                 label="写真未登録"
+                                                ></v-checkbox>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row justify="end" no-gutters>
+                                            <v-col col=9 sm=9>
+                                                <span class="blue--text">「部品説明or取替理由が未登録」、「写真未登録」を選択した場合は、「修理提案使用済」も自動でチェックして検索します。</span>
+                                            </v-col>
+                                        </v-row>
                                         <v-divider></v-divider>
                                         <v-row class="mt-2" no-gutters justify="space-between">
                                             <v-col class=ml-2>
@@ -1416,6 +1462,11 @@
       shousaiShukkokoMenu2:false,
       shousaiChozouKaishiMenu1:false,
       shousaiChozouKaishiMenu2:false,
+      shousaiCheckBox1:false,
+      shousaiCheckBox2:false,
+      shousaiCheckBox3:false,
+      shousaiCheckBox4:false,
+      shousaiCheckBox5:false,
       //setting
       setttingDialog:false,
     
