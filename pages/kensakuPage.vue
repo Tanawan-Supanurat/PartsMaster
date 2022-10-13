@@ -205,8 +205,8 @@
                                     </v-col>
                                 </v-row>
                                 <p class="mb-1">標準図発行日</p>
-                                <v-row class="py-0">
-                                    <v-col col="6">
+                                <v-row no-gutters class="py-0">
+                                    <v-col col="5" sm="5">
                                         <v-menu
                                         ref="menu"
                                         v-model="hakkouMenu1"
@@ -218,6 +218,7 @@
                                         >
                                             <template v-slot:activator="{ on, attrs }">
                                             <v-text-field
+                                                class ="mb-0"
                                                 v-model="hakkouDate1"
                                                 label="YYYY/MM/DD"
                                                 append-icon="mdi-calendar"
@@ -235,8 +236,8 @@
                                             </v-date-picker>
                                         </v-menu>
                                     </v-col>
-                                    <v-col sm="1">~</v-col>
-                                    <v-col col="6">
+                                    <v-col class = "ml-2" sm="1"><p>~</p></v-col>
+                                    <v-col col="5" sm="5">
                                         <v-menu
                                         ref="menu"
                                         v-model="hakkouMenu2"
@@ -248,6 +249,7 @@
                                         >
                                             <template v-slot:activator="{ on, attrs }">
                                             <v-text-field
+                                                class ="mb-0"
                                                 v-model="hakkouDate2"
                                                 label="YYYY/MM/DD"
                                                 append-icon="mdi-calendar"
@@ -266,7 +268,44 @@
                                         </v-menu>
                                     </v-col>
                                 </v-row>
-                                <a class ="mr-2" href="">本日</a><a class ="mr-2" href="">昨日</a><a href="">一昨日</a><br><br>
+                                <v-row class="mt-n4" no-gutters >
+                                    <v-col class="ml-2 mr-auto" sm="6" >
+                                        <v-btn-toggle v-model="toggle_hakko">
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator ="{on,attrs}">
+                                                    <v-btn tile outlined small
+                                                        v-bind="attrs"
+                                                        v-on="on"
+                                                        @click="changeCalendarHakko(0)"
+                                                        >今日</v-btn>
+                                                </template>
+                                                <span>今日</span>
+                                            </v-tooltip>
+
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator ="{on,attrs}">
+                                                    <v-btn tile outlined small
+                                                        v-bind="attrs"
+                                                        v-on="on"
+                                                        @click="changeCalendarHakko(1)"
+                                                    >昨日</v-btn>
+                                                </template>
+                                                <span>昨日</span>
+                                            </v-tooltip>
+                                            
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator ="{on,attrs}">
+                                                    <v-btn tile outlined small
+                                                        v-bind="attrs"
+                                                        v-on="on"
+                                                        @click="changeCalendarHakko(2)"
+                                                    >一昨日</v-btn>
+                                                </template>
+                                                <span>一昨日</span>
+                                            </v-tooltip>
+                                        </v-btn-toggle>
+                                    </v-col>
+                                </v-row>
                                 <p class="mb-1">標準図切替日</p>
                                 <v-row class="py-0">
                                     <v-col col="6">
@@ -328,8 +367,44 @@
                                             </v-date-picker>
                                         </v-menu>
                                     </v-col>
+                                </v-row><v-row class="mt-n4" no-gutters >
+                                    <v-col class="ml-2 mr-auto" sm="6" >
+                                        <v-btn-toggle v-model="toggle_Kirikae">
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator ="{on,attrs}">
+                                                    <v-btn tile outlined small
+                                                        v-bind="attrs"
+                                                        v-on="on"
+                                                        @click="changeCalendarKirikae(0)"
+                                                        >今日</v-btn>
+                                                </template>
+                                                <span>今日</span>
+                                            </v-tooltip>
+
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator ="{on,attrs}">
+                                                    <v-btn tile outlined small
+                                                        v-bind="attrs"
+                                                        v-on="on"
+                                                        @click="changeCalendarKirikae(1)"
+                                                    >昨日</v-btn>
+                                                </template>
+                                                <span>昨日</span>
+                                            </v-tooltip>
+                                            
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator ="{on,attrs}">
+                                                    <v-btn tile outlined small
+                                                        v-bind="attrs"
+                                                        v-on="on"
+                                                        @click="changeCalendarKirikae(2)"
+                                                    >一昨日</v-btn>
+                                                </template>
+                                                <span>一昨日</span>
+                                            </v-tooltip>
+                                        </v-btn-toggle>
+                                    </v-col>
                                 </v-row>
-                                <a class ="mr-2" href="">本日</a><a class ="mr-2" href="">昨日</a><a href="">一昨日</a><br><br>
                                 <v-row class ="my-0 py-0" no-gutters>
                                     <v-col col = "5" sm ="5">
                                         <p class="ma-0">発行通知書No</p>
@@ -580,9 +655,38 @@
                                                         </v-col>
                                                         <v-col class="ml-2 mr-auto" sm="3" >
                                                             <v-btn-toggle v-model="toggle_none">
-                                                                <v-btn small icon tile outlined></v-btn>
-                                                                <v-btn small icon tile outlined></v-btn>
-                                                                <v-btn small icon tile outlined></v-btn>
+                                                                <v-tooltip bottom>
+                                                                    <template v-slot:activator ="{on,attrs}">
+                                                                        <v-btn small icon tile outlined
+                                                                         v-bind="attrs"
+                                                                         v-on="on"
+                                                                         @click="changeCalendarHyouJun(0)"
+                                                                         ></v-btn>
+                                                                    </template>
+                                                                    <span>今日</span>
+                                                                </v-tooltip>
+
+                                                                <v-tooltip bottom>
+                                                                    <template v-slot:activator ="{on,attrs}">
+                                                                        <v-btn small icon tile outlined
+                                                                         v-bind="attrs"
+                                                                         v-on="on"
+                                                                         @click="changeCalendarHyouJun(1)"
+                                                                        ></v-btn>
+                                                                    </template>
+                                                                    <span>昨日</span>
+                                                                </v-tooltip>
+                                                                
+                                                                <v-tooltip bottom>
+                                                                    <template v-slot:activator ="{on,attrs}">
+                                                                        <v-btn small icon tile outlined
+                                                                         v-bind="attrs"
+                                                                         v-on="on"
+                                                                         @click="changeCalendarHyouJun(2)"
+                                                                        ></v-btn>
+                                                                    </template>
+                                                                    <span>一昨日</span>
+                                                                </v-tooltip>
                                                             </v-btn-toggle>
                                                         </v-col>
 
@@ -1476,5 +1580,25 @@
       userShougiSelect:"手配情報",
       userShougiItems:["手配情報","製作情報","購買情報","在庫情報","保守情報","販売価格情報","P/S情報","代替部品情報"],
     }),
+    methods:{
+        changeCalendarHyouJun(value){
+            let cur_date = new Date(Date.now());
+            cur_date.setDate(cur_date.getDate()-value);
+            this.shousaihyoujunDate1 = cur_date.toISOString().substr(0, 10);
+            this.shousaihyoujunDate2 = cur_date.toISOString().substr(0, 10);
+        },
+        changeCalendarHakko(value){
+            let cur_date = new Date(Date.now());
+            cur_date.setDate(cur_date.getDate()-value);
+            this.hakkouDate1 = cur_date.toISOString().substr(0, 10);
+            this.hakkouDate2 = cur_date.toISOString().substr(0, 10);
+        },
+        changeCalendarKirikae(value){
+            let cur_date = new Date(Date.now());
+            cur_date.setDate(cur_date.getDate()-value);
+            this.kirikaeDate1 = cur_date.toISOString().substr(0, 10);
+            this.kirikaeDate2 = cur_date.toISOString().substr(0, 10);
+        },
+    }
   }
 </script>
