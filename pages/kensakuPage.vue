@@ -510,7 +510,7 @@
                                                             >
                                                             </v-text-field>
                                                         </v-col>
-                                                        <v-col cols="2" sm="2">
+                                                        <v-col class="pr-2" cols="2" sm="2">
                                                             <v-combobox
                                                                 class="mb-n4"
                                                                 v-model="shousaiSelectBuhin"
@@ -533,7 +533,7 @@
                                                             >
                                                             </v-text-field>
                                                         </v-col>
-                                                        <v-col cols="2" sm="2">
+                                                        <v-col class="pr-2" cols="2" sm="2">
                                                             <v-combobox
                                                                 class="mb-n4"
                                                                 v-model="shousaiSelectBuhinmei"
@@ -556,7 +556,7 @@
                                                             >
                                                             </v-text-field>
                                                         </v-col>
-                                                        <v-col cols="2" sm="2">
+                                                        <v-col class="pr-2" cols="2" sm="2">
                                                             <v-combobox
                                                                 class="mb-n4"
                                                                 v-model="shousaiSelectHoshu"
@@ -579,7 +579,7 @@
                                                             >
                                                             </v-text-field>
                                                         </v-col>
-                                                        <v-col cols="2" sm="2">
+                                                        <v-col class="pr-2" cols="2" sm="2">
                                                             <v-combobox
                                                                 class="mb-n4"
                                                                 v-model="shousaiSelectZuban"
@@ -1625,14 +1625,14 @@
       shousaiShukkobiCheck:false,
       shousaiZaikoZero:false,
       shousaiDialog:false,
-      shousaiItemsBuhin:[1,2,3],
-      shousaiSelectBuhin:"",
-      shousaiItemsBuhinmei:[1,2,3],
-      shousaiSelectBuhinmei:"",
-      shousaiItemsHoshu:[1,2,3],
-      shousaiSelectHoshu:"",
-      shousaiItemsZuban:[1,2,3],
-      shousaiSelectZuban:"",
+      shousaiItemsBuhin:["1:前方一致","2:完全一致","3:部分一致",],
+      shousaiSelectBuhin:"1:前方一致",
+      shousaiItemsBuhinmei:["1:前方一致","2:完全一致","3:部分一致",],
+      shousaiSelectBuhinmei:"3:部分一致",
+      shousaiItemsHoshu:["1:前方一致","2:完全一致","3:部分一致",],
+      shousaiSelectHoshu:"3:部分一致",
+      shousaiItemsZuban:["1:前方一致","2:完全一致","3:部分一致",],
+      shousaiSelectZuban:"1:前方一致",
       shousaihyoujunDate1:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       shousaihyoujunDate2:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       shousaiNyuukoDate1:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
@@ -1656,6 +1656,7 @@
       shousaiCheckBox5:false,
       shousaiItemsSouko:[1,2,3,4,5,"--"],
       shousaiSelectSouko:"--",
+      shousaiTableCheckbox:false,
       shousaiZaikoSelected: [],
       shousaiZaikoHeaders: [
           {
@@ -1776,10 +1777,10 @@
             this.shousaiNyuukoubiCheck=false;
             this.shousaiShukkobiCheck=false;
             this.shousaiZaikoZero=false;
-            this.shousaiSelectBuhin="";
-            this.shousaiSelectBuhinmei="";
-            this.shousaiSelectHoshu="";
-            this.shousaiSelectZuban="";
+            this.shousaiSelectBuhin="1:前方一致";
+            this.shousaiSelectBuhinmei="3:部分一致";
+            this.shousaiSelectHoshu="3:部分一致";
+            this.shousaiSelectZuban="1:前方一致";
             this.shousaihyoujunMenu1= false;
             this.shousaihyoujunMenu2= false;
             this.shousaiNyuukoMenu1=false;
@@ -1794,6 +1795,17 @@
             this.shousaiCheckBox4=false;
             this.shousaiCheckBox5=false;
             this.shousaiSelectSouko="--";
+            this.shousaiZaikoSelected= [];
+            this.shousaiTableCheckbox=false;
+            this.toggle_none="";
+            this.shousaihyoujunDate1=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
+            this.shousaihyoujunDate2=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
+            this.shousaiNyuukoDate1=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
+            this.shousaiNyuukoDate2=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
+            this.shousaiShukkokoDate1=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
+            this.shousaiShukkokoDate2=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
+            this.shousaiChozouKaishiDate1=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
+            this.shousaiChozouKaishiDate2=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
         },
     }
   }
