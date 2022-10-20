@@ -195,7 +195,7 @@
                                                         <v-icon>mdi-magnify</v-icon>
                                                     </v-btn>
                                                     <v-btn v-else
-                                                    @click="getKensakuAPi()"
+                                                    @click="getKensakuBtn1()"
                                                     elevation="2"
                                                     icon
                                                     tile
@@ -468,15 +468,50 @@
                                         ></v-text-field>
                                     </v-col>
                                     <v-col col ="2" sm="2">
-                                        <v-btn
-                                        elevation="2"
-                                        icon
-                                        tile
-                                        >
-                                        <v-icon>
-                                            mdi-magnify
-                                        </v-icon>
-                                        </v-btn>
+                                        <template>
+                                            <v-dialog
+                                             v-model ="warning_dialog_btn2"
+                                             persistent
+                                             max-width="290"
+                                            >
+                                                <template v-slot:activator = "{on, attrs}">
+                                                    <v-btn v-if="itemsSeihin === '' && hakkouDate1 ==='' &&
+                                                                 hakkouDate2 === '' && kirikaeDate1 ==='' &&
+                                                                 kirikaeDate2 === '' && kirikaeTsuuchi ==='' &&
+                                                                 hakkoTsuuchi === ''"
+                                                     elevation="2"
+                                                     icon
+                                                     tile
+                                                     v-bind="attrs"
+                                                     v-on="on"
+                                                    >
+                                                        <v-icon>mdi-magnify</v-icon>
+                                                    </v-btn>
+                                                    <v-btn v-else
+                                                    @click="getKensakuBtn2()"
+                                                    elevation="2"
+                                                    icon
+                                                    tile
+                                                    >
+                                                        <v-icon> mdi-magnify</v-icon>
+                                                    </v-btn>
+                                                </template>
+                                                <v-card>
+                                                    <v-card-title >Warning</v-card-title>
+                                                    <v-card-text >検索条件を入力してください。</v-card-text>
+                                                    <v-card-actions>
+                                                         <v-spacer></v-spacer>
+                                                        <v-btn
+                                                            color="primary"
+                                                            text
+                                                            @click="warning_dialog_btn2 = false"
+                                                        >
+                                                            OK
+                                                        </v-btn>
+                                                    </v-card-actions>
+                                                </v-card>
+                                            </v-dialog>
+                                        </template>
                                     </v-col>
                                 </v-row>
 
@@ -1597,8 +1632,32 @@
                                     <template>
                                         <thead>
                                             <tr>
-                                                <th v-for="(item,index) in APIJSON[0]" :key=index class="text-left">
-                                                    {{index}}
+                                                <th class="text-left">
+                                                    発行通知書
+                                                </th>
+                                                <th class="text-left">
+                                                    発行日
+                                                </th>
+                                                <th class="text-left">
+                                                    切替指示書
+                                                </th>
+                                                <th class="text-left">
+                                                    図番
+                                                </th>
+                                                <th class="text-left">
+                                                    改訂
+                                                </th>
+                                                <th class="text-left">
+                                                    保守
+                                                </th>
+                                                <th class="text-left">
+                                                    部品コード
+                                                </th>
+                                                <th class="text-left">
+                                                    改訂
+                                                </th>
+                                                <th class="text-left">
+                                                    部品名
                                                 </th>
                                             </tr>
                                         </thead>
@@ -1634,13 +1693,13 @@
       buhincode:"",
       buhinmei:"",
       itemsBuhin:["1:前方一致","2:完全一致","3:部分一致",],
-      selectBuhin:"",
+      selectBuhin:"1:前方一致",
       itemsSeihin:["-:All","1:EV","2:ESC","3:CP",],
       selectSeihin:"-:All",
-      hakkouDate1: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      hakkouDate2: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      kirikaeDate1: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      kirikaeDate2: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      hakkouDate1: "",
+      hakkouDate2: "",
+      kirikaeDate1: "",
+      kirikaeDate2: "",
       hakkouMenu1: false,
       hakkouMenu2: false,
       kirikaeMenu1: false,
@@ -1650,7 +1709,7 @@
       hakkoTsuuchi:"",
       kirikaeTsuuchi:"",
       warning_dialog_btn1:false,
-
+      warning_dialog_btn2:false,
       //shousai from value
       shousaiForm:true,
       shousaiBuhincode:"",
@@ -1704,14 +1763,14 @@
       shousaiSelectHoshu:"3:部分一致",
       shousaiItemsZuban:["1:前方一致","2:完全一致","3:部分一致",],
       shousaiSelectZuban:"1:前方一致",
-      shousaihyoujunDate1:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      shousaihyoujunDate2:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      shousaiNyuukoDate1:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      shousaiNyuukoDate2:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      shousaiShukkokoDate1:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      shousaiShukkokoDate2:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      shousaiChozouKaishiDate1:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      shousaiChozouKaishiDate2:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      shousaihyoujunDate1:"",
+      shousaihyoujunDate2:"",
+      shousaiNyuukoDate1:"",
+      shousaiNyuukoDate2:"",
+      shousaiShukkokoDate1:"",
+      shousaiShukkokoDate2:"",
+      shousaiChozouKaishiDate1:"",
+      shousaiChozouKaishiDate2:"",
       shousaihyoujunMenu1: false,
       shousaihyoujunMenu2: false,
       shousaiNyuukoMenu1:false,
@@ -1801,14 +1860,31 @@
       APIJSON:"",
     }),
     methods:{
-        getKensakuAPi(){
-            const url = "http://localhost:59272/api/KensakuBtn1Get";
-            const req_data = {
+        getKensakuBtn1(){
+            const url = "http://localhost:59272/api/KensakuBtnGet";
+            const params = {
                 PART_NO : this.buhincode,
                 PART_NAME_LOC1 : this.buhinmei,
-
+                FIND_OPTION : this.selectBuhin.substring(0,1),
             }
-            this.$axios.get(url,req_data).then(res =>{
+            this.$axios.get(url,{params}).then(res =>{
+                this.APIJSON = res.data
+            }).catch(err=>{
+
+            })
+        },
+        getKensakuBtn2(){
+            const url = "http://localhost:59272/api/KensakuBtnGet";
+            const params = {
+                PRODUCT_TYPE : this.selectSeihin.substring(0,1),
+                ISSUE_DATE_1 : this.hakkouDate1,
+                ISSUE_DATE_2 : this.hakkouDate2,
+                DWG_CHG_DATE_1 : this.kirikaeDate1,
+                DWG_CHG_DATE_2 : this.kirikaeDate2,
+                CHG_NO : this.kirikaeTsuuchi,
+                ISSUE_NO : this.hakkoTsuuchi,
+            }
+            this.$axios.get(url,{params}).then(res =>{
                 this.APIJSON = res.data
             }).catch(err=>{
 
@@ -1895,14 +1971,14 @@
             this.shousaiZaikoSelected= [];
             this.shousaiTableCheckbox=false;
             this.toggle_none=0;
-            this.shousaihyoujunDate1=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
-            this.shousaihyoujunDate2=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
-            this.shousaiNyuukoDate1=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
-            this.shousaiNyuukoDate2=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
-            this.shousaiShukkokoDate1=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
-            this.shousaiShukkokoDate2=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
-            this.shousaiChozouKaishiDate1=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
-            this.shousaiChozouKaishiDate2=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
+            this.shousaihyoujunDate1="";
+            this.shousaihyoujunDate2="";
+            this.shousaiNyuukoDate1="";
+            this.shousaiNyuukoDate2="";
+            this.shousaiShukkokoDate1="";
+            this.shousaiShukkokoDate2="";
+            this.shousaiChozouKaishiDate1="";
+            this.shousaiChozouKaishiDate2="";
         },
     }
   }
