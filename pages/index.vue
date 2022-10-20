@@ -1,10 +1,6 @@
 <template>
   <v-row justify="center" align="center">
     <v-col cols="12" sm="8" md="6">
-      <v-card class="logo py-4 d-flex justify-center">
-        <NuxtLogo />
-        <VuetifyLogo />
-      </v-card>
       <v-card>
         <v-card-title class="headline">
           Welcome to the Vuetify + Nuxt.js template
@@ -71,6 +67,21 @@
             Continue
           </v-btn>
         </v-card-actions>
+        <div>
+          <ul>
+            <!--
+              <li v-for="(list,index) in name_list" :key="index">
+                Name:{{list.name}} Email:{{list.email}} 
+              </li>
+              -->
+              <!--
+              <li v-for="(list,index) in posts" :key="index">
+                {{index}} . {{list}}
+              </li>
+              -->
+              <li>{{posts}}</li>
+          </ul>
+        </div>
       </v-card>
     </v-col>
   </v-row>
@@ -78,6 +89,48 @@
 
 <script>
 export default {
-  name: 'IndexPage'
-}
+  data(){
+    return {
+      message : "Test Message_data",
+      posts:"",
+      name_list : [
+        {
+          "name": "Jared Mullins",
+          "email": "cepe@od.fr"
+        },
+        {
+          "name": "Bobby Stevenson",
+          "email": "zehzep@dic.lc"
+        },
+        {
+          "name": "Ola Morales",
+          "email": "wejro@ciwhas.cw"
+        },
+        {
+          "name": "Lucille Singleton",
+          "email": "gul@horte.cg"
+        },
+        {
+          "name": "Emma Cohen",
+          "email": "nak@huhdec.de"
+        },
+        {
+          "name": "Duane Weber",
+          "email": "mugode@we.sz"
+        }
+      ]
+    }
+  },
+  name: 'IndexPage',
+  async asyncData({ $axios }) {
+			// 取得先のURL
+			const url = "http://localhost:59272/api/kensakuPage";
+			// リクエスト（Get）
+			const response = await $axios.$get(url);
+			// 配列で返ってくるのでJSONにして返却
+			return {
+				posts: response
+			};
+  }
+};
 </script>

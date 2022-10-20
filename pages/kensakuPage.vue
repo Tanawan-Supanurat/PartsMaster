@@ -123,7 +123,7 @@
                 :mini-variant.sync="mini"
                 floating
                 clipped
-                width=30%
+                width=32%
             >
                 <v-list
                  nav
@@ -135,7 +135,7 @@
                     >
                         <v-form
                          ref="form"
-                         v-model="valid"
+                         v-model="kensakuForm"
                          lazy-validation
                         >
                              <v-btn class = "mb-2"
@@ -178,15 +178,48 @@
                                         ></v-combobox>
                                     </v-col>
                                     <v-col cols ="1" sm="1" class = "ml-4">
-                                        <v-btn
-                                        elevation="2"
-                                        icon
-                                        tile
-                                        >
-                                        <v-icon>
-                                            mdi-magnify
-                                        </v-icon>
-                                        </v-btn>
+                                        <template>
+                                            <v-dialog
+                                             v-model ="warning_dialog_btn1"
+                                             persistent
+                                             max-width="290"
+                                            >
+                                                <template v-slot:activator = "{on, attrs}">
+                                                    <v-btn v-if="buhincode === '' && buhinmei ==='' "
+                                                     elevation="2"
+                                                     icon
+                                                     tile
+                                                     v-bind="attrs"
+                                                     v-on="on"
+                                                    >
+                                                        <v-icon>mdi-magnify</v-icon>
+                                                    </v-btn>
+                                                    <v-btn v-else
+                                                    @click="getKensakuAPi()"
+                                                    elevation="2"
+                                                    icon
+                                                    tile
+                                                    >
+                                                        <v-icon> mdi-magnify</v-icon>
+                                                    </v-btn>
+                                                </template>
+                                                <v-card>
+                                                    <v-card-title >Warning</v-card-title>
+                                                    <v-card-text >検索条件を入力してください。</v-card-text>
+                                                    <v-card-actions>
+                                                         <v-spacer></v-spacer>
+                                                        <v-btn
+                                                            color="primary"
+                                                            text
+                                                            @click="warning_dialog_btn1 = false"
+                                                        >
+                                                            OK
+                                                        </v-btn>
+                                                    </v-card-actions>
+                                                </v-card>
+                                            </v-dialog>
+                                        </template>
+                                        
                                     </v-col>
                                 </v-row>
                                 <v-divider class="mx-4"></v-divider>
@@ -493,7 +526,7 @@
                                             </v-row>
                                             <v-form
                                                 ref="shousai_form"
-                                                v-model="valid"
+                                                v-model="shousaiForm"
                                             >
                                                 <v-row no-gutters>
                                                     <v-col>
@@ -1541,7 +1574,7 @@
                 mini-variant-width = 40
                 floating
                 clipped
-                width=70%
+                width=68%
             >
                 <v-list
                  nav
@@ -1553,7 +1586,35 @@
                         >
                         <v-icon>mdi-step-backward</v-icon>
                         </v-btn>検索結果
-                </v-list>
+                        <v-container fluid>
+                        <v-row justify="center">
+                            <v-col>
+                                <v-simple-table
+                                 fixed-header
+                                 height="70vh"
+                                 dense
+                                >
+                                    <template>
+                                        <thead>
+                                            <tr>
+                                                <th v-for="(item,index) in APIJSON[0]" :key=index class="text-left">
+                                                    {{index}}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(item,index) in APIJSON" :key=index>
+                                                <td v-for="(item2,index2) in item" :key=index2>
+                                                    {{item2}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </v-simple-table>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-list>   
             </v-navigation-drawer>
             </v-row>
         </v-card>  
@@ -1565,10 +1626,13 @@
     export default {
     
     data: () => ({
+      kensakuForm:true,
       drawer: false,
       mini:false,
       mini2:false,
       group: null,
+      buhincode:"",
+      buhinmei:"",
       itemsBuhin:["1:前方一致","2:完全一致","3:部分一致",],
       selectBuhin:"",
       itemsSeihin:["-:All","1:EV","2:ESC","3:CP",],
@@ -1581,8 +1645,14 @@
       hakkouMenu2: false,
       kirikaeMenu1: false,
       kirikaeMenu2: false,
+      toggle_hakko:0,
+      toggle_Kirikae:0,
+      hakkoTsuuchi:"",
+      kirikaeTsuuchi:"",
+      warning_dialog_btn1:false,
 
       //shousai from value
+      shousaiForm:true,
       shousaiBuhincode:"",
       shousaiBuhinmei:"",
       shousaiHoshuu:"",
@@ -1625,6 +1695,7 @@
       shousaiShukkobiCheck:false,
       shousaiZaikoZero:false,
       shousaiDialog:false,
+      toggle_none:0,
       shousaiItemsBuhin:["1:前方一致","2:完全一致","3:部分一致",],
       shousaiSelectBuhin:"1:前方一致",
       shousaiItemsBuhinmei:["1:前方一致","2:完全一致","3:部分一致",],
@@ -1703,20 +1774,46 @@
             setsumei: 159,
           },
           {
-            souko: 'DDD',
+            souko: 'HHH',
             setsumei: 159,
           },
       ],
       //setting
       setttingDialog:false,
+      DatabaseTitle:{
+        "ISSUE_NO": "発行通知書",
+        "ISSUE_DATE": "発行日",
+        "CHG_NO" : "切替指示書",
+        "DWG_NO" : "図番",
+        "DWG_REV_NO" :"改訂",
+        "SEQ_NO" : "保守",
+        "PART_NO" : "部品コード",
+        "PART_REV_NO":"改訂",
+        "PART_NAME_LOC1":"部品名"
+      },
     
       //User Setting 
       userKoumokuSelect:"P/M基本情報",
       userKoumokuItems:["P/M基本情報","手配情報","標準時間マスタ","購買情報","在庫情報"],
       userShougiSelect:"手配情報",
       userShougiItems:["手配情報","製作情報","購買情報","在庫情報","保守情報","販売価格情報","P/S情報","代替部品情報"],
+
+      APIJSON:"",
     }),
     methods:{
+        getKensakuAPi(){
+            const url = "http://localhost:59272/api/KensakuBtn1Get";
+            const req_data = {
+                PART_NO : this.buhincode,
+                PART_NAME_LOC1 : this.buhinmei,
+
+            }
+            this.$axios.get(url,req_data).then(res =>{
+                this.APIJSON = res.data
+            }).catch(err=>{
+
+            })
+        },
         changeCalendarHyouJun(value){
             let cur_date = new Date(Date.now());
             cur_date.setDate(cur_date.getDate()-value);
@@ -1797,7 +1894,7 @@
             this.shousaiSelectSouko="--";
             this.shousaiZaikoSelected= [];
             this.shousaiTableCheckbox=false;
-            this.toggle_none="";
+            this.toggle_none=0;
             this.shousaihyoujunDate1=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
             this.shousaihyoujunDate2=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);
             this.shousaiNyuukoDate1=(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10);

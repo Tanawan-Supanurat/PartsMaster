@@ -1,0 +1,3 @@
+C:\work-nuxt\PartsMaster\PartsMaster\obj\Debug\kensakuPage.njsprojAssemblyReference.cache
+C:\work-nuxt\PartsMaster\PartsMaster\obj\Debug\kensakuPage.njsproj.CoreCompileInputs.cache
+C:\work-nuxt\PartsMaster\PartsMaster\bin\Microsoft.NodejsTools.WebRole.dll
