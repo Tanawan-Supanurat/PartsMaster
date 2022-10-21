@@ -126,7 +126,7 @@
                 :mini-variant.sync="mini"
                 floating
                 clipped
-                width=32%
+                width=22%
             >
                 <v-list
                  nav
@@ -148,6 +148,7 @@
                              <v-icon>mdi-step-backward</v-icon>
                             </v-btn>検索条件
                             <v-content class ="pl-10">
+                                <!--　基本検索条件1 -->
                                 <p class="ma-0">部品コード</p>
                                 <v-text-field
                                     v-model="buhincode"
@@ -158,7 +159,6 @@
                                     required
                                 >
                                 </v-text-field>
-                                <!--　基本検索条件1 -->
                                 <p class="ma-0">部品名</p>
                                 <v-row no-gutters>
                                     <v-col cols ="7" sm ="7" >
@@ -258,7 +258,6 @@
                                                 class ="mb-0"
                                                 v-model="hakkouDate1"
                                                 label="YYYY/MM/DD"
-                                                 
                                                 dense
                                                 outlined
                                                 readonly
@@ -289,7 +288,6 @@
                                                 class ="mb-0"
                                                 v-model="hakkouDate2"
                                                 label="YYYY/MM/DD"
-                                                 
                                                 dense
                                                 outlined
                                                 readonly
@@ -344,8 +342,8 @@
                                     </v-col>
                                 </v-row>
                                 <p class="mb-2">標準図切替日</p>
-                                <v-row class="py-0">
-                                    <v-col col="6">
+                                <v-row no-gutters class="py-0">
+                                    <v-col col="5" sm="5">
                                         <v-menu
                                         ref="menu"
                                         v-model="kirikaeMenu1"
@@ -374,8 +372,8 @@
                                             </v-date-picker>
                                         </v-menu>
                                     </v-col>
-                                    <v-col sm="1">~</v-col>
-                                    <v-col col="6">
+                                    <v-col class = "ml-2" sm="1"><p>~</p></v-col>
+                                    <v-col col="5" sm="5">
                                         <v-menu
                                         ref="menu"
                                         v-model="kirikaeMenu2"
@@ -1582,7 +1580,7 @@
                                                     </v-btn>
                                                 </v-col>
                                                 <v-col> 
-                                                    <v-btn>
+                                                    <v-btn @click="getShousaiKensaku()">
                                                         <v-icon>mdi-magnify</v-icon>
                                                         検索（F）
                                                     </v-btn>
@@ -1712,8 +1710,8 @@
       hakkouMenu2: false,
       kirikaeMenu1: false,
       kirikaeMenu2: false,
-      toggle_hakko:0,
-      toggle_Kirikae:0,
+      toggle_hakko:"",
+      toggle_Kirikae:"",
       hakkoTsuuchi:"",
       kirikaeTsuuchi:"",
       warning_dialog_btn1:false,
@@ -1904,7 +1902,7 @@
                 PART_NO : this.shousaiBuhincode,//部品コード
                 PART_NO_OPTION : this.shousaiSelectBuhin.substring(0,1),//部品コード検索方法
                 PART_NAME_LOC1 : this.shousaiBuhinmei,//部品名
-                PART_NAME_LOC1_OPTION = this.shousaiSelectBuhinmei.substring(0,1),//部品名検索方法
+                PART_NAME_LOC1_OPTION : this.shousaiSelectBuhinmei.substring(0,1),//部品名検索方法
                 MAINT_PART_NAME: this.shousaiHoshuu,//保守部品名
                 MAINT_PART_NAME_OPTION : this.shousaiSelectHoshu.substring(0,1),//保守部品名検索方法
                 DWG_NO : this.shousaiZuban,//図番
@@ -1932,7 +1930,7 @@
                 VENDOR_CODE: this.shousaiTorisakiCode,//取引先コード
                 SG_CODE : this.shousaiSagyouCode,//作業コード
                 ckUselWHCode_Checked :this.shousaiSokoCodeCheckbox,//倉庫コードチェックボックス
-                pWhCode:this.shousaiZaikoItems.souko,//倉庫コード
+                //pWhCode:,//倉庫コード
                 LOCATION:this.shousaiTanban,//置場/棚番
                 SOKO_TANTO:this.shousaiSokotantou,//倉庫担当
                 PS_FLAG:this.shousaiPStenkai,//P/S展開区分
@@ -1947,7 +1945,7 @@
                 ckNoReceipt_Checked:this.shousaiNyuukoubiCheck,//最終入庫日チェックボックス
                 LAST_RECEIPT_DATE_1:this.shousaiNyuukoDate1,//最終入庫日１
                 LAST_RECEIPT_DATE_2:this.shousaiNyuukoDate2,//最終入庫日２
-                ckNoIssue_Checked:shousaiShukkobiCheck,//最終出庫日チェックボックス
+                ckNoIssue_Checked:this.shousaiShukkobiCheck,//最終出庫日チェックボックス
                 LAST_ISSUE_DATE_1:this.shousaiShukkokoDate1,//最終出庫日１
                 LAST_ISSUE_DATE_2:this.shousaiShukkokoDate2,//最終出庫日２
                 STOCK_START_DATE_1:this.shousaiChozouKaishiDate1,//貯蔵開始日１
@@ -1963,7 +1961,12 @@
                 ckNoPhoto_Checke:this.shousaiCheckBox5,//写真未登録
 
             }
+             this.$axios.get(url,{params}).then(res =>{
+                this.APIJSON = res.data
+            }).catch(err=>{
 
+            })
+            this.shousaiDialog = false;
         },
         changeCalendarHyouJun(value){
             let cur_date = new Date(Date.now());
