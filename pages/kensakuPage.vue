@@ -120,12 +120,12 @@
                 class="fill-height"
                 no-gutters
             >
+            
             <!-- 基本検索条件 -->
             <v-navigation-drawer
                 v-model="drawer"
                 :mini-variant.sync="mini"
                 floating
-                clipped
                 width=22%
             >
                 <v-list
@@ -1612,76 +1612,69 @@
                 :mini-variant.sync="mini2"
                 mini-variant-width = 40
                 floating
-                clipped
-                width=68%
+                :width=table_width
             >
                 <v-list
                  nav
                  dense
                  >
-                    <v-btn class = "mb-2"
+                 <v-row no-gutters justify="space-between">
+                    <v-col>
+                    <v-btn class = "sm-2"
                         icon
                         @click.stop="mini2 = !mini2"
-                        >
+                    >
                         <v-icon>mdi-step-backward</v-icon>
-                        </v-btn>検索結果
+                    </v-btn>検索結果
+                    </v-col>
+                    <v-spacer></v-spacer>
+                    <v-btn 
+                        class="ml-10" small icon
+                        @click.stop="changeTableWidth()"
+                    >
+                            <v-icon>mdi-fit-to-page-outline</v-icon>
+                        </v-btn>
+                 </v-row>
                         <v-container fluid>
                         <v-row justify="center">
                             <v-col>
-                                <v-simple-table
-                                 fixed-header
+                                <v-data-table
                                  height="70vh"
-                                 dense
+                                 :headers="HeaderTable"
+                                 :items="APIJSON"
                                 >
-                                    
-                                    <template>
-                                        <thead>
-                                            <tr>
-                                                <th class="text-left">
-                                                    発行通知書
-                                                </th>
-                                                <th class="text-left">
-                                                    発行日
-                                                </th>
-                                                <th class="text-left">
-                                                    切替指示書
-                                                </th>
-                                                <th class="text-left">
-                                                    図番
-                                                </th>
-                                                <th class="text-left">
-                                                    改訂
-                                                </th>
-                                                <th class="text-left">
-                                                    保守
-                                                </th>
-                                                <th class="text-left">
-                                                    部品コード
-                                                </th>
-                                                <th class="text-left">
-                                                    改訂
-                                                </th>
-                                                <th class="text-left">
-                                                    部品名
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(item,index) in APIJSON" :key=index>
-                                                <td v-for="(item2,index2) in item" :key=index2>
-                                                    {{item2}}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </template>
-                                </v-simple-table>
+                                 <template v-slot:item.SOUSA="{}">
+                                   <v-btn-toggle 
+                                     v-model="toggle_Table"
+                                     light
+                                     borderless
+                                     dense
+                                   >
+                                   <v-btn small>
+                                        <v-icon>mdi-tab-plus</v-icon>
+                                    </v-btn>
+                                    <v-btn small>
+                                        <v-icon>mdi-image-outline</v-icon>
+                                    </v-btn>
+                                    <v-btn small>
+                                        <v-icon>mdi-file-tree-outline</v-icon>
+                                    </v-btn>
+                                   </v-btn-toggle>
+                                 </template>
+                                </v-data-table>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-list>   
             </v-navigation-drawer>
             <!-- 検索テーブル -->
+                <v-row no-gutters justify="center">
+                    <v-col>
+                        <h1>Hello world</h1>
+                    </v-col>
+                </v-row>
             </v-row>
+            
         </v-card>  
     </div> 
 </template>
@@ -1845,25 +1838,39 @@
       ],
       //setting
       setttingDialog:false,
-      DatabaseTitle:{
-        "ISSUE_NO": "発行通知書",
-        "ISSUE_DATE": "発行日",
-        "CHG_NO" : "切替指示書",
-        "DWG_NO" : "図番",
-        "DWG_REV_NO" :"改訂",
-        "SEQ_NO" : "保守",
-        "PART_NO" : "部品コード",
-        "PART_REV_NO":"改訂",
-        "PART_NAME_LOC1":"部品名"
-      },
-    
+      HeaderTable:[
+        { text: "操作", value: "SOUSA", align: "center",width:"100px" , sortable: false },
+        { text: "部品コード", value: "PART_NO", align: "center",width:"100px" },
+        { text: "改訂", value: "PART_REV_NO", align: "center"},
+        { text: "部品名", value: "PART_NAME_LOC1", align: "center",width:"200px" },
+        { text: "発行通知書", value: "ISSUE_NO", align: "center",width:"200px" },
+        { text: "発行日", value: "ISSUE_DATE", align: "center" ,width:"100px"},
+        { text: "切替指示書", value: "CHG_NO", align: "center",width:"200px" },
+        { text: "図番", value: "DWG_NO", align: "center",width:"200px" },
+        { text: "改訂", value: "DWG_REV_NO", align: "center"},
+        { text: "保守", value: "SEQ_NO", align: "center"},
+      ],
+      toggle_Table:null,
+      table_width:"30%",
+      table_width_state:true,
       //User Setting 
       userKoumokuSelect:"P/M基本情報",
       userKoumokuItems:["P/M基本情報","手配情報","標準時間マスタ","購買情報","在庫情報"],
       userShougiSelect:"手配情報",
       userShougiItems:["手配情報","製作情報","購買情報","在庫情報","保守情報","販売価格情報","P/S情報","代替部品情報"],
 
-      APIJSON:"",
+      APIJSON: [{ 
+        SOUSA: "", 
+        PART_NO: "", 
+        PART_REV_NO: "" ,
+        PART_NAME_LOC1:"",
+        ISSUE_NO:"",
+        ISSUE_DATE:"",
+        CHG_NO:"",
+        DWG_NO:"",
+        DWG_REV_NO:"",
+        SEQ_NO:""
+        }],
     }),
     methods:{
         getKensakuBtn1(){
@@ -1967,6 +1974,17 @@
 
             })
             this.shousaiDialog = false;
+        },
+        changeTableWidth(){
+            if(this.table_width_state)
+            {
+                this.table_width_state = !this.table_width_state;
+                this.table_width ="70%";
+            }else
+            {
+                this.table_width_state = !this.table_width_state;
+                this.table_width ="30%";
+            }
         },
         changeCalendarHyouJun(value){
             let cur_date = new Date(Date.now());
