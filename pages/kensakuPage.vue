@@ -4,6 +4,7 @@
             class="mx-auto overflow-hidden"
             height=100vh
         >
+            <!-- Nav-bar -->
             <v-app-bar
             color="light-blue lighten-1"
             dense
@@ -15,7 +16,7 @@
             <v-app-bar-nav-icon class = "mt-5" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             <v-toolbar-title ><br>Fujitec<br> Parts Master</v-toolbar-title>
             <v-spacer></v-spacer>
-            
+            <!--　ユーザー設定画面　-->
             <v-dialog
                 v-model="setttingDialog"
                 max-width = "100vh"
@@ -112,12 +113,14 @@
                     </v-row>
                 </v-card>
              </v-dialog>
-
+            <!--　ユーザー設定画面　-->
             </v-app-bar>
+            <!-- Nav-bar -->
             <v-row
                 class="fill-height"
                 no-gutters
             >
+            <!-- 基本検索条件 -->
             <v-navigation-drawer
                 v-model="drawer"
                 :mini-variant.sync="mini"
@@ -145,7 +148,6 @@
                              <v-icon>mdi-step-backward</v-icon>
                             </v-btn>検索条件
                             <v-content class ="pl-10">
-                                <!-- 半角入力 -->
                                 <p class="ma-0">部品コード</p>
                                 <v-text-field
                                     v-model="buhincode"
@@ -156,7 +158,7 @@
                                     required
                                 >
                                 </v-text-field>
-                                <!-- 自由入力 -->
+                                <!--　基本検索条件1 -->
                                 <p class="ma-0">部品名</p>
                                 <v-row no-gutters>
                                     <v-col cols ="7" sm ="7" >
@@ -224,6 +226,8 @@
                                 </v-row>
                                 <v-divider class="mx-4"></v-divider>
                                 <br>
+                                <!--　基本検索条件1 -->
+                                <!--　基本検索条件２ -->
                                 <p class="ma-0">製品種別</p>
                                 <v-row >
                                     <v-col class="ma-0" col= "1" sm = "4">
@@ -475,10 +479,8 @@
                                              max-width="290"
                                             >
                                                 <template v-slot:activator = "{on, attrs}">
-                                                    <v-btn v-if="itemsSeihin === '' && hakkouDate1 ==='' &&
-                                                                 hakkouDate2 === '' && kirikaeDate1 ==='' &&
-                                                                 kirikaeDate2 === '' && kirikaeTsuuchi ==='' &&
-                                                                 hakkoTsuuchi === ''"
+                                                    <v-btn v-if="hakkouDate1 ==='' && hakkouDate2 === '' && kirikaeDate1 ==='' &&
+                                                                 kirikaeDate2 === '' && kirikaeTsuuchi ==='' && hakkoTsuuchi === ''"
                                                      elevation="2"
                                                      icon
                                                      tile
@@ -514,7 +516,7 @@
                                         </template>
                                     </v-col>
                                 </v-row>
-
+                                <!--　基本検索条件２ -->
                                 <v-dialog
                                  v-model="shousaiDialog"
                                  fullscreen
@@ -540,7 +542,8 @@
                                             </v-btn>
                                         </v-col>
                                     </template>
-                                    <v-container fluid>
+                                    <v-container fluid>  
+                                        <!-- 詳細検索条件　-->
                                         <v-card tile> 
                                             <v-system-bar height="30">
                                                 <v-toolbar-title>詳細検索画面</v-toolbar-title>
@@ -775,7 +778,7 @@
                                                                     <v-row no-gutters>
                                                                         <v-checkbox
                                                                         class="ml-2 mb-n5"
-                                                                        v-model="shousaiTableCheckbox"
+                                                                        v-model="shousaiSokoCodeCheckbox"
                                                                         label="倉庫コードを指定する。"
                                                                         ></v-checkbox>
                                                                     </v-row>
@@ -841,7 +844,7 @@
                                                         <v-col class="ml-10" col="10" sm="10">
                                                             <v-text-field
                                                             class="mb-n4"
-                                                            v-model="shousaiSoukotantou"
+                                                            v-model="shousaiSokotantou"
                                                             dense outlined></v-text-field>
                                                         </v-col>
                                                     </v-row>
@@ -897,7 +900,7 @@
                                                         <v-col class="my-0 mr-8 mr-auto" col="2" sm="2">
                                                             <v-text-field 
                                                             class="mb-n4"
-                                                            v-model="shousaiSeihinkubun"
+                                                            v-model="shousaiBuhinkubun"
                                                             dense outlined></v-text-field>
                                                         </v-col>
                                                         <v-col>
@@ -1109,7 +1112,7 @@
                                                         <v-col>
                                                             <v-checkbox 
                                                             class ="mt-n1 mb-n5"
-                                                            v-model="shousaiZaikoZero"
+                                                            v-model="shousaiZaikoZeroCheckBox"
                                                             label="在庫0ではない。"
                                                             dense
                                                             >
@@ -1407,7 +1410,7 @@
                                                         </v-row>
                                                         <v-row no-gutters> 
                                                             <v-col>
-                                                                <p class ="ma-0 mt-2">・貯蔵中し止予定</p>
+                                                                <p class ="ma-0 mt-2">・貯蔵中止予定</p>
                                                             </v-col>
                                                         </v-row>
                                                         <v-row no-gutters>
@@ -1415,15 +1418,15 @@
                                                                 <v-radio-group class="ma-0 mb-n4" v-model="shousaiChoushiYoutei" row >
                                                                     <v-radio
                                                                     label="含む"
-                                                                    value="含む"
+                                                                    value=""
                                                                     ></v-radio>
                                                                     <v-radio
                                                                     label="除く"
-                                                                    value="除く"
+                                                                    value="0"
                                                                     ></v-radio>
                                                                     <v-radio
                                                                     label="中止予定のみ"
-                                                                    value="中止予定のみ"
+                                                                    value="1"
                                                                     ></v-radio>
                                                                 </v-radio-group>
                                                             </v-col>
@@ -1438,15 +1441,15 @@
                                                                 <v-radio-group class="ma-0 mb-n4" v-model="shousaiChoushi" row >
                                                                     <v-radio
                                                                     label="含む"
-                                                                    value="含む"
+                                                                    value=""
                                                                     ></v-radio>
                                                                     <v-radio
                                                                     label="除く"
-                                                                    value="除く"
+                                                                    value="0"
                                                                     ></v-radio>
                                                                     <v-radio
                                                                     label="貯蔵中止のみ"
-                                                                    value="貯蔵中止のみ"
+                                                                    value="1"
                                                                     ></v-radio>
                                                                 </v-radio-group>
                                                             </v-col>
@@ -1596,13 +1599,16 @@
                                                 <br>
                                             </v-form>
                                         </v-card>  
-                                    </v-container>
+                                        <!-- 詳細検索条件　-->
+                                    </v-container>  
                                 </v-dialog>
                             </v-content>
                         </v-form>
                     </v-list-item-group>
                 </v-list>
             </v-navigation-drawer>
+            <!-- 基本検索条件 -->
+            <!-- 検索テーブル -->
             <v-navigation-drawer
                 v-model="drawer"
                 :mini-variant.sync="mini2"
@@ -1629,6 +1635,7 @@
                                  height="70vh"
                                  dense
                                 >
+                                    
                                     <template>
                                         <thead>
                                             <tr>
@@ -1675,6 +1682,7 @@
                     </v-container>
                 </v-list>   
             </v-navigation-drawer>
+            <!-- 検索テーブル -->
             </v-row>
         </v-card>  
     </div> 
@@ -1718,11 +1726,11 @@
       shousaiZuban:"",
       shousaiKoban:"",
       shousaiTanban:"",
-      shousaiSoukotantou:"",
+      shousaiSokotantou:"",
       shousaiPStenkai:"",
       shousaiJidouKounyuu:"",
       shousaiSeihinbunruiCode:"",
-      shousaiSeihinkubun:"",
+      shousaiBuhinkubun:"",
       shousaiPDM:"",
       shousaikishuu:"",
       shousaiMakerKataban:"",
@@ -1752,7 +1760,7 @@
       shousaiHoshuHantei:"",
       shousaiNyuukoubiCheck:false,
       shousaiShukkobiCheck:false,
-      shousaiZaikoZero:false,
+      shousaiZaikoZeroCheckBox:false,
       shousaiDialog:false,
       toggle_none:0,
       shousaiItemsBuhin:["1:前方一致","2:完全一致","3:部分一致",],
@@ -1786,7 +1794,7 @@
       shousaiCheckBox5:false,
       shousaiItemsSouko:[1,2,3,4,5,"--"],
       shousaiSelectSouko:"--",
-      shousaiTableCheckbox:false,
+      shousaiSokoCodeCheckbox:false,
       shousaiZaikoSelected: [],
       shousaiZaikoHeaders: [
           {
@@ -1890,6 +1898,73 @@
 
             })
         },
+        getShousaiKensaku(){
+            const url = "http://localhost:59272/api/KensakuBtnGet";
+            const params = {
+                PART_NO : this.shousaiBuhincode,//部品コード
+                PART_NO_OPTION : this.shousaiSelectBuhin.substring(0,1),//部品コード検索方法
+                PART_NAME_LOC1 : this.shousaiBuhinmei,//部品名
+                PART_NAME_LOC1_OPTION = this.shousaiSelectBuhinmei.substring(0,1),//部品名検索方法
+                MAINT_PART_NAME: this.shousaiHoshuu,//保守部品名
+                MAINT_PART_NAME_OPTION : this.shousaiSelectHoshu.substring(0,1),//保守部品名検索方法
+                DWG_NO : this.shousaiZuban,//図番
+                DWG_NO_OPTION : this.shousaiSelectZuban.substring(0,1),//図番検索方法
+                ISSUE_DATE_1 : this.shousaihyoujunDate1,//標準図発行日1
+                ISSUE_DATE_2 : this.shousaihyoujunDate2,//標準図発行日２
+                PRODUCT_CODE : this.shousaiSeihinbunruiCode,//製品分類コード
+                PART_TYPE : this.shousaiBuhinkubun,//部品区分
+                PDM_TYPE : this.shousaiPDM,//PDM判定
+                MACHINE_TYPE : this.shousaikishuu,//機種
+                SELLING_PRICE_TYPE : this.shousaiKakakuSetttei,//価格設定
+                MAKER_PART : this.shousaiMakerKataban,//メーカー型番
+                PLANT_NO : this.shousaiKoban,//工場区分
+                MFG_TYPE : this.shousaiNaigai,//内外作区分
+                STOCK_TYPE : this.shousaiChozou,//貯蔵区分
+                ARR_BRANCH_CODE : this.shousaiKanriTenshou,//管理店所
+                ARR_WHO : this.shousaiZaikoTantou,//在庫担当
+                PO_BRANCH_CODE : this.shousaiHachuTenshou,//発注店所
+                PO_WHO : this.shousaiHachuTantou,//発注担当
+                BUCKET : this.shousaiBacker,//バケット
+                ORDER_TYPE : this.shousaiKanriKijun,//管理基準
+                ABC_TYPE : this.shousaiABCKanriCodeKubun,//ABC区分
+                STOCK_CODE : this.shousaiZaikoKanriCode,//在庫管理コード
+                ROUTING_CODE : this.shousaiKoteiCode,//工程コード
+                VENDOR_CODE: this.shousaiTorisakiCode,//取引先コード
+                SG_CODE : this.shousaiSagyouCode,//作業コード
+                ckUselWHCode_Checked :this.shousaiSokoCodeCheckbox,//倉庫コードチェックボックス
+                pWhCode:this.shousaiZaikoItems.souko,//倉庫コード
+                LOCATION:this.shousaiTanban,//置場/棚番
+                SOKO_TANTO:this.shousaiSokotantou,//倉庫担当
+                PS_FLAG:this.shousaiPStenkai,//P/S展開区分
+                AUTO_PURCHASE_REQ:this.shousaiJidouKounyuu,//自動購入指示
+                ckMoreZero_Checked:this.shousaiZaikoZeroCheckBox,//在庫数チェックボックス
+                CURRENT_BALANCE_1:this.shousaiZaikousuu1,//在庫数１
+                CURRENT_BALANCE_2:this.shousaiZaikousuu2,//在庫数２
+                eStockAmount_1:this.shousaiZaikouKingaku1,//在庫金額１
+                eStockAmount_2:this.shousaiZaikouKingaku2,//在庫金額２
+                YOTEI_TANKA_1:this.shousaihyoujunTanka1,//標準単価１
+                YOTEI_TANKA_2:this.shousaihyoujunTanka2,//標準単価２
+                ckNoReceipt_Checked:this.shousaiNyuukoubiCheck,//最終入庫日チェックボックス
+                LAST_RECEIPT_DATE_1:this.shousaiNyuukoDate1,//最終入庫日１
+                LAST_RECEIPT_DATE_2:this.shousaiNyuukoDate2,//最終入庫日２
+                ckNoIssue_Checked:shousaiShukkobiCheck,//最終出庫日チェックボックス
+                LAST_ISSUE_DATE_1:this.shousaiShukkokoDate1,//最終出庫日１
+                LAST_ISSUE_DATE_2:this.shousaiShukkokoDate2,//最終出庫日２
+                STOCK_START_DATE_1:this.shousaiChozouKaishiDate1,//貯蔵開始日１
+                STOCK_START_DATE_2:this.shousaiChozouKaishiDate2,//貯蔵開始日２
+                STOCK_STOP_FlAG:this.shousaiChoushiYoutei,//貯蔵中止予定
+                STOCK_STOP_DATE:this.shousaiChoushi,//貯蔵止め
+                PART_LOCATION:this.shousaiBui,//部位
+                MAINT_TYPE:this.shousaiHoshuHantei,//保守判定
+                ckPPPMMAINTMS2_notEdit_Checked:this.shousaiCheckBox1,//図面発行後、二次判定が一度も設定されていないもの。
+                ckPCEntandSPNoEnt_Checked:this.shousaiCheckBox2,//製造原価登録済且つ販売価格未登録部品
+                ckRepairRepEnt_Checked:this.shousaiCheckBox3,//修理提案書利用
+                ckPartDescAndRepReason_Checked:this.shousaiCheckBox4,//部品説明or取替理由が未登録
+                ckNoPhoto_Checke:this.shousaiCheckBox5,//写真未登録
+
+            }
+
+        },
         changeCalendarHyouJun(value){
             let cur_date = new Date(Date.now());
             cur_date.setDate(cur_date.getDate()-value);
@@ -1908,6 +1983,7 @@
             this.kirikaeDate1 = cur_date.toISOString().substr(0, 10);
             this.kirikaeDate2 = cur_date.toISOString().substr(0, 10);
         },
+        //詳細検索クリアパラメータ
         shousaiClear(){
             this.shousaiBuhincode="";
             this.shousaiBuhinmei="";
@@ -1915,11 +1991,11 @@
             this.shousaiZuban="";
             this.shousaiKoban="";
             this.shousaiTanban="";
-            this.shousaiSoukotantou="";
+            this.shousaiSokotantou="";
             this.shousaiPStenkai="";
             this.shousaiJidouKounyuu="";
             this.shousaiSeihinbunruiCode="";
-            this.shousaiSeihinkubun="";
+            this.shousaiBuhinkubun="";
             this.shousaiPDM="";
             this.shousaikishuu="";
             this.shousaiMakerKataban="";
@@ -1949,7 +2025,7 @@
             this.shousaiHoshuHantei="";
             this.shousaiNyuukoubiCheck=false;
             this.shousaiShukkobiCheck=false;
-            this.shousaiZaikoZero=false;
+            this.shousaiZaikoZeroCheckBox=false;
             this.shousaiSelectBuhin="1:前方一致";
             this.shousaiSelectBuhinmei="3:部分一致";
             this.shousaiSelectHoshu="3:部分一致";
@@ -1969,7 +2045,7 @@
             this.shousaiCheckBox5=false;
             this.shousaiSelectSouko="--";
             this.shousaiZaikoSelected= [];
-            this.shousaiTableCheckbox=false;
+            this.shousaiSokoCodeCheckbox=false;
             this.toggle_none=0;
             this.shousaihyoujunDate1="";
             this.shousaihyoujunDate2="";
