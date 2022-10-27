@@ -193,6 +193,7 @@
                                                      tile
                                                      v-bind="attrs"
                                                      v-on="on"
+                                                     small
                                                     >
                                                         <v-icon>mdi-magnify</v-icon>
                                                     </v-btn>
@@ -449,7 +450,7 @@
                                 </v-row>
 
                                 <v-row class="my-0 py-0" no-gutters>
-                                    <v-col class="mr-8" col = "4" sm ="4">
+                                    <v-col class="mr-8" cols = "4" sm ="4">
                                         <v-text-field
                                         v-model="hakkoTsuuchi"
                                         outlined
@@ -459,7 +460,7 @@
                                         required
                                         ></v-text-field>
                                     </v-col>
-                                    <v-col class="mr-6" col = "4" sm="4">
+                                    <v-col class="mr-6" cols = "4" sm="4">
                                         <v-text-field
                                         v-model="kirikaeTsuuchi"
                                         outlined
@@ -469,7 +470,8 @@
                                         required
                                         ></v-text-field>
                                     </v-col>
-                                    <v-col col ="2" sm="2">
+                                    <v-spacer></v-spacer>
+                                    <v-col cols ="2" sm="1">
                                         <template>
                                             <v-dialog
                                              v-model ="warning_dialog_btn2"
@@ -482,6 +484,7 @@
                                                      elevation="2"
                                                      icon
                                                      tile
+                                                     small
                                                      v-bind="attrs"
                                                      v-on="on"
                                                     >
@@ -768,7 +771,7 @@
                                                                 dense
                                                                 show-select
                                                                 fixed-header
-                                                                items-per-page =-1
+                                                                :footer-props="{'items-per-page-options':[-1]}"
                                                                 hide-default-footer
                                                                 height ="24vh"
                                                                 class="elevation-5"
@@ -933,13 +936,12 @@
                                                                              v-model="dialogKoumokuTableSelected"
                                                                              :headers ="dialogKoumokuTableHeader"
                                                                              :items ="dialogKoumokuTableItem"
-                                                                             items-per-page="100"
+                                                                             :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                                                              fixed-header
-                                                                             singleSelect = "ture"
+                                                                             singleSelect
                                                                              item-key="CM_CODE"
                                                                              dense
                                                                              height="500px"
-                                                                             hide-default-footer
                                                                              show-select
                                                                              
                                                                             ></v-data-table>
@@ -1015,13 +1017,12 @@
                                                                              v-model="dialogKoumokuTableSelected"
                                                                              :headers ="dialogKoumokuTableHeader"
                                                                              :items ="dialogKoumokuTableItem"
-                                                                             items-per-page="100"
+                                                                             :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                                                              fixed-header
-                                                                             singleSelect = "ture"
+                                                                             singleSelect
                                                                              item-key="CM_CODE"
                                                                              dense
                                                                              height="500px"
-                                                                             hide-default-footer
                                                                              show-select
                                                                              
                                                                             ></v-data-table>
@@ -1110,13 +1111,12 @@
                                                                                     v-model="dialogKoumokuTableSelected"
                                                                                     :headers ="dialogKoumokuTableHeader"
                                                                                     :items ="dialogKoumokuTableItem"
-                                                                                    items-per-page="100"
+                                                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                                                                     fixed-header
-                                                                                    singleSelect = "ture"
+                                                                                    singleSelect
                                                                                     item-key="CM_CODE"
                                                                                     dense
                                                                                     height="500px"
-                                                                                    hide-default-footer
                                                                                     show-select
                                                                                     
                                                                                     ></v-data-table>
@@ -1196,13 +1196,12 @@
                                                                                     v-model="dialogKoumokuTableSelected"
                                                                                     :headers ="dialogKoumokuTableHeader"
                                                                                     :items ="dialogKoumokuTableItem"
-                                                                                    items-per-page="100"
+                                                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                                                                     fixed-header
-                                                                                    singleSelect = "ture"
+                                                                                    singleSelect
                                                                                     item-key="CM_CODE"
                                                                                     dense
                                                                                     height="500px"
-                                                                                    hide-default-footer
                                                                                     show-select
                                                                                     
                                                                                     ></v-data-table>
@@ -1300,13 +1299,12 @@
                                                                             v-model="dialogKoumokuTableSelected"
                                                                             :headers ="dialogKoumokuTableHeader"
                                                                             :items ="dialogKoumokuTableItem"
-                                                                            items-per-page="100"
+                                                                            :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                                                             fixed-header
-                                                                            singleSelect = "ture"
+                                                                            singleSelect
                                                                             item-key="CM_CODE"
                                                                             dense
                                                                             height="500px"
-                                                                            hide-default-footer
                                                                             show-select
                                                                             
                                                                             ></v-data-table>
@@ -1473,13 +1471,12 @@
                                                                                 v-model="dialogKoumokuTableSelected"
                                                                                 :headers ="dialogKoumokuTableHeader"
                                                                                 :items ="dialogKoumokuTableItem"
-                                                                                items-per-page="100"
+                                                                                :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                                                                 fixed-header
-                                                                                singleSelect = "ture"
+                                                                                singleSelect
                                                                                 item-key="CM_CODE"
                                                                                 dense
                                                                                 height="500px"
-                                                                                hide-default-footer
                                                                                 show-select
                                                                                 
                                                                                 ></v-data-table>
@@ -1549,7 +1546,7 @@
                                                                 <v-system-bar window dark>
                                                                         <span>PMRA0191 参照画面（共用マスタ）</span>
                                                                         <v-spacer></v-spacer>
-                                                                        <v-btn small @click="dialogKanriKijun = false">
+                                                                        <v-btn small @click="dialogABCKanriCodeKubun = false">
                                                                             <v-icon>mdi-close</v-icon>
                                                                         </v-btn>
                                                                 </v-system-bar>
@@ -1568,13 +1565,12 @@
                                                                         v-model="dialogKoumokuTableSelected"
                                                                         :headers ="dialogKoumokuTableHeader"
                                                                         :items ="dialogKoumokuTableItem"
-                                                                        items-per-page="100"
+                                                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                                                         fixed-header
-                                                                        singleSelect = "ture"
+                                                                        singleSelect
                                                                         item-key="CM_CODE"
                                                                         dense
                                                                         height="500px"
-                                                                        hide-default-footer
                                                                         show-select
                                                                         
                                                                         ></v-data-table>
@@ -2068,7 +2064,7 @@
                                                                                             </v-text-field>
                                                                                         </v-col>
                                                                                         <v-col>
-                                                                                            <v-btn small><v-icon left>mdi-close-circle</v-icon>クリア（C）</v-btn>
+                                                                                            <v-btn small @click="getClearKouteiCodeText()"><v-icon left>mdi-close-circle</v-icon>クリア（C）</v-btn>
                                                                                         </v-col>
                                                                                     </v-row>
                                                                                     <v-row>
@@ -2076,9 +2072,8 @@
                                                                                         v-model="dialogKouteiCodeTableSelected"
                                                                                         :headers ="dialogKouteiCodeTableHeader"
                                                                                         :items ="dialogKouteiCodeTableItem"
-                                                                                        items-per-page="100"
                                                                                         fixed-header
-                                                                                        singleSelect = "ture"
+                                                                                        singleSelect
                                                                                         item-key="KT_CODE"
                                                                                         dense
                                                                                         height="500px"
@@ -2223,13 +2218,8 @@
                                                 </v-col>
                                             </v-row>
                                             <v-divider></v-divider>
-                                            <v-row class="mt-2" no-gutters justify="space-between">
-                                                <v-col class=ml-2>
-                                                    <v-btn color="primary">
-                                                        <v-icon>mdi-magnify</v-icon>
-                                                        SQLを表示する。
-                                                    </v-btn>
-                                                </v-col>
+                                            <v-row class="mt-2" no-gutters >
+                                                <v-spacer></v-spacer>
                                                 <v-col> 
                                                     <v-btn @click="getShousaiKensaku()">
                                                         <v-icon>mdi-magnify</v-icon>
@@ -2293,8 +2283,7 @@
                                  height="70vh"
                                  :headers="HeaderTable"
                                  :items="APIJSON"
-                                 items-per-page= -1
-                                 hide-default-footer
+                                 :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                  show-select
                                 >
                                  <template v-slot:item.SOUSA="{item}">
@@ -2325,7 +2314,9 @@
             <!-- 検索テーブル -->
                 <v-row no-gutters justify="center">
                     <v-col>
-                        <h1>Hello world</h1>
+                        <h6 v-for ="item,index in this.shousaiZaikoSelected" :key="index">
+                           {{index +1}} : {{ item.CM_CODE }}
+                        </h6>
                     </v-col>
                 </v-row>
             </v-row>
@@ -2467,8 +2458,8 @@
       dialogKouteiCode:false,
       dialogKoumokuNO:"210",
       dialogKoumokuName:"TestName",
-      dialogEnableDate_1:"1999.01.01",
-      dialogEnableDate_2:"2999.12.31",
+      dialogEnableDate_1:"",
+      dialogEnableDate_2:"",
       dialogKoumokuTableSelected:[],
       dialogKoumokuTableHeader:[
         {text:"コード",value:"CM_CODE",},
@@ -2505,7 +2496,6 @@
       userKoumokuItems:["P/M基本情報","手配情報","標準時間マスタ","購買情報","在庫情報"],
       userShougiSelect:"手配情報",
       userShougiItems:["手配情報","製作情報","購買情報","在庫情報","保守情報","販売価格情報","P/S情報","代替部品情報"],
-
       APIJSON: [{ 
         SOUSA: "", 
         PART_NO: "", 
@@ -2648,8 +2638,21 @@
                 })
             }
        },
+        getClearKouteiCodeText(){
+            this.KT_CODE ="";
+            this.WC_CODE ="";
+            this.CC_CODE ="";
+            this.SG_CODE ="";
+        },
         getShousaiKensaku(){
             const url = "http://localhost:59272/api/KensakuBtnGet";
+            var pWhCode_value=[];
+            if(this.shousaiSokoCodeCheckbox)
+            {
+                this.shousaiZaikoSelected.forEach(value =>{
+                    pWhCode_value.push(value.CM_CODE);//倉庫コード
+                })
+            }
             const params = {
                 PART_NO : this.shousaiBuhincode,//部品コード
                 PART_NO_OPTION : this.shousaiSelectBuhin.substring(0,1),//部品コード検索方法
@@ -2682,7 +2685,7 @@
                 VENDOR_CODE: this.shousaiTorisakiCode,//取引先コード
                 SG_CODE : this.shousaiSagyouCode,//作業コード
                 ckUselWHCode_Checked :this.shousaiSokoCodeCheckbox,//倉庫コードチェックボックス
-                //pWhCode:this.shousaiZaikoSelected,//倉庫コード
+                pWhCode:pWhCode_value,//倉庫コード
                 LOCATION:this.shousaiTanban,//置場/棚番
                 SOKO_TANTO:this.shousaiSokotantou,//倉庫担当
                 PS_FLAG:this.shousaiPStenkai,//P/S展開区分
@@ -2711,7 +2714,6 @@
                 ckRepairRepEnt_Checked:this.shousaiCheckBox3,//修理提案書利用
                 ckPartDescAndRepReason_Checked:this.shousaiCheckBox4,//部品説明or取替理由が未登録
                 ckNoPhoto_Checked:this.shousaiCheckBox5,//写真未登録
-
             }
             this.$axios.get(url,{params}).then(res =>{
                 this.APIJSON = res.data;
@@ -2730,7 +2732,9 @@
                 STOP_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
             }
              this.$axios.get(url,{params}).then(res =>{
-                this.dialogKoumokuTableItem = res.data
+                this.dialogKoumokuTableItem = res.data;
+                this.dialogEnableDate_1 = Math.min(...this.dialogKoumokuTableItem.map(value =>value.START_DATE));
+                this.dialogEnableDate_2 = Math.max(...this.dialogKoumokuTableItem.map(value =>value.STOP_DATE));
             }).catch(err=>{
 
             })
@@ -2745,6 +2749,7 @@
             }
             this.$axios.get(url,{params}).then(res =>{
                 this.dialogKouteiCodeTableItem = res.data;
+                
             }).catch(err=>{
                 
             })
