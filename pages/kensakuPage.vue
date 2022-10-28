@@ -2335,18 +2335,27 @@
                 </v-tabs>
                 <v-container fluid>
                     <v-card outlined shaped tile>
-                        <v-card-text v-if ="this.showHeader">
-                            部品コード {{this.Header_Data[this.Header_Data.length-1].PART_NO}} [{{this.Header_Data[this.Header_Data.length-1].PART_REV_NO}} ]
-                            部品名　{{this.Header_Data[this.Header_Data.length-1].PART_NAME_LOC1}}
-                        </v-card-text>
-                        <v-card-text class="mt-n5" v-if ="this.showHeader">
-                            更新者　[{{this.Header_Data[this.Header_Data.length-1].UPD_WHO }}] {{this.Header_Data[this.Header_Data.length-1].UPD_NAME}} 
-                            {{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(0,4)}}.{{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(4,6)}}.{{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(6,8)}}
-                             {{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(8,10)}}:{{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(10,12)}}:{{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(12,14)}}
-                            登録者　[{{this.Header_Data[this.Header_Data.length-1].ENT_WHO}}] {{this.Header_Data[this.Header_Data.length-1].ENT_NAME}}
-                             {{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(0,4)}}.{{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(4,6)}}.{{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(6,8)}}
-                             {{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(8,10)}}:{{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(10,12)}}:{{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(12,14)}}
-                        </v-card-text>
+                        <v-row no-gutters>
+                            <v-col cols="10" sm="10">
+                                <v-card-text v-if ="this.showHeader">
+                                    部品コード {{this.Header_Data[this.Header_Data.length-1].PART_NO}} [{{this.Header_Data[this.Header_Data.length-1].PART_REV_NO}} ]
+                                    部品名　{{this.Header_Data[this.Header_Data.length-1].PART_NAME_LOC1}}
+                                </v-card-text>
+                                <v-card-text class="mt-n5" v-if ="this.showHeader">
+                                    更新者　[{{this.Header_Data[this.Header_Data.length-1].UPD_WHO }}] {{this.Header_Data[this.Header_Data.length-1].UPD_NAME}} 
+                                    {{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(0,4)}}.{{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(4,6)}}.{{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(6,8)}}
+                                    {{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(8,10)}}:{{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(10,12)}}:{{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(12,14)}}
+                                    登録者　[{{this.Header_Data[this.Header_Data.length-1].ENT_WHO}}] {{this.Header_Data[this.Header_Data.length-1].ENT_NAME}}
+                                    {{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(0,4)}}.{{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(4,6)}}.{{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(6,8)}}
+                                    {{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(8,10)}}:{{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(10,12)}}:{{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(12,14)}}
+                                </v-card-text>
+                            </v-col>
+                            <v-spacer></v-spacer>
+                            <v-col class="mt-10 mr-2">
+                            <v-btn icon><v-icon right>mdi-image</v-icon></v-btn>
+                            </v-col>
+                        </v-row>
+                        
                         <v-card-text v-if ="!this.showHeader"></v-card-text><v-card-text v-if ="!this.showHeader"></v-card-text>
                     </v-card>
                 </v-container>
@@ -2357,18 +2366,18 @@
                          :items="Header_Data"
                          item-key="PART_REV_NO"
                          :sort-by="['PART_REV_NO']"
-                         show-select
-                         single-select
                          dense
+                         @click:row="RowClick" 
                         >
                         </v-data-table>
                     </v-card>
                 </v-container>
+                <v-container fluid>
+                    <h3>{{this.Click}}</h3>
+                </v-container>  
             </v-card>
             </v-row>
         </v-card>  
-        <h1>{{this.Click}}</h1>
-
     </div> 
 </template>
 
@@ -2587,7 +2596,7 @@
         {text:"更新日",value:"UPD_WHEN"},
         {text:"承",value:"APP_CUR_TYPE"},
       ],
-      Click:"",
+      Click:"Test Click",
     }),
     computed:{
         dialogKouteiCodeTableHeader(){
@@ -2654,6 +2663,10 @@
         },
     },
     methods:{
+        RowClick(item){
+            this.Click = item.PART_REV_NO;
+        }
+        ,
         OpenCloseNav(){
             this.drawer = !this.drawer;
             if(this.drawer)
