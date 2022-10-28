@@ -13,7 +13,7 @@
             clipped-left
             dark 
             >
-            <v-app-bar-nav-icon class = "mt-5" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-app-bar-nav-icon class = "mt-5" @click.stop="OpenCloseNav()"></v-app-bar-nav-icon>
             <v-toolbar-title ><br>Fujitec<br> Parts Master</v-toolbar-title>
             <v-spacer></v-spacer>
             <!--　ユーザー設定画面　-->
@@ -126,7 +126,8 @@
                 v-model="drawer"
                 :mini-variant.sync="mini"
                 floating
-                width=22%
+                mini-variant-width = "3%"
+                :width = search_width
             >
                 <v-list
                  nav
@@ -143,7 +144,7 @@
                         >
                              <v-btn class = "mb-2"
                              icon
-                            @click.stop="mini = !mini"
+                            @click.stop="changeSearchMiniWidth()"
                             >
                              <v-icon>mdi-step-backward</v-icon>
                             </v-btn>検索条件
@@ -2251,9 +2252,9 @@
             <v-navigation-drawer
                 v-model="drawer"
                 :mini-variant.sync="mini2"
-                mini-variant-width = 40
+                mini-variant-width = 3%
                 floating
-                :width=table_width
+                :width = table_width
             >
                 <v-list
                  nav
@@ -2263,7 +2264,7 @@
                     <v-col>
                     <v-btn class = "sm-2"
                         icon
-                        @click.stop="mini2 = !mini2"
+                        @click.stop="changeTableMiniWidth()"
                     >
                         <v-icon>mdi-step-backward</v-icon>
                     </v-btn>検索結果
@@ -2284,8 +2285,12 @@
                                  :headers="HeaderTable"
                                  :items="APIJSON"
                                  :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                 show-select
                                 >
+                                <template v-slot:item.PART_NO="{item}">
+                                    <v-btn text elevation="0" small @click.stop="getHeaderInfo(item.PART_NO)">
+                                        {{item.PART_NO}}
+                                    </v-btn>
+                                </template>
                                  <template v-slot:item.SOUSA="{item}">
                                     <v-row no-gutters>
                                         <v-col>
@@ -2312,16 +2317,58 @@
                 </v-list>   
             </v-navigation-drawer>
             <!-- 検索テーブル -->
-                <v-row no-gutters justify="center">
-                    <v-col>
-                        <h6 v-for ="item,index in this.shousaiZaikoSelected" :key="index">
-                           {{index +1}} : {{ item.CM_CODE }}
-                        </h6>
-                    </v-col>
-                </v-row>
+            <v-card
+             :width = tab_width
+             
+            >
+                <v-tabs
+                 background-color="cyan"
+                 dark
+                >
+                    <v-tabs-slider color="yellow"></v-tabs-slider>
+                    <v-tab
+                     v-for ="tab_name in tab_menu" 
+                     :key="tab_name"
+                    >
+                        {{tab_name}}
+                    </v-tab>
+                </v-tabs>
+                <v-container fluid>
+                    <v-card outlined shaped tile>
+                        <v-card-text v-if ="this.showHeader">
+                            部品コード {{this.Header_Data[this.Header_Data.length-1].PART_NO}} [{{this.Header_Data[this.Header_Data.length-1].PART_REV_NO}} ]
+                            部品名　{{this.Header_Data[this.Header_Data.length-1].PART_NAME_LOC1}}
+                        </v-card-text>
+                        <v-card-text class="mt-n5" v-if ="this.showHeader">
+                            更新者　[{{this.Header_Data[this.Header_Data.length-1].UPD_WHO }}] {{this.Header_Data[this.Header_Data.length-1].UPD_NAME}} 
+                            {{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(0,4)}}.{{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(4,6)}}.{{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(6,8)}}
+                             {{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(8,10)}}:{{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(10,12)}}:{{this.Header_Data[this.Header_Data.length-1].UPD_WHEN.substring(12,14)}}
+                            登録者　[{{this.Header_Data[this.Header_Data.length-1].ENT_WHO}}] {{this.Header_Data[this.Header_Data.length-1].ENT_NAME}}
+                             {{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(0,4)}}.{{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(4,6)}}.{{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(6,8)}}
+                             {{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(8,10)}}:{{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(10,12)}}:{{this.Header_Data[this.Header_Data.length-1].ENT_WHEN.substring(12,14)}}
+                        </v-card-text>
+                        <v-card-text v-if ="!this.showHeader"></v-card-text><v-card-text v-if ="!this.showHeader"></v-card-text>
+                    </v-card>
+                </v-container>
+                <v-container fluid>
+                    <v-card>
+                        <v-data-table
+                         :headers="kaiteiTableHeader"
+                         :items="Header_Data"
+                         item-key="PART_REV_NO"
+                         :sort-by="['PART_REV_NO']"
+                         show-select
+                         single-select
+                         dense
+                        >
+                        </v-data-table>
+                    </v-card>
+                </v-container>
+            </v-card>
             </v-row>
-            
         </v-card>  
+        <h1>{{this.Click}}</h1>
+
     </div> 
 </template>
 
@@ -2489,8 +2536,7 @@
         { text: "保守", value: "SEQ_NO", align: "center"},
       ],
       toggle_Table:"",
-      table_width:"30%",
-      table_width_state:true,
+      table_width_state:false,
       //User Setting 
       userKoumokuSelect:"P/M基本情報",
       userKoumokuItems:["P/M基本情報","手配情報","標準時間マスタ","購買情報","在庫情報"],
@@ -2508,6 +2554,40 @@
         DWG_REV_NO:"",
         SEQ_NO:""
         }],
+        //表示データ
+      Page_data:[],
+      tab_menu:["手配","製作","購買","入出庫","在庫","保守","PC/SP","P/S","代替",],
+      search_width : "0%",
+      table_width: "0%",
+      tab_width : "100%",
+      showHeader : false,
+      Header_Data:[{
+        PART_NO:"",
+        PART_REV_NO:"",
+        PART_NAME_LOC1:"",
+        UPD_WHO:"",
+        UPD_NAME:"",
+        UPD_WHEN:"",
+        ENT_WHO:"",
+        ENT_NAME:"",
+        ENT_WHEN:"",
+        REV_START_DATE:"",
+        REV_STOP_DATE:"",
+        M_START_DATE:"",
+        M_STOP_DATE:"",
+        APP_CUR_TYPE:"",
+        }],
+      kaiteiTableHeader:[
+        {text:"改訂",value:"PART_REV_NO"},
+        {text:"使用開始日（当改訂）",value:"REV_START_DATE"},
+        {text:"使用止め日（当改訂）",value:"REV_STOP_DATE"},
+        {text:"使用開始日（当保守）",value:"M_START_DATE"},
+        {text:"使用止め日（当保守）",value:"M_STOP_DATE"},
+        {text:"更新者",value:"UPD_WHO"},
+        {text:"更新日",value:"UPD_WHEN"},
+        {text:"承",value:"APP_CUR_TYPE"},
+      ],
+      Click:"",
     }),
     computed:{
         dialogKouteiCodeTableHeader(){
@@ -2574,6 +2654,23 @@
         },
     },
     methods:{
+        OpenCloseNav(){
+            this.drawer = !this.drawer;
+            if(this.drawer)
+            {
+                this.search_width = "22%";
+                this.table_width = "32%";
+                this.tab_width = "46%";
+            }
+            else
+            {
+                this.mini= false;
+                this.mini2=false;
+                this.search_width = "0%";
+                this.table_width = "0%";
+                this.tab_width = "100%"; 
+            }
+        },
         getKensakuBtn1(){
             const url = "http://localhost:59272/api/KensakuBtnGet";
             const params = {
@@ -2755,6 +2852,19 @@
             })
             this.dialogKouteiCode = false;
         },
+        getHeaderInfo(value){
+            const url = "http://localhost:59272/api/KensakuBtnGet";
+            
+            const params = {
+                Table_Id : value,
+            }
+            this.$axios.get(url,{params}).then(res =>{
+                this.Header_Data = res.data;
+                this.showHeader = true;
+            }).catch(err=>{
+                
+            })
+        },
         getSeihinbunruiCodeFromDialog(){
             this.shousaiSeihinbunruiCode = this.dialogKoumokuTableSelected[0].CM_CODE;
             this.dialogSeihinbunru = false;
@@ -2795,16 +2905,24 @@
             this.dialogKouteiCode = false;
             this.dialogKouteiCodeTableSelected =[];
         },
+        changeSearchMiniWidth(){
+            this.mini = !this.mini;
+            this.CheckWidth_state();
+        },
+        changeTableMiniWidth(){
+            this.mini2 = !this.mini2;
+            this.CheckWidth_state();
+           
+        },
         changeTableWidth(){
-            if(this.table_width_state)
-            {
-                this.table_width_state = !this.table_width_state;
-                this.table_width ="70%";
-            }else
-            {
-                this.table_width_state = !this.table_width_state;
-                this.table_width ="30%";
-            }
+            this.table_width_state = !this.table_width_state;
+            this.CheckWidth_state();
+        
+        },
+        CheckWidth_state(){
+            this.table_width = this.table_width_state?"70%":(this.mini?"48%":"32%");
+            this.tab_width = this.mini? (this.mini2?"94%":this.table_width_state?"27%":"49%")
+                                        :(this.mini2?"75%":this.table_width_state?"45%":"46%");
         },
         changeCalendarHyouJun(value){
             let cur_date = new Date(Date.now());
@@ -2824,6 +2942,7 @@
             this.kirikaeDate1 = cur_date.toISOString().substr(0, 10);
             this.kirikaeDate2 = cur_date.toISOString().substr(0, 10);
         },
+        
         //詳細検索クリアパラメータ
         shousaiClear(){
             this.shousaiBuhincode="";
