@@ -2371,8 +2371,59 @@
                         >
                         </v-data-table>
                     </v-card>
+                </v-container >
+                <v-container fluid>
+                    <v-row>
+                        <v-col cols="6" sm="6">
+                            <v-card>   
+                                <v-row no-gutters>
+                                    <v-col class="ml-2">
+                                        <h3>P/M基本情報</h3>
+                                    </v-col>
+                                    <v-spacer>
+                                    </v-spacer>
+                                    <v-col class="d-flex">
+                                        <v-btn class = "ml-auto" outlined small>フィルター</v-btn>
+                                    </v-col>
+                                </v-row>
+                                <v-data-table>
+                                
+
+                                </v-data-table>
+                            </v-card>
+                        </v-col>
+                        <v-col cols ="6" sm ="6">
+                            <v-card>
+                                <v-row no-gutters>
+                                    <v-col class="ml-2">
+                                        <h4>手配情報</h4>
+                                    </v-col>
+                                    <v-col class="ml-2">
+                                        <p>工場区分</p>
+                                    </v-col>
+                                    <v-spacer></v-spacer>
+                                    <v-col class="ml-2">
+                                        <v-text-field dense outlined></v-text-field>
+                                    </v-col >
+                                        <v-checkbox
+                                        hide-details
+                                        class="ml-2 mt-0"></v-checkbox>
+                                    <v-col sm="1">
+                                        <v-text-field dense outlined></v-text-field>
+
+                                    </v-col>
+                                        
+                                </v-row>
+                                <v-data-table>
+                                
+
+                                </v-data-table>
+                            </v-card>
+                        </v-col>    
+                    </v-row>
                 </v-container>
                 <v-container fluid>
+
                     <h3>{{this.Click}}</h3>
                 </v-container>  
             </v-card>
