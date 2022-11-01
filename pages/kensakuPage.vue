@@ -2319,7 +2319,6 @@
             <!-- 検索テーブル -->
             <v-card
              :width = tab_width
-             
             >
                 <v-tabs
                  background-color="cyan"
@@ -2356,7 +2355,7 @@
                             </v-col>
                         </v-row>
                         
-                        <v-card-text v-if ="!this.showHeader"></v-card-text><v-card-text v-if ="!this.showHeader"></v-card-text>
+                        <v-card-text v-if ="!this.showHeader"></v-card-text>
                     </v-card>
                 </v-container>
                 <v-container fluid>
@@ -2367,7 +2366,7 @@
                          item-key="PART_REV_NO"
                          :sort-by="['PART_REV_NO']"
                          dense
-                         @click:row="RowClick" 
+                         @click:row="Editinfo" 
                         >
                         </v-data-table>
                     </v-card>
@@ -2386,9 +2385,20 @@
                                         <v-btn class = "ml-auto" outlined small>フィルター</v-btn>
                                     </v-col>
                                 </v-row>
-                                <v-data-table>
-                                
-
+                                <v-data-table
+                                 :headers="this.Editinfo_Header"
+                                 :items="this.EditInfo_Value"
+                                 :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                 dense
+                                 height="400"
+                                >
+                                <template v-slot:item.CELL_TYPE="{item}">
+                                   <v-btn 
+                                   v-if="item.CELL_TYPE == 'B'"
+                                   x-small 
+                                   @click="getEditBtnClick(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1)"
+                                   >...</v-btn>
+                                </template>
                                 </v-data-table>
                             </v-card>
                         </v-col>
@@ -2412,20 +2422,77 @@
                                         <v-text-field dense outlined></v-text-field>
 
                                     </v-col>
-                                        
                                 </v-row>
                                 <v-data-table>
-                                
-
                                 </v-data-table>
                             </v-card>
                         </v-col>    
                     </v-row>
                 </v-container>
-                <v-container fluid>
+                <v-dialog
+                    v-model="dialogEditInfo"
+                    width="700"
+                >
+                <v-card>
+                    <v-system-bar window>
+                            <span>PMRA0191 参照画面（共用マスタ）</span>
+                            <v-spacer></v-spacer>
+                            <v-btn small @click="dialogEditInfo = false">
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                    </v-system-bar>
+                    <v-container>
+                        <v-row justify="space-between" no-gutters>
+                            <v-col>
+                                <span>参照画面</span>
+                            </v-col>
+                            <v-col sm=5>
 
-                    <h3>{{this.Click}}</h3>
-                </v-container>  
+                                <p>項目No.{{dialogKoumokuNO}}:{{dialogKoumokuName}} Index :{{this.EditIndex}}</p>
+                                <p>項目の有効期限{{dialogEnableDate_1}}~{{dialogEnableDate_2}}</p>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-data-table
+                            v-model="dialogKoumokuTableSelected"
+                            :headers ="dialogKoumokuTableHeader"
+                            :items ="dialogKoumokuTableItem"
+                            :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                            fixed-header
+                            singleSelect
+                            item-key="CM_CODE"
+                            dense
+                            height="500px"
+                            show-select
+                            
+                            ></v-data-table>
+                        </v-row>
+                        <br>
+                        <v-divider></v-divider>
+                        <v-row class= "mt-2 mb-1 mr-2">
+                            <v-spacer></v-spacer>
+                                <v-btn small @click="getEditInfoDialog()" >  
+                            <v-icon
+                                    left
+                                    dark
+                                >
+                                    mdi-check-outline
+                                </v-icon>  
+                                選択(S)
+                            </v-btn>
+                            <v-btn small class="ml-2" @click ="dialogEditInfo = false">
+                                <v-icon
+                                    left
+                                    dark
+                                >
+                                    mdi-close-box-outline
+                                </v-icon> 
+                                閉じる(C)
+                            </v-btn>
+                        </v-row>
+                    </v-container>
+                </v-card>
+                </v-dialog>
             </v-card>
             </v-row>
         </v-card>  
@@ -2648,6 +2715,17 @@
         {text:"承",value:"APP_CUR_TYPE"},
       ],
       Click:"Test Click",
+      Editinfo_Header:[
+        {text:"項目名",value:"FIELD_NAME_LOC1",width:"200px" },
+        {text:"値",value:"FIELD_VALUE"},
+        {text:"",value:"CELL_TYPE"},
+        {text:"説明",value:"FIELD_EXPLAIN"}
+    ],
+      EditInfo_Value:[],
+      dialogEditInfo : false,
+      EditdialogItemNo:"",
+      EditdialogFIELD_NAME:"",
+      EditIndex:"",
     }),
     computed:{
         dialogKouteiCodeTableHeader(){
@@ -2714,8 +2792,17 @@
         },
     },
     methods:{
-        RowClick(item){
+        Editinfo(item){
             this.Click = item.PART_REV_NO;
+            const url = "http://localhost:59272/api/KensakuBtnGet";
+            const params = {
+                Edit_Id : "PPPMMS",
+            }
+            this.$axios.get(url,{params}).then(res =>{
+                this.EditInfo_Value = res.data
+            }).catch(err=>{
+
+            })
         }
         ,
         OpenCloseNav(){
@@ -2968,6 +3055,18 @@
             this.shousaiKoteiCode = this.dialogKouteiCodeTableSelected[0].KT_CODE;
             this.dialogKouteiCode = false;
             this.dialogKouteiCodeTableSelected =[];
+        },
+        getEditInfoDialog(){
+            this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogKoumokuTableSelected[0].CM_CODE;
+            this.dialogEditInfo = false;
+            this.dialogKoumokuTableSelected =[];
+        },
+        getEditBtnClick(value,ITEM_NO,NAME_LOC1){
+            this.dialogEditInfo = true;
+            this.EditIndex = value;
+            this.EditdialogItemNo = ITEM_NO;
+            this.EditdialogFIELD_NAME= NAME_LOC1;
+            this.getDialogKoumoku(this.EditdialogItemNo,this.EditdialogFIELD_NAME);
         },
         changeSearchMiniWidth(){
             this.mini = !this.mini;

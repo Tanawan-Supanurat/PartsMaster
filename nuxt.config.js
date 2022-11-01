@@ -9,6 +9,7 @@ export default {
 
   router:{
     base: '/PartsMaster',
+    middleware: ['dark', 'fujitecSso'],
   },
 
   // Global page headers: https://go.nuxtjs.dev/config-head
