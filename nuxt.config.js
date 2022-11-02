@@ -1,16 +1,46 @@
+import fs from 'fs'
 import colors from 'vuetify/es5/util/colors'
 
+/** 変数取り出し */
+const { PROCESS, PROCESS_NAME, SYSTEM_TITLE, BASE_PATH, BUILD_DIR, API_PATH } =
+  process.env
+/** version をセット(値を変えることで処理中でも強制再読み込みする) */
+const verNum = '0.0.1.1'
+// versionファイルを作成
+fs.writeFileSync('static/ver.json', JSON.stringify({ ver: verNum }))
+
 export default {
+  publicRuntimeConfig: {
+    BASE_PATH, // ベースパス
+    VER: verNum, // version
+    PROCESS, // プロセス
+    PROCESS_NAME, // プロセス名
+    SYSTEM_TITLE, // システムタイトル
+    API_PATH, // APIのベースURL
+  },
+  privateRuntimeConfig: {},
+
+  // router (ベースURLを指定。middlewareを指定)
+  router: {
+    base: '/PartsMaster',
+    middleware: ['dark', 'fujitecSso'],
+  },
+
+  // server (すべてのIPからアクセス可。)
+ /*
+  server: {
+    host: '0.0.0.0',
+  },
+  */
+  // ビルドの出力先
+  generate: {
+    dir: BUILD_DIR,
+  },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
-
-  router:{
-    base: '/PartsMaster',
-    middleware: ['dark', 'fujitecSso'],
-  },
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {

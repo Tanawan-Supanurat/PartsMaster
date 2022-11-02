@@ -33,16 +33,17 @@
                 </template>
                 <v-card height="90vh">
                     <v-card-title class="text-h5 font-weight-bold">
+                        
                         ユーザー設定画面
                     </v-card-title>
                     <v-row no-gutters>
                         <v-col class="ml-8">
                             <br>
                             <v-card-text class="py-0 text-subtitle-1">
-                                ログインユーザー：
+                                ログインユーザー： {{userName}}
                             </v-card-text>
                             <v-card-text class="py-0 my-2 text-subtitle-1">
-                                所属部課：
+                                所属部課： {{departmentName}}
                             </v-card-text>
                         </v-col>
 
@@ -2383,7 +2384,7 @@
                                     <v-spacer>
                                     </v-spacer>
                                     <v-col class="d-flex">
-                                        <v-btn class = "ml-auto mr-2 my-1 " outlined small>フィルター</v-btn>
+                                        <v-btn class = "ml-auto mr-2 my-1 mt-2 " outlined small>フィルター</v-btn>
                                     </v-col>
                                 </v-row>
                                 <v-data-table
@@ -2392,7 +2393,7 @@
                                  :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                  dense
                                  hide-default-footer
-                                 height="400"
+                                 :height="PM_height"
                                 >
                                 <template v-slot:item.CELL_TYPE="{item}">
                                     <v-div v-if="item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'">
@@ -2437,10 +2438,41 @@
                                 <v-row no-gutters>
                                     <v-btn class = "ml-auto mr-2 my-1 mt-n5" outlined small>フィルター</v-btn>
                                 </v-row>
-                                <v-data-table>
+                                <v-data-table
+                                 :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                 dense
+                                 hide-default-footer
+                                 :height="Teihai_height"
+                                >
                                 </v-data-table>
                             </v-card>
                         </v-col>    
+                    </v-row>
+                </v-container>
+                <v-container fluid>
+                    <v-row no-gutters justify="end">
+                        <v-col class="d-flex flex-row-reverse" >
+                            <v-btn large>
+                                <v-icon
+                                    left
+                                    dark
+                                    large
+                                >
+                                mdi-content-save
+                                </v-icon>
+                                <h3>保存</h3>
+                            </v-btn>
+                            <v-btn class="mr-2" large>
+                                <v-icon
+                                    left
+                                    dark
+                                    large
+                                >
+                                    mdi-close-box-outline
+                                </v-icon> 
+                                <h3>閉じる</h3>
+                            </v-btn>
+                        </v-col>
                     </v-row>
                 </v-container>
                 <v-dialog
@@ -2514,713 +2546,761 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+export default {
 
-    export default {
-    
-    data: () => ({
-      kensakuForm:true,
-      drawer: false,
-      mini:false,
-      mini2:false,
-      group: null,
-      buhincode:"",
-      buhinmei:"",
-      itemsBuhin:["1:前方一致","2:完全一致","3:部分一致",],
-      selectBuhin:"1:前方一致",
-      itemsSeihin:["-:All","1:EV","2:ESC","3:CP",],
-      selectSeihin:"-:All",
-      hakkouDate1: "",
-      hakkouDate2: "",
-      kirikaeDate1: "",
-      kirikaeDate2: "",
-      hakkouMenu1: false,
-      hakkouMenu2: false,
-      kirikaeMenu1: false,
-      kirikaeMenu2: false,
-      toggle_hakko:"",
-      toggle_Kirikae:"",
-      hakkoTsuuchi:"",
-      kirikaeTsuuchi:"",
-      warning_dialog_btn1:false,
-      warning_dialog_btn2:false,
-      //shousai from value
-      shousaiForm:true,
-      shousaiBuhincode:"",
-      shousaiBuhinmei:"",
-      shousaiHoshuu:"",
-      shousaiZuban:"",
-      shousaiKoban:"",
-      shousaiTanban:"",
-      shousaiSokotantou:"",
-      shousaiPStenkai:"",
-      shousaiJidouKounyuu:"",
-      shousaiSeihinbunruiCode:"",
-      shousaiBuhinkubun:"",
-      shousaiPDM:"",
-      shousaikishuu:"",
-      shousaiMakerKataban:"",
-      shousaiNaigai:"",
-      shousaiChozou:"",
-      shousaiKanriTenshou:"",
-      shousaiZaikoTantou:"",
-      shousaiHachuTenshou:"",
-      shousaiHachuTantou:"",
-      shousaiBacker:"",
-      shousaiKanriKijun:"",
-      shousaiABCKanriCodeKubun:"",
-      shousaiZaikoKanriCode:"",
-      shousaiZaikousuu1:"",
-      shousaiZaikousuu2:"",
-      shousaiZaikouKingaku1:"",
-      shousaiZaikouKingaku2:"",
-      shousaihyoujunTanka1:"",
-      shousaihyoujunTanka2:"",
-      shousaiChoushiYoutei:"",
-      shousaiChoushi:"",
-      shousaiTorisakiCode:"",
-      shousaiKoteiCode:"",
-      shousaiSagyouCode:"",
-      shousaiBui:"",
-      shousaiKakakuSetttei:"-",
-      shousaiKakakuSettteiItems:["-","0:無効","1:有効"],
-      shousaiHoshuHantei:"-",
-      shousaiHoshuHanteiItems:["-","0:無効","1:有効"],
-      shousaiNyuukoubiCheck:false,
-      shousaiShukkobiCheck:false,
-      shousaiZaikoZeroCheckBox:false,
-      shousaiDialog:false,
-      toggle_none:0,
-      shousaiItemsBuhin:["1:前方一致","2:完全一致","3:部分一致",],
-      shousaiSelectBuhin:"1:前方一致",
-      shousaiItemsBuhinmei:["1:前方一致","2:完全一致","3:部分一致",],
-      shousaiSelectBuhinmei:"3:部分一致",
-      shousaiItemsHoshu:["1:前方一致","2:完全一致","3:部分一致",],
-      shousaiSelectHoshu:"3:部分一致",
-      shousaiItemsZuban:["1:前方一致","2:完全一致","3:部分一致",],
-      shousaiSelectZuban:"1:前方一致",
-      shousaihyoujunDate1:"",
-      shousaihyoujunDate2:"",
-      shousaiNyuukoDate1:"",
-      shousaiNyuukoDate2:"",
-      shousaiShukkokoDate1:"",
-      shousaiShukkokoDate2:"",
-      shousaiChozouKaishiDate1:"",
-      shousaiChozouKaishiDate2:"",
-      shousaihyoujunMenu1: false,
-      shousaihyoujunMenu2: false,
-      shousaiNyuukoMenu1:false,
-      shousaiNyuukoMenu2:false,
-      shousaiShukkokoMenu1:false,
-      shousaiShukkokoMenu2:false,
-      shousaiChozouKaishiMenu1:false,
-      shousaiChozouKaishiMenu2:false,
-      shousaiCheckBox1:false,
-      shousaiCheckBox2:false,
-      shousaiCheckBox3:false,
-      shousaiCheckBox4:false,
-      shousaiCheckBox5:false,
-      shousaiItemsSouko:[],
-      shousaiSelectSouko:"",
-      shousaiSokoCodeCheckbox:false,
-      shousaiZaikoSelected: [],
-      shousaiZaikoHeaders: [
-          {
-            text: '倉',
-            align: 'start',
-            sortable: false,
-            value: 'CM_CODE',
-          }, 
-          { text: '説明', 
-            sortable: false,
-            value: 'CM_CODE_SETUMEI' },
-        ],
-      shousaiZaikoItems: [],
-      //shousaiDiaLog
-      dialogSeihinbunru:false,
-      dialogBuhinkubun:false,
-      dialogPDM:false,
-      dialogKishuu:false,
-      dialogNaigai:false,
-      dialogKanriKijun:false,
-      dialogABCKanriCodeKubun:false,
-      dialogKouteiCode:false,
-      dialogKoumokuNO:"210",
-      dialogKoumokuName:"TestName",
-      dialogEnableDate_1:"",
-      dialogEnableDate_2:"",
-      dialogKoumokuTableSelected:[],
-      dialogKoumokuTableHeader:[
-        {text:"コード",value:"CM_CODE",},
-        {text:"コード説明",value:"CM_CODE_SETUMEI",width:"300px"},
-        {text:"使用開始日",value:"START_DATE"},
-        {text:"使用止め日",value:"STOP_DATE"},
-      ],
-      dialogKoumokuTableItem:[],
-      dialogKouteiCodeTableSelected:[],
-      dialogKouteiCodeTableItem:[],
-      KT_CODE:"",
-      WC_CODE:"",
-      CC_CODE:"",
-      SG_CODE:"",
-      //setting
-      setttingDialog:false,
-      HeaderTable:[
-        { text: "操作", value: "SOUSA", align: "center",width:"200px" , sortable: false },
-        { text: "部品コード", value: "PART_NO", align: "center",width:"100px" },
-        { text: "改訂", value: "PART_REV_NO", align: "center"},
-        { text: "部品名", value: "PART_NAME_LOC1", align: "center",width:"200px" },
-        { text: "発行通知書", value: "ISSUE_NO", align: "center",width:"200px" },
-        { text: "発行日", value: "ISSUE_DATE", align: "center" ,width:"100px"},
-        { text: "切替指示書", value: "CHG_NO", align: "center",width:"200px" },
-        { text: "図番", value: "DWG_NO", align: "center",width:"200px" },
-        { text: "改訂", value: "DWG_REV_NO", align: "center"},
-        { text: "保守", value: "SEQ_NO", align: "center"},
-      ],
-      toggle_Table:"",
-      table_width_state:false,
-      //User Setting 
-      userKoumokuSelect:"P/M基本情報",
-      userKoumokuItems:["P/M基本情報","手配情報","標準時間マスタ","購買情報","在庫情報"],
-      userShougiSelect:"手配情報",
-      userShougiItems:["手配情報","製作情報","購買情報","在庫情報","保守情報","販売価格情報","P/S情報","代替部品情報"],
-      APIJSON: [{ 
-        SOUSA: "", 
-        PART_NO: "", 
-        PART_REV_NO: "" ,
-        PART_NAME_LOC1:"",
-        ISSUE_NO:"",
-        ISSUE_DATE:"",
-        CHG_NO:"",
-        DWG_NO:"",
-        DWG_REV_NO:"",
-        SEQ_NO:""
-        }],
-        //表示データ
-      Page_data:[],
-      tab_menu:["手配","製作","購買","入出庫","在庫","保守","PC/SP","P/S","代替",],
-      search_width : "0%",
-      table_width: "0%",
-      tab_width : "100%",
-      showHeader : false,
-      Header_Data:[{
-        PART_NO:"",
-        PART_REV_NO:"",
-        PART_NAME_LOC1:"",
-        UPD_WHO:"",
-        UPD_NAME:"",
-        UPD_WHEN:"",
-        ENT_WHO:"",
-        ENT_NAME:"",
-        ENT_WHEN:"",
-        REV_START_DATE:"",
-        REV_STOP_DATE:"",
-        M_START_DATE:"",
-        M_STOP_DATE:"",
-        APP_CUR_TYPE:"",
-        }],
-      kaiteiTableHeader:[
-        {text:"改訂",value:"PART_REV_NO"},
-        {text:"使用開始日（当改訂）",value:"REV_START_DATE"},
-        {text:"使用止め日（当改訂）",value:"REV_STOP_DATE"},
-        {text:"使用開始日（当保守）",value:"M_START_DATE"},
-        {text:"使用止め日（当保守）",value:"M_STOP_DATE"},
-        {text:"更新者",value:"UPD_WHO"},
-        {text:"更新日",value:"UPD_WHEN"},
-        {text:"承",value:"APP_CUR_TYPE"},
-      ],
-      Editinfo_Header:[
-        {text:"項目名",value:"FIELD_NAME_LOC1",width:"200px" },
-        {text:"値",value:"FIELD_VALUE",width:"200px"},
-        {text:"",value:"CELL_TYPE"},
-        {text:"説明",value:"FIELD_EXPLAIN"}
+data: () => ({
+    kensakuForm:true,
+    drawer: false,
+    mini:false,
+    mini2:false,
+    group: null,
+    buhincode:"",
+    buhinmei:"",
+    itemsBuhin:["1:前方一致","2:完全一致","3:部分一致",],
+    selectBuhin:"1:前方一致",
+    itemsSeihin:["-:All","1:EV","2:ESC","3:CP",],
+    selectSeihin:"-:All",
+    hakkouDate1: "",
+    hakkouDate2: "",
+    kirikaeDate1: "",
+    kirikaeDate2: "",
+    hakkouMenu1: false,
+    hakkouMenu2: false,
+    kirikaeMenu1: false,
+    kirikaeMenu2: false,
+    toggle_hakko:"",
+    toggle_Kirikae:"",
+    hakkoTsuuchi:"",
+    kirikaeTsuuchi:"",
+    warning_dialog_btn1:false,
+    warning_dialog_btn2:false,
+    //shousai from value
+    shousaiForm:true,
+    shousaiBuhincode:"",
+    shousaiBuhinmei:"",
+    shousaiHoshuu:"",
+    shousaiZuban:"",
+    shousaiKoban:"",
+    shousaiTanban:"",
+    shousaiSokotantou:"",
+    shousaiPStenkai:"",
+    shousaiJidouKounyuu:"",
+    shousaiSeihinbunruiCode:"",
+    shousaiBuhinkubun:"",
+    shousaiPDM:"",
+    shousaikishuu:"",
+    shousaiMakerKataban:"",
+    shousaiNaigai:"",
+    shousaiChozou:"",
+    shousaiKanriTenshou:"",
+    shousaiZaikoTantou:"",
+    shousaiHachuTenshou:"",
+    shousaiHachuTantou:"",
+    shousaiBacker:"",
+    shousaiKanriKijun:"",
+    shousaiABCKanriCodeKubun:"",
+    shousaiZaikoKanriCode:"",
+    shousaiZaikousuu1:"",
+    shousaiZaikousuu2:"",
+    shousaiZaikouKingaku1:"",
+    shousaiZaikouKingaku2:"",
+    shousaihyoujunTanka1:"",
+    shousaihyoujunTanka2:"",
+    shousaiChoushiYoutei:"",
+    shousaiChoushi:"",
+    shousaiTorisakiCode:"",
+    shousaiKoteiCode:"",
+    shousaiSagyouCode:"",
+    shousaiBui:"",
+    shousaiKakakuSetttei:"-",
+    shousaiKakakuSettteiItems:["-","0:無効","1:有効"],
+    shousaiHoshuHantei:"-",
+    shousaiHoshuHanteiItems:["-","0:無効","1:有効"],
+    shousaiNyuukoubiCheck:false,
+    shousaiShukkobiCheck:false,
+    shousaiZaikoZeroCheckBox:false,
+    shousaiDialog:false,
+    toggle_none:0,
+    shousaiItemsBuhin:["1:前方一致","2:完全一致","3:部分一致",],
+    shousaiSelectBuhin:"1:前方一致",
+    shousaiItemsBuhinmei:["1:前方一致","2:完全一致","3:部分一致",],
+    shousaiSelectBuhinmei:"3:部分一致",
+    shousaiItemsHoshu:["1:前方一致","2:完全一致","3:部分一致",],
+    shousaiSelectHoshu:"3:部分一致",
+    shousaiItemsZuban:["1:前方一致","2:完全一致","3:部分一致",],
+    shousaiSelectZuban:"1:前方一致",
+    shousaihyoujunDate1:"",
+    shousaihyoujunDate2:"",
+    shousaiNyuukoDate1:"",
+    shousaiNyuukoDate2:"",
+    shousaiShukkokoDate1:"",
+    shousaiShukkokoDate2:"",
+    shousaiChozouKaishiDate1:"",
+    shousaiChozouKaishiDate2:"",
+    shousaihyoujunMenu1: false,
+    shousaihyoujunMenu2: false,
+    shousaiNyuukoMenu1:false,
+    shousaiNyuukoMenu2:false,
+    shousaiShukkokoMenu1:false,
+    shousaiShukkokoMenu2:false,
+    shousaiChozouKaishiMenu1:false,
+    shousaiChozouKaishiMenu2:false,
+    shousaiCheckBox1:false,
+    shousaiCheckBox2:false,
+    shousaiCheckBox3:false,
+    shousaiCheckBox4:false,
+    shousaiCheckBox5:false,
+    shousaiItemsSouko:[],
+    shousaiSelectSouko:"",
+    shousaiSokoCodeCheckbox:false,
+    shousaiZaikoSelected: [],
+    shousaiZaikoHeaders: [
+        {
+        text: '倉',
+        align: 'start',
+        sortable: false,
+        value: 'CM_CODE',
+        }, 
+        { text: '説明', 
+        sortable: false,
+        value: 'CM_CODE_SETUMEI' },
     ],
-      EditInfo_Value:[],
-      dialogEditInfo : false,
-      EditdialogItemNo:"",
-      EditdialogFIELD_NAME:"",
-      EditIndex:"",
-    }),
-    computed:{
-        dialogKouteiCodeTableHeader(){
-            return[
-            {
-                text:"工程コード",
-                value:"KT_CODE",
-                width:"120px",
-                filter: value =>{
-                    if(!this.KT_CODE) return true
-                    if(value.indexOf(this.KT_CODE))
-                        return false
-                    else
-                        return true
-                },
-            },
-            {
-                text:"WC",
-                value:"WC_CODE",
-                width:"80px",
-                filter: value =>{
-                    if(!this.WC_CODE) return true
-                    if(value.indexOf(this.WC_CODE))
-                        return false
-                    else
-                        return true
-                },
-            },
-            {
-                text:"CC",
-                value:"CC_CODE",
-                width:"80px",
-                filter: value =>{
-                    if(!this.CC_CODE) return true
-                    if(value.indexOf(this.CC_CODE))
-                        return false
-                    else
-                        return true
-                },
-            },
-            {
-                text:"SG",
-                value:"SG_CODE",
-                width:"80px",
-                filter: value =>{
-                    if(!this.SG_CODE) return true
-                    if(value.indexOf(this.SG_CODE))
-                        return false
-                    else
-                        return true
-                },
-            },
-            {text:"工程順",value:"SEQ_NO",width:"90px"},
-            {text:"準備段取り時間",value:"SETUP_STDTIME",width:"150px"},
-            {text:"準備作業時間",value:"WORK_STDTIME",width:"150px"},
-            {text:"正社員比率",value:"SEI_STDPCNT",width:"150px"},
-            {text:"備考",value:"REMARKS",width:"150px"},
-            {text:"使用開始日",value:"START_DATE",width:"150px"},
-            {text:"使用止め日",value:"STOP_DATE",width:"150px"},
-            {text:"更新者",value:"UPD_WHO",width:"150px"},
-            {text:"更新日時",value:"UPP_WHEN",width:"150px"},
-            {text:"登録日",value:"ENT_DATE",width:"150px"},
-            ]
-        },
+    shousaiZaikoItems: [],
+    //shousaiDiaLog
+    dialogSeihinbunru:false,
+    dialogBuhinkubun:false,
+    dialogPDM:false,
+    dialogKishuu:false,
+    dialogNaigai:false,
+    dialogKanriKijun:false,
+    dialogABCKanriCodeKubun:false,
+    dialogKouteiCode:false,
+    dialogKoumokuNO:"210",
+    dialogKoumokuName:"TestName",
+    dialogEnableDate_1:"",
+    dialogEnableDate_2:"",
+    dialogKoumokuTableSelected:[],
+    dialogKoumokuTableHeader:[
+    {text:"コード",value:"CM_CODE",},
+    {text:"コード説明",value:"CM_CODE_SETUMEI",width:"300px"},
+    {text:"使用開始日",value:"START_DATE"},
+    {text:"使用止め日",value:"STOP_DATE"},
+    ],
+    dialogKoumokuTableItem:[],
+    dialogKouteiCodeTableSelected:[],
+    dialogKouteiCodeTableItem:[],
+    KT_CODE:"",
+    WC_CODE:"",
+    CC_CODE:"",
+    SG_CODE:"",
+    //setting
+    setttingDialog:false,
+    HeaderTable:[
+    { text: "操作", value: "SOUSA", align: "center",width:"200px" , sortable: false },
+    { text: "部品コード", value: "PART_NO", align: "center",width:"100px" },
+    { text: "改訂", value: "PART_REV_NO", align: "center"},
+    { text: "部品名", value: "PART_NAME_LOC1", align: "center",width:"200px" },
+    { text: "発行通知書", value: "ISSUE_NO", align: "center",width:"200px" },
+    { text: "発行日", value: "ISSUE_DATE", align: "center" ,width:"100px"},
+    { text: "切替指示書", value: "CHG_NO", align: "center",width:"200px" },
+    { text: "図番", value: "DWG_NO", align: "center",width:"200px" },
+    { text: "改訂", value: "DWG_REV_NO", align: "center"},
+    { text: "保守", value: "SEQ_NO", align: "center"},
+    ],
+    toggle_Table:"",
+    table_width_state:false,
+    //User Setting 
+    userKoumokuSelect:"P/M基本情報",
+    userKoumokuItems:["P/M基本情報","手配情報","標準時間マスタ","購買情報","在庫情報"],
+    userShougiSelect:"手配情報",
+    userShougiItems:["手配情報","製作情報","購買情報","在庫情報","保守情報","販売価格情報","P/S情報","代替部品情報"],
+    APIJSON: [{ 
+    SOUSA: "", 
+    PART_NO: "", 
+    PART_REV_NO: "" ,
+    PART_NAME_LOC1:"",
+    ISSUE_NO:"",
+    ISSUE_DATE:"",
+    CHG_NO:"",
+    DWG_NO:"",
+    DWG_REV_NO:"",
+    SEQ_NO:""
+    }],
+    //表示データ
+    Page_data:[],
+    tab_menu:["手配","製作","購買","入出庫","在庫","保守","PC/SP","P/S","代替",],
+    search_width : "0%",
+    table_width: "0%",
+    tab_width : "100%",
+    PM_height : "40vh",
+    Teihai_height : "36.3vh",
+    showHeader : false,
+    Header_Data:[{
+    PART_NO:"",
+    PART_REV_NO:"",
+    PART_NAME_LOC1:"",
+    UPD_WHO:"",
+    UPD_NAME:"",
+    UPD_WHEN:"",
+    ENT_WHO:"",
+    ENT_NAME:"",
+    ENT_WHEN:"",
+    REV_START_DATE:"",
+    REV_STOP_DATE:"",
+    M_START_DATE:"",
+    M_STOP_DATE:"",
+    APP_CUR_TYPE:"",
+    }],
+    kaiteiTableHeader:[
+    {text:"改訂",value:"PART_REV_NO"},
+    {text:"使用開始日（当改訂）",value:"REV_START_DATE"},
+    {text:"使用止め日（当改訂）",value:"REV_STOP_DATE"},
+    {text:"使用開始日（当保守）",value:"M_START_DATE"},
+    {text:"使用止め日（当保守）",value:"M_STOP_DATE"},
+    {text:"更新者",value:"UPD_WHO"},
+    {text:"更新日",value:"UPD_WHEN"},
+    {text:"承",value:"APP_CUR_TYPE"},
+    ],
+    Editinfo_Header:[
+    {text:"項目名",value:"FIELD_NAME_LOC1",width:"200px" },
+    {text:"値",value:"FIELD_VALUE",width:"200px"},
+    {text:"",value:"CELL_TYPE"},
+    {text:"説明",value:"FIELD_EXPLAIN"}
+],
+    EditInfo_Value:[],
+    dialogEditInfo : false,
+    EditdialogItemNo:"",
+    EditdialogFIELD_NAME:"",
+    EditIndex:"",
+}),
+computed:{
+    /** システムタイトル */
+    title() {
+      return this.$config.SYSTEM_TITLE
     },
-    methods:{
-        Editinfo(item){
-            const url = "http://localhost:59272/api/KensakuBtnGet";
-            const params = {
-                Edit_PART_NO : item.PART_NO,
-                Edit_REV_NO : item.PART_REV_NO,
-            }
+    /** プロセス */
+    process() {
+      return this.$config.PROCESS
+    },
+    /** プロセス名 */
+    processName() {
+      return this.$config.PROCESS_NAME
+    },
+    /** バージョン */
+    ver() {
+      return this.$config.VER
+    },
+    ...mapState(['authority', 'isSso']),
+    /** シングルサインオンの情報(storeから) */
+    ...mapState('fujitecSso', ['userId', 'userName', 'departmentName']),
+    /** ダークモード(middleware で localStorage からロード済み) */
+    dark: {
+      get() {
+        return this.$vuetify.theme.dark
+      },
+      set(val) {
+        this.$vuetify.theme.dark = val
+        // localStorage に保存
+        localStorage.setItem('vuetify_theme_dark', val ? '1' : '0')
+      },
+    },
+    /** ログアウト表示・非表示(SSO認証なし、FIND-PAGEアプリ経由は非表示) */
+    dispLogout() {
+      return (
+        this.isSso &&
+        !location.origin.match(/https:\/\/mobileapi.fujitec.co.jp/)
+      )
+    },
+    dialogKouteiCodeTableHeader(){
+        return[
+        {
+            text:"工程コード",
+            value:"KT_CODE",
+            width:"120px",
+            filter: value =>{
+                if(!this.KT_CODE) return true
+                if(value.indexOf(this.KT_CODE))
+                    return false
+                else
+                    return true
+            },
+        },
+        {
+            text:"WC",
+            value:"WC_CODE",
+            width:"80px",
+            filter: value =>{
+                if(!this.WC_CODE) return true
+                if(value.indexOf(this.WC_CODE))
+                    return false
+                else
+                    return true
+            },
+        },
+        {
+            text:"CC",
+            value:"CC_CODE",
+            width:"80px",
+            filter: value =>{
+                if(!this.CC_CODE) return true
+                if(value.indexOf(this.CC_CODE))
+                    return false
+                else
+                    return true
+            },
+        },
+        {
+            text:"SG",
+            value:"SG_CODE",
+            width:"80px",
+            filter: value =>{
+                if(!this.SG_CODE) return true
+                if(value.indexOf(this.SG_CODE))
+                    return false
+                else
+                    return true
+            },
+        },
+        {text:"工程順",value:"SEQ_NO",width:"90px"},
+        {text:"準備段取り時間",value:"SETUP_STDTIME",width:"150px"},
+        {text:"準備作業時間",value:"WORK_STDTIME",width:"150px"},
+        {text:"正社員比率",value:"SEI_STDPCNT",width:"150px"},
+        {text:"備考",value:"REMARKS",width:"150px"},
+        {text:"使用開始日",value:"START_DATE",width:"150px"},
+        {text:"使用止め日",value:"STOP_DATE",width:"150px"},
+        {text:"更新者",value:"UPD_WHO",width:"150px"},
+        {text:"更新日時",value:"UPP_WHEN",width:"150px"},
+        {text:"登録日",value:"ENT_DATE",width:"150px"},
+        ]
+    },
+    
+},
+methods:{
+    Editinfo(item){
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const params = {
+            Edit_PART_NO : item.PART_NO,
+            Edit_REV_NO : item.PART_REV_NO,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.EditInfo_Value = res.data
+        }).catch(err=>{
+
+        })
+    }
+    ,
+    OpenCloseNav(){
+        this.drawer = !this.drawer;
+        if(this.drawer)
+        {
+            this.CheckWidth_state()
+            this.search_width = "22%";
+            this.table_width = "32%";
+            this.tab_width = "46%";
+        }
+        else
+        {
+            this.mini= false;
+            this.mini2=false;
+            this.table_width_state = false;
+            this.search_width = "0%";
+            this.table_width = "0%";
+            this.tab_width = "100%"; 
+            this.PM_height = "40vh";
+            this.Teihai_height = "36.3vh";
+        }
+    },
+    getKensakuBtn1(){
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const params = {
+            PART_NO : this.buhincode,
+            PART_NAME_LOC1 : this.buhinmei,
+            FIND_OPTION : this.selectBuhin.substring(0,1),
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.APIJSON = res.data
+        }).catch(err=>{
+
+        })
+    },
+    getKensakuBtn2(){
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const params = {
+            PRODUCT_TYPE : this.selectSeihin.substring(0,1),
+            ISSUE_DATE_1 : this.hakkouDate1,
+            ISSUE_DATE_2 : this.hakkouDate2,
+            DWG_CHG_DATE_1 : this.kirikaeDate1,
+            DWG_CHG_DATE_2 : this.kirikaeDate2,
+            CHG_NO : this.kirikaeTsuuchi,
+            ISSUE_NO : this.hakkoTsuuchi,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.APIJSON = res.data
+        }).catch(err=>{
+
+        })
+    },
+    getSokoType(){
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        var JSON_RES=[{CM_CODE:"",CM_CODE_SETUMEI:"", }]
+        var ITEM=[];
+        const params ={
+            CM_KOUNO : "010"
+        }
+        if(this.shousaiSokoCodeCheckbox){
             this.$axios.get(url,{params}).then(res =>{
-                this.EditInfo_Value = res.data
+            JSON_RES = res.data;
+            JSON_RES.forEach(index => {
+                ITEM.push(index.CM_CODE + "*" +index.CM_CODE_SETUMEI);
+            });
+            ITEM.push("--*全工房対象");
+            this.shousaiItemsSouko = ITEM;
             }).catch(err=>{
 
             })
         }
-        ,
-        OpenCloseNav(){
-            this.drawer = !this.drawer;
-            if(this.drawer)
-            {
-                this.search_width = "22%";
-                this.table_width = "32%";
-                this.tab_width = "46%";
-            }
-            else
-            {
-                this.mini= false;
-                this.mini2=false;
-                this.search_width = "0%";
-                this.table_width = "0%";
-                this.tab_width = "100%"; 
-            }
-        },
-        getKensakuBtn1(){
-            const url = "http://localhost:59272/api/KensakuBtnGet";
-            const params = {
-                PART_NO : this.buhincode,
-                PART_NAME_LOC1 : this.buhinmei,
-                FIND_OPTION : this.selectBuhin.substring(0,1),
-            }
+    },
+    getSoko(){
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const params={
+                CM_KOUNO : "310",
+                data3 :this.shousaiSelectSouko.substring(0,1),
+        }
+        if(this.shousaiSokoCodeCheckbox){
             this.$axios.get(url,{params}).then(res =>{
-                this.APIJSON = res.data
+                this.shousaiZaikoItems = res.data;
             }).catch(err=>{
 
             })
-        },
-        getKensakuBtn2(){
-            const url = "http://localhost:59272/api/KensakuBtnGet";
-            const params = {
-                PRODUCT_TYPE : this.selectSeihin.substring(0,1),
-                ISSUE_DATE_1 : this.hakkouDate1,
-                ISSUE_DATE_2 : this.hakkouDate2,
-                DWG_CHG_DATE_1 : this.kirikaeDate1,
-                DWG_CHG_DATE_2 : this.kirikaeDate2,
-                CHG_NO : this.kirikaeTsuuchi,
-                ISSUE_NO : this.hakkoTsuuchi,
-            }
+        }
+    },
+    getClearKouteiCodeText(){
+        this.KT_CODE ="";
+        this.WC_CODE ="";
+        this.CC_CODE ="";
+        this.SG_CODE ="";
+    },
+    getShousaiKensaku(){
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        var pWhCode_value=[];
+        if(this.shousaiSokoCodeCheckbox)
+        {
+            this.shousaiZaikoSelected.forEach(value =>{
+                pWhCode_value.push(value.CM_CODE);//倉庫コード
+            })
+        }
+        const params = {
+            PART_NO : this.shousaiBuhincode,//部品コード
+            PART_NO_OPTION : this.shousaiSelectBuhin.substring(0,1),//部品コード検索方法
+            PART_NAME_LOC1 : this.shousaiBuhinmei,//部品名
+            PART_NAME_LOC1_OPTION : this.shousaiSelectBuhinmei.substring(0,1),//部品名検索方法
+            MAINT_PART_NAME: this.shousaiHoshuu,//保守部品名
+            MAINT_PART_NAME_OPTION : this.shousaiSelectHoshu.substring(0,1),//保守部品名検索方法
+            DWG_NO : this.shousaiZuban,//図番
+            DWG_NO_OPTION : this.shousaiSelectZuban.substring(0,1),//図番検索方法
+            ISSUE_DATE_1 : this.shousaihyoujunDate1,//標準図発行日1
+            ISSUE_DATE_2 : this.shousaihyoujunDate2,//標準図発行日２
+            PRODUCT_CODE : this.shousaiSeihinbunruiCode,//製品分類コード
+            PART_TYPE : this.shousaiBuhinkubun,//部品区分
+            PDM_TYPE : this.shousaiPDM,//PDM判定
+            MACHINE_TYPE : this.shousaikishuu,//機種
+            SELLING_PRICE_TYPE : this.shousaiKakakuSetttei.substring(0,1),//価格設定
+            MAKER_PART_NO : this.shousaiMakerKataban,//メーカー型番
+            PLANT_NO : this.shousaiKoban,//工場区分
+            MFG_TYPE : this.shousaiNaigai,//内外作区分
+            STOCK_TYPE : this.shousaiChozou,//貯蔵区分
+            ARR_BRANCH_CODE : this.shousaiKanriTenshou,//管理店所
+            ARR_WHO : this.shousaiZaikoTantou,//在庫担当
+            PO_BRANCH_CODE : this.shousaiHachuTenshou,//発注店所
+            PO_WHO : this.shousaiHachuTantou,//発注担当
+            BUCKET : this.shousaiBacker,//バケット
+            ORDER_TYPE : this.shousaiKanriKijun,//管理基準
+            ABC_TYPE : this.shousaiABCKanriCodeKubun,//ABC区分
+            STOCK_CODE : this.shousaiZaikoKanriCode,//在庫管理コード
+            ROUTING_CODE : this.shousaiKoteiCode,//工程コード
+            VENDOR_CODE: this.shousaiTorisakiCode,//取引先コード
+            SG_CODE : this.shousaiSagyouCode,//作業コード
+            ckUselWHCode_Checked :this.shousaiSokoCodeCheckbox,//倉庫コードチェックボックス
+            pWhCode:pWhCode_value,//倉庫コード
+            LOCATION:this.shousaiTanban,//置場/棚番
+            SOKO_TANTO:this.shousaiSokotantou,//倉庫担当
+            PS_FLAG:this.shousaiPStenkai,//P/S展開区分
+            AUTO_PURCHASE_REQ:this.shousaiJidouKounyuu,//自動購入指示
+            ckMoreZero_Checked:this.shousaiZaikoZeroCheckBox,//在庫数チェックボックス
+            CURRENT_BALANCE_1:this.shousaiZaikousuu1,//在庫数１
+            CURRENT_BALANCE_2:this.shousaiZaikousuu2,//在庫数２
+            eStockAmount_1:this.shousaiZaikouKingaku1,//在庫金額１
+            eStockAmount_2:this.shousaiZaikouKingaku2,//在庫金額２
+            YOTEI_TANKA_1:this.shousaihyoujunTanka1,//標準単価１
+            YOTEI_TANKA_2:this.shousaihyoujunTanka2,//標準単価２
+            ckNoReceipt_Checked:this.shousaiNyuukoubiCheck,//最終入庫日チェックボックス
+            LAST_RECEIPT_DATE_1:this.shousaiNyuukoDate1,//最終入庫日１
+            LAST_RECEIPT_DATE_2:this.shousaiNyuukoDate2,//最終入庫日２
+            ckNoIssue_Checked:this.shousaiShukkobiCheck,//最終出庫日チェックボックス
+            LAST_ISSUE_DATE_1:this.shousaiShukkokoDate1,//最終出庫日１
+            LAST_ISSUE_DATE_2:this.shousaiShukkokoDate2,//最終出庫日２
+            STOCK_START_DATE_1:this.shousaiChozouKaishiDate1,//貯蔵開始日１
+            STOCK_START_DATE_2:this.shousaiChozouKaishiDate2,//貯蔵開始日２
+            STOCK_STOP_FlAG:this.shousaiChoushiYoutei,//貯蔵中止予定
+            STOCK_STOP_DATE:this.shousaiChoushi,//貯蔵止め
+            PART_LOCATION:this.shousaiBui,//部位
+            MAINT_TYPE:this.shousaiHoshuHantei.substring(0,1),//保守判定
+            ckPPPMMAINTMS2_notEdit_Checked:this.shousaiCheckBox1,//図面発行後、二次判定が一度も設定されていないもの。
+            ckPCEntandSPNoEnt_Checked:this.shousaiCheckBox2,//製造原価登録済且つ販売価格未登録部品
+            ckRepairRepEnt_Checked:this.shousaiCheckBox3,//修理提案書利用
+            ckPartDescAndRepReason_Checked:this.shousaiCheckBox4,//部品説明or取替理由が未登録
+            ckNoPhoto_Checked:this.shousaiCheckBox5,//写真未登録
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.APIJSON = res.data;
+        }).catch(err=>{
+
+        })
+        this.shousaiDialog = false;
+    },
+    getDialogKoumoku(KoumokuNo,KoumokuName){
+        this.dialogKoumokuNO = KoumokuNo;
+        this.dialogKoumokuName = KoumokuName;
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const params ={
+            CM_KOUNO : this.dialogKoumokuNO,
+            START_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            STOP_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+        }
             this.$axios.get(url,{params}).then(res =>{
-                this.APIJSON = res.data
-            }).catch(err=>{
+            this.dialogKoumokuTableItem = res.data;
+            this.dialogEnableDate_1 = Math.min(...this.dialogKoumokuTableItem.map(value =>value.START_DATE));
+            this.dialogEnableDate_2 = Math.max(...this.dialogKoumokuTableItem.map(value =>value.STOP_DATE));
+        }).catch(err=>{
 
-            })
-        },
-        getSokoType(){
-            const url = "http://localhost:59272/api/KensakuBtnGet";
-            var JSON_RES=[{CM_CODE:"",CM_CODE_SETUMEI:"", }]
-            var ITEM=[];
-            const params ={
-                CM_KOUNO : "010"
-            }
-            if(this.shousaiSokoCodeCheckbox){
-                this.$axios.get(url,{params}).then(res =>{
-                JSON_RES = res.data;
-                JSON_RES.forEach(index => {
-                    ITEM.push(index.CM_CODE + "*" +index.CM_CODE_SETUMEI);
-                });
-                ITEM.push("--*全工房対象");
-                this.shousaiItemsSouko = ITEM;
-                }).catch(err=>{
-
-                })
-            }
-        },
-       getSoko(){
-            const url = "http://localhost:59272/api/KensakuBtnGet";
-            const params={
-                 CM_KOUNO : "310",
-                 data3 :this.shousaiSelectSouko.substring(0,1),
-            }
-            if(this.shousaiSokoCodeCheckbox){
-                this.$axios.get(url,{params}).then(res =>{
-                    this.shousaiZaikoItems = res.data;
-                }).catch(err=>{
-
-                })
-            }
-       },
-        getClearKouteiCodeText(){
-            this.KT_CODE ="";
-            this.WC_CODE ="";
-            this.CC_CODE ="";
-            this.SG_CODE ="";
-        },
-        getShousaiKensaku(){
-            const url = "http://localhost:59272/api/KensakuBtnGet";
-            var pWhCode_value=[];
-            if(this.shousaiSokoCodeCheckbox)
-            {
-                this.shousaiZaikoSelected.forEach(value =>{
-                    pWhCode_value.push(value.CM_CODE);//倉庫コード
-                })
-            }
-            const params = {
-                PART_NO : this.shousaiBuhincode,//部品コード
-                PART_NO_OPTION : this.shousaiSelectBuhin.substring(0,1),//部品コード検索方法
-                PART_NAME_LOC1 : this.shousaiBuhinmei,//部品名
-                PART_NAME_LOC1_OPTION : this.shousaiSelectBuhinmei.substring(0,1),//部品名検索方法
-                MAINT_PART_NAME: this.shousaiHoshuu,//保守部品名
-                MAINT_PART_NAME_OPTION : this.shousaiSelectHoshu.substring(0,1),//保守部品名検索方法
-                DWG_NO : this.shousaiZuban,//図番
-                DWG_NO_OPTION : this.shousaiSelectZuban.substring(0,1),//図番検索方法
-                ISSUE_DATE_1 : this.shousaihyoujunDate1,//標準図発行日1
-                ISSUE_DATE_2 : this.shousaihyoujunDate2,//標準図発行日２
-                PRODUCT_CODE : this.shousaiSeihinbunruiCode,//製品分類コード
-                PART_TYPE : this.shousaiBuhinkubun,//部品区分
-                PDM_TYPE : this.shousaiPDM,//PDM判定
-                MACHINE_TYPE : this.shousaikishuu,//機種
-                SELLING_PRICE_TYPE : this.shousaiKakakuSetttei.substring(0,1),//価格設定
-                MAKER_PART_NO : this.shousaiMakerKataban,//メーカー型番
-                PLANT_NO : this.shousaiKoban,//工場区分
-                MFG_TYPE : this.shousaiNaigai,//内外作区分
-                STOCK_TYPE : this.shousaiChozou,//貯蔵区分
-                ARR_BRANCH_CODE : this.shousaiKanriTenshou,//管理店所
-                ARR_WHO : this.shousaiZaikoTantou,//在庫担当
-                PO_BRANCH_CODE : this.shousaiHachuTenshou,//発注店所
-                PO_WHO : this.shousaiHachuTantou,//発注担当
-                BUCKET : this.shousaiBacker,//バケット
-                ORDER_TYPE : this.shousaiKanriKijun,//管理基準
-                ABC_TYPE : this.shousaiABCKanriCodeKubun,//ABC区分
-                STOCK_CODE : this.shousaiZaikoKanriCode,//在庫管理コード
-                ROUTING_CODE : this.shousaiKoteiCode,//工程コード
-                VENDOR_CODE: this.shousaiTorisakiCode,//取引先コード
-                SG_CODE : this.shousaiSagyouCode,//作業コード
-                ckUselWHCode_Checked :this.shousaiSokoCodeCheckbox,//倉庫コードチェックボックス
-                pWhCode:pWhCode_value,//倉庫コード
-                LOCATION:this.shousaiTanban,//置場/棚番
-                SOKO_TANTO:this.shousaiSokotantou,//倉庫担当
-                PS_FLAG:this.shousaiPStenkai,//P/S展開区分
-                AUTO_PURCHASE_REQ:this.shousaiJidouKounyuu,//自動購入指示
-                ckMoreZero_Checked:this.shousaiZaikoZeroCheckBox,//在庫数チェックボックス
-                CURRENT_BALANCE_1:this.shousaiZaikousuu1,//在庫数１
-                CURRENT_BALANCE_2:this.shousaiZaikousuu2,//在庫数２
-                eStockAmount_1:this.shousaiZaikouKingaku1,//在庫金額１
-                eStockAmount_2:this.shousaiZaikouKingaku2,//在庫金額２
-                YOTEI_TANKA_1:this.shousaihyoujunTanka1,//標準単価１
-                YOTEI_TANKA_2:this.shousaihyoujunTanka2,//標準単価２
-                ckNoReceipt_Checked:this.shousaiNyuukoubiCheck,//最終入庫日チェックボックス
-                LAST_RECEIPT_DATE_1:this.shousaiNyuukoDate1,//最終入庫日１
-                LAST_RECEIPT_DATE_2:this.shousaiNyuukoDate2,//最終入庫日２
-                ckNoIssue_Checked:this.shousaiShukkobiCheck,//最終出庫日チェックボックス
-                LAST_ISSUE_DATE_1:this.shousaiShukkokoDate1,//最終出庫日１
-                LAST_ISSUE_DATE_2:this.shousaiShukkokoDate2,//最終出庫日２
-                STOCK_START_DATE_1:this.shousaiChozouKaishiDate1,//貯蔵開始日１
-                STOCK_START_DATE_2:this.shousaiChozouKaishiDate2,//貯蔵開始日２
-                STOCK_STOP_FlAG:this.shousaiChoushiYoutei,//貯蔵中止予定
-                STOCK_STOP_DATE:this.shousaiChoushi,//貯蔵止め
-                PART_LOCATION:this.shousaiBui,//部位
-                MAINT_TYPE:this.shousaiHoshuHantei.substring(0,1),//保守判定
-                ckPPPMMAINTMS2_notEdit_Checked:this.shousaiCheckBox1,//図面発行後、二次判定が一度も設定されていないもの。
-                ckPCEntandSPNoEnt_Checked:this.shousaiCheckBox2,//製造原価登録済且つ販売価格未登録部品
-                ckRepairRepEnt_Checked:this.shousaiCheckBox3,//修理提案書利用
-                ckPartDescAndRepReason_Checked:this.shousaiCheckBox4,//部品説明or取替理由が未登録
-                ckNoPhoto_Checked:this.shousaiCheckBox5,//写真未登録
-            }
-            this.$axios.get(url,{params}).then(res =>{
-                this.APIJSON = res.data;
-            }).catch(err=>{
-
-            })
-            this.shousaiDialog = false;
-        },
-        getDialogKoumoku(KoumokuNo,KoumokuName){
-            this.dialogKoumokuNO = KoumokuNo;
-            this.dialogKoumokuName = KoumokuName;
-            const url = "http://localhost:59272/api/KensakuBtnGet";
-            const params ={
-                CM_KOUNO : this.dialogKoumokuNO,
-                START_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-                STOP_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-            }
-             this.$axios.get(url,{params}).then(res =>{
-                this.dialogKoumokuTableItem = res.data;
-                this.dialogEnableDate_1 = Math.min(...this.dialogKoumokuTableItem.map(value =>value.START_DATE));
-                this.dialogEnableDate_2 = Math.max(...this.dialogKoumokuTableItem.map(value =>value.STOP_DATE));
-            }).catch(err=>{
-
-            })
-        },
-        getDialogKouteiCode_Init(){
-            const url = "http://localhost:59272/api/KensakuBtnGet";
-            let cur_date = new Date(Date.now());
-            cur_date.setDate(cur_date.getDate());
-            const params = {
-                KT_START_DATE : cur_date.toISOString().substr(0, 10),
-                KT_STOP_DATE  : cur_date.toISOString().substr(0, 10),
-            }
-            this.$axios.get(url,{params}).then(res =>{
-                this.dialogKouteiCodeTableItem = res.data;
-                
-            }).catch(err=>{
-                
-            })
-            this.dialogKouteiCode = false;
-        },
-        getHeaderInfo(value){
-            const url = "http://localhost:59272/api/KensakuBtnGet";
+        })
+    },
+    getDialogKouteiCode_Init(){
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        let cur_date = new Date(Date.now());
+        cur_date.setDate(cur_date.getDate());
+        const params = {
+            KT_START_DATE : cur_date.toISOString().substr(0, 10),
+            KT_STOP_DATE  : cur_date.toISOString().substr(0, 10),
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.dialogKouteiCodeTableItem = res.data;
             
-            const params = {
-                Table_Id : value,
-            }
-            this.$axios.get(url,{params}).then(res =>{
-                this.Header_Data = res.data;
-                this.showHeader = true;
-            }).catch(err=>{
-                
-            })
-        },
-        getSeihinbunruiCodeFromDialog(){
-            this.shousaiSeihinbunruiCode = this.dialogKoumokuTableSelected[0].CM_CODE;
-            this.dialogSeihinbunru = false;
-            this.dialogKoumokuTableSelected =[];
-        },
-        getBuhinkubaFromDialog(){
-            this.shousaiBuhinkubun = this.dialogKoumokuTableSelected[0].CM_CODE;
-            this.dialogBuhinkubun = false;
-            this.dialogKoumokuTableSelected =[];
-        },
-        getPDMFromDialog(){
-            this.shousaiPDM = this.dialogKoumokuTableSelected[0].CM_CODE;
-            this.dialogPDM = false;
-            this.dialogKoumokuTableSelected =[];
-        },
-        getkishuuFromDialog(){
-            this.shousaikishuu = this.dialogKoumokuTableSelected[0].CM_CODE;
-            this.dialogKishuu = false;
-            this.dialogKoumokuTableSelected =[];
-        },
-        getNaigaiFromDialog(){
-            this.shousaiNaigai = this.dialogKoumokuTableSelected[0].CM_CODE;
-            this.dialogNaigai = false;
-            this.dialogKoumokuTableSelected =[];
-        },
-        getKanriKijunFromDialog(){
-            this.shousaiKanriKijun = this.dialogKoumokuTableSelected[0].CM_CODE;
-            this.dialogKanriKijun = false;
-            this.dialogKoumokuTableSelected =[];
-        },
-        getABCKanriCodeKubunFromDialog(){
-            this.shousaiABCKanriCodeKubun = this.dialogKoumokuTableSelected[0].CM_CODE;
-            this.dialogABCKanriCodeKubun = false;
-            this.dialogKoumokuTableSelected =[];
-        },
-        getKouteicode(){
-            this.shousaiKoteiCode = this.dialogKouteiCodeTableSelected[0].KT_CODE;
-            this.dialogKouteiCode = false;
-            this.dialogKouteiCodeTableSelected =[];
-        },
-        getEditInfoDialog(){
-            this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogKoumokuTableSelected[0].CM_CODE;
-            this.dialogEditInfo = false;
-            this.dialogKoumokuTableSelected =[];
-        },
-        getEditBtnClick(value,ITEM_NO,NAME_LOC1){
-            this.dialogEditInfo = true;
-            this.EditIndex = value;
-            this.EditdialogItemNo = ITEM_NO;
-            this.EditdialogFIELD_NAME= NAME_LOC1;
-            this.getDialogKoumoku(this.EditdialogItemNo,this.EditdialogFIELD_NAME);
-        },
-        changeSearchMiniWidth(){
-            this.mini = !this.mini;
-            this.CheckWidth_state();
-        },
-        changeTableMiniWidth(){
-            this.mini2 = !this.mini2;
-            this.CheckWidth_state();
-           
-        },
-        changeTableWidth(){
-            this.table_width_state = !this.table_width_state;
-            this.CheckWidth_state();
+        }).catch(err=>{
+            
+        })
+        this.dialogKouteiCode = false;
+    },
+    getHeaderInfo(value){
+        const url = "http://localhost:59272/api/KensakuBtnGet";
         
-        },
-        CheckWidth_state(){
-            this.table_width = this.table_width_state?"48%":(this.mini?"32%":"32%");
-            this.tab_width = this.mini? (this.mini2?"94%":this.table_width_state?"49%":"65%")
-                                        :(this.mini2?"75%":this.table_width_state?"45%":"46%");
-        },
-        changeCalendarHyouJun(value){
-            let cur_date = new Date(Date.now());
-            cur_date.setDate(cur_date.getDate()-value);
-            this.shousaihyoujunDate1 = cur_date.toISOString().substr(0, 10);
-            this.shousaihyoujunDate2 = cur_date.toISOString().substr(0, 10);
-        },
-        changeCalendarHakko(value){
-            let cur_date = new Date(Date.now());
-            cur_date.setDate(cur_date.getDate()-value);
-            this.hakkouDate1 = cur_date.toISOString().substr(0, 10);
-            this.hakkouDate2 = cur_date.toISOString().substr(0, 10);
-        },
-        changeCalendarKirikae(value){
-            let cur_date = new Date(Date.now());
-            cur_date.setDate(cur_date.getDate()-value);
-            this.kirikaeDate1 = cur_date.toISOString().substr(0, 10);
-            this.kirikaeDate2 = cur_date.toISOString().substr(0, 10);
-        },
+        const params = {
+            Table_Id : value,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.Header_Data = res.data;
+            this.showHeader = true;
+        }).catch(err=>{
+            
+        })
+    },
+    getSeihinbunruiCodeFromDialog(){
+        this.shousaiSeihinbunruiCode = this.dialogKoumokuTableSelected[0].CM_CODE;
+        this.dialogSeihinbunru = false;
+        this.dialogKoumokuTableSelected =[];
+    },
+    getBuhinkubaFromDialog(){
+        this.shousaiBuhinkubun = this.dialogKoumokuTableSelected[0].CM_CODE;
+        this.dialogBuhinkubun = false;
+        this.dialogKoumokuTableSelected =[];
+    },
+    getPDMFromDialog(){
+        this.shousaiPDM = this.dialogKoumokuTableSelected[0].CM_CODE;
+        this.dialogPDM = false;
+        this.dialogKoumokuTableSelected =[];
+    },
+    getkishuuFromDialog(){
+        this.shousaikishuu = this.dialogKoumokuTableSelected[0].CM_CODE;
+        this.dialogKishuu = false;
+        this.dialogKoumokuTableSelected =[];
+    },
+    getNaigaiFromDialog(){
+        this.shousaiNaigai = this.dialogKoumokuTableSelected[0].CM_CODE;
+        this.dialogNaigai = false;
+        this.dialogKoumokuTableSelected =[];
+    },
+    getKanriKijunFromDialog(){
+        this.shousaiKanriKijun = this.dialogKoumokuTableSelected[0].CM_CODE;
+        this.dialogKanriKijun = false;
+        this.dialogKoumokuTableSelected =[];
+    },
+    getABCKanriCodeKubunFromDialog(){
+        this.shousaiABCKanriCodeKubun = this.dialogKoumokuTableSelected[0].CM_CODE;
+        this.dialogABCKanriCodeKubun = false;
+        this.dialogKoumokuTableSelected =[];
+    },
+    getKouteicode(){
+        this.shousaiKoteiCode = this.dialogKouteiCodeTableSelected[0].KT_CODE;
+        this.dialogKouteiCode = false;
+        this.dialogKouteiCodeTableSelected =[];
+    },
+    getEditInfoDialog(){
+        this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogKoumokuTableSelected[0].CM_CODE;
+        this.dialogEditInfo = false;
+        this.dialogKoumokuTableSelected =[];
+    },
+    getEditBtnClick(value,ITEM_NO,NAME_LOC1){
+        this.dialogEditInfo = true;
+        this.EditIndex = value;
+        this.EditdialogItemNo = ITEM_NO;
+        this.EditdialogFIELD_NAME= NAME_LOC1;
+        this.getDialogKoumoku(this.EditdialogItemNo,this.EditdialogFIELD_NAME);
+    },
+    changeSearchMiniWidth(){
+        this.mini = !this.mini;
+        this.CheckWidth_state();
+    },
+    changeTableMiniWidth(){
+        this.mini2 = !this.mini2;
+        this.CheckWidth_state();
         
-        //詳細検索クリアパラメータ
-        shousaiClear(){
-            this.shousaiBuhincode="";
-            this.shousaiBuhinmei="";
-            this.shousaiHoshuu="";
-            this.shousaiZuban="";
-            this.shousaiKoban="";
-            this.shousaiTanban="";
-            this.shousaiSokotantou="";
-            this.shousaiPStenkai="";
-            this.shousaiJidouKounyuu="";
-            this.shousaiSeihinbunruiCode="";
-            this.shousaiBuhinkubun="";
-            this.shousaiPDM="";
-            this.shousaikishuu="";
-            this.shousaiMakerKataban="";
-            this.shousaiNaigai="";
-            this.shousaiChozou="";
-            this.shousaiKanriTenshou="";
-            this.shousaiZaikoTantou="";
-            this.shousaiHachuTenshou="";
-            this.shousaiHachuTantou="";
-            this.shousaiBacker="";
-            this.shousaiKanriKijun="";
-            this.shousaiABCKanriCodeKubun="";
-            this.shousaiZaikoKanriCode="";
-            this.shousaiZaikousuu1="";
-            this.shousaiZaikousuu2="";
-            this.shousaiZaikouKingaku1="";
-            this.shousaiZaikouKingaku2="";
-            this.shousaihyoujunTanka1="";
-            this.shousaihyoujunTanka2="";
-            this.shousaiChoushiYoutei="";
-            this.shousaiChoushi="";
-            this.shousaiTorisakiCode="";
-            this.shousaiKoteiCode="";
-            this.shousaiSagyouCode="";
-            this.shousaiBui="";
-            this.shousaiKakakuSetttei="-";
-            this.shousaiHoshuHantei="-";
-            this.shousaiNyuukoubiCheck=false;
-            this.shousaiShukkobiCheck=false;
-            this.shousaiZaikoZeroCheckBox=false;
-            this.shousaiSelectBuhin="1:前方一致";
-            this.shousaiSelectBuhinmei="3:部分一致";
-            this.shousaiSelectHoshu="3:部分一致";
-            this.shousaiSelectZuban="1:前方一致";
-            this.shousaihyoujunMenu1= false;
-            this.shousaihyoujunMenu2= false;
-            this.shousaiNyuukoMenu1=false;
-            this.shousaiNyuukoMenu2=false;
-            this.shousaiShukkokoMenu1=false;
-            this.shousaiShukkokoMenu2=false;
-            this.shousaiChozouKaishiMenu1=false;
-            this.shousaiChozouKaishiMenu2=false;
-            this.shousaiCheckBox1=false;
-            this.shousaiCheckBox2=false;
-            this.shousaiCheckBox3=false;
-            this.shousaiCheckBox4=false;
-            this.shousaiCheckBox5=false;
-            this.shousaiSelectSouko="--";
-            this.shousaiZaikoSelected= [];
-            this.shousaiSokoCodeCheckbox=false;
-            this.toggle_none=0;
-            this.shousaihyoujunDate1="";
-            this.shousaihyoujunDate2="";
-            this.shousaiNyuukoDate1="";
-            this.shousaiNyuukoDate2="";
-            this.shousaiShukkokoDate1="";
-            this.shousaiShukkokoDate2="";
-            this.shousaiChozouKaishiDate1="";
-            this.shousaiChozouKaishiDate2="";
-        },
-    }
-  }
+    },
+    changeTableWidth(){
+        this.table_width_state = !this.table_width_state;
+        this.CheckWidth_state();
+    
+    },
+    CheckWidth_state(){
+        this.table_width = this.table_width_state?(this.mini?"48%":"78%"):"32%";
+        this.tab_width = this.mini? (this.mini2?"94%":this.table_width_state?"49%":"65%")
+                                    :(this.mini2?"75%":this.table_width_state?"45%":"46%");
+        this.Teihai_height = this.mini? (this.mini2?"36.3vh":this.table_width_state?"30vh":"36.3vh")
+                                    :(this.mini2?"36.3vh":this.table_width_state?"45%":"30vh"); ;
+        this.PM_height = this.mini? (this.mini2?"40vh":this.table_width_state?"31.5vh":"40vh")
+                                    :(this.mini2?"40vh":this.table_width_state?"45%":"31.5vh");;
+    },
+    changeCalendarHyouJun(value){
+        let cur_date = new Date(Date.now());
+        cur_date.setDate(cur_date.getDate()-value);
+        this.shousaihyoujunDate1 = cur_date.toISOString().substr(0, 10);
+        this.shousaihyoujunDate2 = cur_date.toISOString().substr(0, 10);
+    },
+    changeCalendarHakko(value){
+        let cur_date = new Date(Date.now());
+        cur_date.setDate(cur_date.getDate()-value);
+        this.hakkouDate1 = cur_date.toISOString().substr(0, 10);
+        this.hakkouDate2 = cur_date.toISOString().substr(0, 10);
+    },
+    changeCalendarKirikae(value){
+        let cur_date = new Date(Date.now());
+        cur_date.setDate(cur_date.getDate()-value);
+        this.kirikaeDate1 = cur_date.toISOString().substr(0, 10);
+        this.kirikaeDate2 = cur_date.toISOString().substr(0, 10);
+    },
+    
+    //詳細検索クリアパラメータ
+    shousaiClear(){
+        this.shousaiBuhincode="";
+        this.shousaiBuhinmei="";
+        this.shousaiHoshuu="";
+        this.shousaiZuban="";
+        this.shousaiKoban="";
+        this.shousaiTanban="";
+        this.shousaiSokotantou="";
+        this.shousaiPStenkai="";
+        this.shousaiJidouKounyuu="";
+        this.shousaiSeihinbunruiCode="";
+        this.shousaiBuhinkubun="";
+        this.shousaiPDM="";
+        this.shousaikishuu="";
+        this.shousaiMakerKataban="";
+        this.shousaiNaigai="";
+        this.shousaiChozou="";
+        this.shousaiKanriTenshou="";
+        this.shousaiZaikoTantou="";
+        this.shousaiHachuTenshou="";
+        this.shousaiHachuTantou="";
+        this.shousaiBacker="";
+        this.shousaiKanriKijun="";
+        this.shousaiABCKanriCodeKubun="";
+        this.shousaiZaikoKanriCode="";
+        this.shousaiZaikousuu1="";
+        this.shousaiZaikousuu2="";
+        this.shousaiZaikouKingaku1="";
+        this.shousaiZaikouKingaku2="";
+        this.shousaihyoujunTanka1="";
+        this.shousaihyoujunTanka2="";
+        this.shousaiChoushiYoutei="";
+        this.shousaiChoushi="";
+        this.shousaiTorisakiCode="";
+        this.shousaiKoteiCode="";
+        this.shousaiSagyouCode="";
+        this.shousaiBui="";
+        this.shousaiKakakuSetttei="-";
+        this.shousaiHoshuHantei="-";
+        this.shousaiNyuukoubiCheck=false;
+        this.shousaiShukkobiCheck=false;
+        this.shousaiZaikoZeroCheckBox=false;
+        this.shousaiSelectBuhin="1:前方一致";
+        this.shousaiSelectBuhinmei="3:部分一致";
+        this.shousaiSelectHoshu="3:部分一致";
+        this.shousaiSelectZuban="1:前方一致";
+        this.shousaihyoujunMenu1= false;
+        this.shousaihyoujunMenu2= false;
+        this.shousaiNyuukoMenu1=false;
+        this.shousaiNyuukoMenu2=false;
+        this.shousaiShukkokoMenu1=false;
+        this.shousaiShukkokoMenu2=false;
+        this.shousaiChozouKaishiMenu1=false;
+        this.shousaiChozouKaishiMenu2=false;
+        this.shousaiCheckBox1=false;
+        this.shousaiCheckBox2=false;
+        this.shousaiCheckBox3=false;
+        this.shousaiCheckBox4=false;
+        this.shousaiCheckBox5=false;
+        this.shousaiSelectSouko="--";
+        this.shousaiZaikoSelected= [];
+        this.shousaiSokoCodeCheckbox=false;
+        this.toggle_none=0;
+        this.shousaihyoujunDate1="";
+        this.shousaihyoujunDate2="";
+        this.shousaiNyuukoDate1="";
+        this.shousaiNyuukoDate2="";
+        this.shousaiShukkokoDate1="";
+        this.shousaiShukkokoDate2="";
+        this.shousaiChozouKaishiDate1="";
+        this.shousaiChozouKaishiDate2="";
+    },
+}
+}
 </script>
 
 <style>
-    .v-text-field .v-input__control .v-input__slot {
-        min-height: auto !important;
-        display: flex !important;
-        align-items: center !important;
-        font-size:0.8em;
-        height: 25px;
+.v-text-field .v-input__control .v-input__slot {
+    min-height: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    font-size:0.8em;
+    height: 25px;
+}
+p {
+    margin-bottom: -4pt !important ;
+    font-size:0.8em;
+}
+.v-radio label {
+    font-size:0.8em;
+}
+.left-input input {
+    text-align: left;
     }
-    p {
-        margin-bottom: -4pt !important ;
-        font-size:0.8em;
-    }
-    .v-radio label {
-        font-size:0.8em;
-    }
-    .left-input input {
-        text-align: left;
-      }
 
-      .center-input input {
-        text-align: center;
-      }
+    .center-input input {
+    text-align: center;
+    }
 
-      .right-input input {
-        text-align: right;
-      }
+    .right-input input {
+    text-align: right;
+    }
 </style>
 
