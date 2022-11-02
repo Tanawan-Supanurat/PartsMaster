@@ -2332,6 +2332,7 @@
                         {{tab_name}}
                     </v-tab>
                 </v-tabs>
+                <!--  手配画面表示 -->
                 <v-container fluid>
                     <v-card outlined shaped tile>
                         <v-row no-gutters>
@@ -2376,13 +2377,13 @@
                         <v-col cols="6" sm="6">
                             <v-card>   
                                 <v-row no-gutters>
-                                    <v-col class="ml-2">
+                                    <v-col class="ml-2 mt-2">
                                         <h3>P/M基本情報</h3>
                                     </v-col>
                                     <v-spacer>
                                     </v-spacer>
                                     <v-col class="d-flex">
-                                        <v-btn class = "ml-auto" outlined small>フィルター</v-btn>
+                                        <v-btn class = "ml-auto mr-2 my-1 " outlined small>フィルター</v-btn>
                                     </v-col>
                                 </v-row>
                                 <v-data-table
@@ -2390,14 +2391,26 @@
                                  :items="this.EditInfo_Value"
                                  :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                  dense
+                                 hide-default-footer
                                  height="400"
                                 >
                                 <template v-slot:item.CELL_TYPE="{item}">
-                                   <v-btn 
-                                   v-if="item.CELL_TYPE == 'B'"
-                                   x-small 
-                                   @click="getEditBtnClick(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1)"
-                                   >...</v-btn>
+                                    <v-div v-if="item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'">
+                                        <v-btn 
+                                        x-small 
+                                        @click="getEditBtnClick(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1)"
+                                        >...</v-btn>
+                                    </v-div>
+                                </template>
+                                <template v-slot:item.FIELD_VALUE="{item}">
+                                    <v-text-field
+                                        :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                        :disabled = "item.AUTH_TYPE == '2'?false:true"
+                                        :filled= "item.AUTH_TYPE == '2'?false:true"
+                                        v-model = EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_VALUE
+                                        outlined
+                                        dense>
+                                    </v-text-field>
                                 </template>
                                 </v-data-table>
                             </v-card>
@@ -2405,23 +2418,24 @@
                         <v-col cols ="6" sm ="6">
                             <v-card>
                                 <v-row no-gutters>
-                                    <v-col class="ml-2">
-                                        <h4>手配情報</h4>
+                                    <v-col class = "ml-2 mt-2">
+                                        <h3>手配情報</h3>
                                     </v-col>
-                                    <v-col class="ml-2">
-                                        <p>工場区分</p>
+                                    <v-col class ="mt-2">
+                                        <h4>工場区分</h4>
                                     </v-col>
-                                    <v-spacer></v-spacer>
-                                    <v-col class="ml-2">
-                                        <v-text-field dense outlined></v-text-field>
+                                    <v-col>
+                                        <v-combobox class ="mt-2" dense outlined></v-combobox>
                                     </v-col >
                                         <v-checkbox
                                         hide-details
-                                        class="ml-2 mt-0"></v-checkbox>
-                                    <v-col sm="1">
-                                        <v-text-field dense outlined></v-text-field>
-
+                                        class="ml-2 mt-1"></v-checkbox>
+                                    <v-col class ="mr-2">
+                                        <v-combobox class ="mt-2" dense outlined></v-combobox>
                                     </v-col>
+                                </v-row>
+                                <v-row no-gutters>
+                                    <v-btn class = "ml-auto mr-2 my-1 mt-n5" outlined small>フィルター</v-btn>
                                 </v-row>
                                 <v-data-table>
                                 </v-data-table>
@@ -2714,10 +2728,9 @@
         {text:"更新日",value:"UPD_WHEN"},
         {text:"承",value:"APP_CUR_TYPE"},
       ],
-      Click:"Test Click",
       Editinfo_Header:[
         {text:"項目名",value:"FIELD_NAME_LOC1",width:"200px" },
-        {text:"値",value:"FIELD_VALUE"},
+        {text:"値",value:"FIELD_VALUE",width:"200px"},
         {text:"",value:"CELL_TYPE"},
         {text:"説明",value:"FIELD_EXPLAIN"}
     ],
@@ -2793,10 +2806,10 @@
     },
     methods:{
         Editinfo(item){
-            this.Click = item.PART_REV_NO;
             const url = "http://localhost:59272/api/KensakuBtnGet";
             const params = {
-                Edit_Id : "PPPMMS",
+                Edit_PART_NO : item.PART_NO,
+                Edit_REV_NO : item.PART_REV_NO,
             }
             this.$axios.get(url,{params}).then(res =>{
                 this.EditInfo_Value = res.data
@@ -3083,8 +3096,8 @@
         
         },
         CheckWidth_state(){
-            this.table_width = this.table_width_state?"70%":(this.mini?"48%":"32%");
-            this.tab_width = this.mini? (this.mini2?"94%":this.table_width_state?"27%":"49%")
+            this.table_width = this.table_width_state?"48%":(this.mini?"32%":"32%");
+            this.tab_width = this.mini? (this.mini2?"94%":this.table_width_state?"49%":"65%")
                                         :(this.mini2?"75%":this.table_width_state?"45%":"46%");
         },
         changeCalendarHyouJun(value){
@@ -3198,5 +3211,16 @@
     .v-radio label {
         font-size:0.8em;
     }
+    .left-input input {
+        text-align: left;
+      }
+
+      .center-input input {
+        text-align: center;
+      }
+
+      .right-input input {
+        text-align: right;
+      }
 </style>
 
