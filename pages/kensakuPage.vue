@@ -40,7 +40,7 @@
                         <v-col class="ml-8">
                             <br>
                             <v-card-text class="py-0 text-subtitle-1">
-                                ログインユーザー： {{userName}}
+                                ログインユーザー： {{userName}} 
                             </v-card-text>
                             <v-card-text class="py-0 my-2 text-subtitle-1">
                                 所属部課： {{departmentName}}
@@ -783,7 +783,7 @@
                                                                         <v-checkbox
                                                                         class="ml-2 mb-n5"
                                                                         v-model="shousaiSokoCodeCheckbox"
-                                                                        @change="getSokoType()"
+                                                                        @change="getSokoType(true)"
                                                                         label="倉庫コードを指定する。"
                                                                         ></v-checkbox>
                                                                     </v-row>
@@ -2322,6 +2322,7 @@
              :width = tab_width
             >
                 <v-tabs
+                 v-model="tab_select"
                  background-color="cyan"
                  dark
                 >
@@ -2334,7 +2335,8 @@
                     </v-tab>
                 </v-tabs>
                 <!--  手配画面表示 -->
-                <v-container fluid>
+                <div v-if="tab_select == 0">
+                    <v-container fluid>
                     <v-card outlined shaped tile>
                         <v-row no-gutters>
                             <v-col cols="10" sm="10">
@@ -2359,122 +2361,206 @@
                         
                         <v-card-text v-if ="!this.showHeader"></v-card-text>
                     </v-card>
-                </v-container>
-                <v-container fluid>
-                    <v-card>
-                        <v-data-table
-                         :headers="kaiteiTableHeader"
-                         :items="Header_Data"
-                         item-key="PART_REV_NO"
-                         :sort-by="['PART_REV_NO']"
-                         dense
-                         @click:row="Editinfo" 
-                        >
-                        </v-data-table>
-                    </v-card>
-                </v-container >
-                <v-container fluid>
-                    <v-row>
-                        <v-col cols="6" sm="6">
-                            <v-card>   
-                                <v-row no-gutters>
-                                    <v-col class="ml-2 mt-2">
-                                        <h3>P/M基本情報</h3>
-                                    </v-col>
-                                    <v-spacer>
-                                    </v-spacer>
-                                    <v-col class="d-flex">
-                                        <v-btn class = "ml-auto mr-2 my-1 mt-2 " outlined small>フィルター</v-btn>
-                                    </v-col>
-                                </v-row>
-                                <v-data-table
-                                 :headers="this.Editinfo_Header"
-                                 :items="this.EditInfo_Value"
-                                 :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                 dense
-                                 hide-default-footer
-                                 :height="PM_height"
-                                >
-                                <template v-slot:item.CELL_TYPE="{item}">
-                                    <v-div v-if="item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'">
+                    </v-container>
+                    <v-container fluid>
+                        <v-card>
+                            <v-data-table
+                            :headers="kaiteiTableHeader"
+                            :items="Header_Data"
+                            item-key="PART_REV_NO"
+                            :sort-by="['PART_REV_NO']"
+                            dense
+                            @click:row="Editinfo" 
+                            >
+                            </v-data-table>
+                        </v-card>
+                    </v-container >
+                    <v-container fluid>
+                        <v-row>
+                            <v-col cols="6" sm="6">
+                                <v-card>   
+                                    <v-row no-gutters>
+                                        <v-col class="ml-2 mt-2">
+                                            <h3>P/M基本情報</h3>
+                                        </v-col>
+                                        <v-spacer>
+                                        </v-spacer>
+                                        <v-col class="d-flex">
+                                            <v-btn class = "ml-auto mr-2 my-1 mt-2 " outlined small>フィルター</v-btn>
+                                        </v-col>
+                                    </v-row>
+                                    <v-data-table
+                                    :headers="this.Editinfo_Header"
+                                    :items="this.EditInfo_Value"
+                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                    dense
+                                    hide-default-footer
+                                    :height="PM_height"
+                                    >
+                                    <template v-slot:item.CELL_TYPE="{item}">
                                         <v-btn 
+                                        v-if="item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
                                         x-small 
                                         @click="getEditBtnClick(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1)"
                                         >...</v-btn>
-                                    </v-div>
-                                </template>
-                                <template v-slot:item.FIELD_VALUE="{item}">
-                                    <v-text-field
-                                        :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
-                                        :disabled = "item.AUTH_TYPE == '2'?false:true"
-                                        :filled= "item.AUTH_TYPE == '2'?false:true"
-                                        v-model = EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_VALUE
-                                        outlined
-                                        dense>
-                                    </v-text-field>
-                                </template>
-                                </v-data-table>
-                            </v-card>
-                        </v-col>
-                        <v-col cols ="6" sm ="6">
-                            <v-card>
-                                <v-row no-gutters>
-                                    <v-col class = "ml-2 mt-2">
-                                        <h3>手配情報</h3>
-                                    </v-col>
-                                    <v-col class ="mt-2">
-                                        <h4>工場区分</h4>
-                                    </v-col>
-                                    <v-col>
-                                        <v-combobox class ="mt-2" dense outlined></v-combobox>
-                                    </v-col >
-                                        <v-checkbox
-                                        hide-details
-                                        class="ml-2 mt-1"></v-checkbox>
-                                    <v-col class ="mr-2">
-                                        <v-combobox class ="mt-2" dense outlined></v-combobox>
-                                    </v-col>
-                                </v-row>
-                                <v-row no-gutters>
-                                    <v-btn class = "ml-auto mr-2 my-1 mt-n5" outlined small>フィルター</v-btn>
-                                </v-row>
-                                <v-data-table
-                                 :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                 dense
-                                 hide-default-footer
-                                 :height="Teihai_height"
-                                >
-                                </v-data-table>
-                            </v-card>
-                        </v-col>    
-                    </v-row>
-                </v-container>
-                <v-container fluid>
-                    <v-row no-gutters justify="end">
-                        <v-col class="d-flex flex-row-reverse" >
-                            <v-btn large>
-                                <v-icon
-                                    left
-                                    dark
-                                    large
-                                >
-                                mdi-content-save
-                                </v-icon>
-                                <h3>保存</h3>
-                            </v-btn>
-                            <v-btn class="mr-2" large>
-                                <v-icon
-                                    left
-                                    dark
-                                    large
-                                >
-                                    mdi-close-box-outline
-                                </v-icon> 
-                                <h3>閉じる</h3>
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                </v-container>
+                                    </template>
+                                    <template v-slot:item.FIELD_VALUE="{item}">
+                                        <v-text-field
+                                            :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                            :disabled = "item.AUTH_TYPE == '2'?false:true"
+                                            :filled= "item.AUTH_TYPE == '2'?false:true"
+                                            :counter ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                            v-model = EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_VALUE
+                                            outlined
+                                            dense>
+                                        </v-text-field>
+                                    </template>
+                                    </v-data-table>
+                                </v-card>
+                            </v-col>
+                            <v-col cols ="6" sm ="6">
+                                <v-card>
+                                    <v-row no-gutters>
+                                        <v-col class = "ml-2 mt-2">
+                                            <h3>手配情報</h3>
+                                        </v-col>
+                                        <v-col class ="mt-2">
+                                            <h4>工場区分</h4>
+                                        </v-col>
+                                        <v-col>
+                                            <v-combobox 
+                                            v-model="Edit_Combobox_1_select"
+                                            :items = "Edit_Combobox_1_item"
+                                            class ="mt-2" 
+                                            dense 
+                                            outlined>
+                                        </v-combobox>
+                                        </v-col >
+                                            <v-checkbox
+                                            v-model="Edit_checkbox"
+                                            hide-details
+                                            class="ml-2 mt-1">
+                                        </v-checkbox>
+                                        <v-col class ="mr-2">
+                                            <v-combobox 
+                                            v-model="Edit_Combobox_2_select"
+                                            :items = "Edit_Combobox_2_item"
+                                            :disabled= Edit_checkbox?false:true
+                                            class ="mt-2" 
+                                            dense 
+                                            outlined>
+                                        </v-combobox>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row no-gutters>
+                                        <v-btn class = "ml-auto mr-2 my-1 mt-n5" outlined small>フィルター</v-btn>
+                                    </v-row>
+                                    <v-data-table
+                                    :headers="this.Editinfo2_Header"
+                                    :items="this.EditInfo2_Value"
+                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                    dense
+                                    hide-default-footer
+                                    :height="Teihai_height"
+                                    >
+                                        <template v-slot:item.CELL_TYPE="{item}">
+                                                <v-btn 
+                                                v-if="item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                                x-small 
+                                                @click="getEditBtnClick(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1)"
+                                                >...</v-btn>
+                                        </template>
+                                        <template v-slot:item.FIELD_VALUE="{item}">
+                                            <v-text-field
+                                                :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                :disabled = "item.AUTH_TYPE == '2'?false:true"
+                                                :filled= "item.AUTH_TYPE == '2'?false:true"
+                                                :counter ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                v-model = EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_VALUE
+                                                outlined
+                                                dense>
+                                            </v-text-field>
+                                        </template>
+                                    </v-data-table>
+                                </v-card>
+                            </v-col>    
+                        </v-row>
+                    </v-container>
+                    <v-container fluid>
+                        <v-row no-gutters justify="end">
+                            <v-col class="d-flex flex-row-reverse" >
+                                <v-btn large>
+                                    <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                    mdi-content-save
+                                    </v-icon>
+                                    <h3>保存</h3>
+                                </v-btn>
+                                <v-btn class="mr-2" large>
+                                    <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                        mdi-close-box-outline
+                                    </v-icon> 
+                                    <h3>閉じる</h3>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </div>
+                <!-- 製作画面表示 -->
+                <div v-if="tab_select == 1">
+                    <v-container>
+                        <h1>製作画面</h1>
+                    </v-container>
+                </div>
+                <!-- 購買画面表示 -->
+                <div v-if="tab_select == 2">
+                    <v-container>
+                        <h1>購買画面</h1>
+                    </v-container>
+                </div>
+                <!-- 入出庫画面表示 -->
+                <div v-if="tab_select == 3">
+                    <v-container>
+                        <h1>入出庫画面</h1>
+                    </v-container>
+                </div>
+                <!-- 在庫画面表示 -->
+                <div v-if="tab_select == 4">
+                    <v-container>
+                        <h1>在庫画面</h1>
+                    </v-container>
+                </div>
+                <!-- 保守画面表示 -->
+                <div v-if="tab_select == 5">
+                    <v-container>
+                        <h1>保守画面</h1>
+                    </v-container>
+                </div>
+                <!-- PC/SP画面表示 -->
+                <div v-if="tab_select == 6">
+                    <v-container>
+                        <h1>PC/SP画面</h1>
+                    </v-container>
+                </div>
+                <!-- P/S画面表示 -->
+                <div v-if="tab_select == 7">
+                    <v-container>
+                        <h1>P/S画面</h1>
+                    </v-container>
+                </div>
+                <!-- 切替画面表示 -->
+                <div v-if="tab_select == 8">
+                    <v-container>
+                        <h1>切替画面</h1>
+                    </v-container>
+                </div>
                 <v-dialog
                     v-model="dialogEditInfo"
                     width="700"
@@ -2729,6 +2815,7 @@ data: () => ({
     }],
     //表示データ
     Page_data:[],
+    tab_select:"",
     tab_menu:["手配","製作","購買","入出庫","在庫","保守","PC/SP","P/S","代替",],
     search_width : "0%",
     table_width: "0%",
@@ -2767,12 +2854,24 @@ data: () => ({
     {text:"値",value:"FIELD_VALUE",width:"200px"},
     {text:"",value:"CELL_TYPE"},
     {text:"説明",value:"FIELD_EXPLAIN"}
-],
+    ],
+    Editinfo2_Header:[
+    {text:"項目名",value:"FIELD_NAME_LOC1",width:"200px" },
+    {text:"値",value:"FIELD_VALUE",width:"200px"},
+    {text:"",value:"CELL_TYPE"},
+    {text:"説明",value:"FIELD_EXPLAIN"}
+    ],
     EditInfo_Value:[],
+    EditInfo2_Value:[],
     dialogEditInfo : false,
     EditdialogItemNo:"",
     EditdialogFIELD_NAME:"",
     EditIndex:"",
+    Edit_Combobox_1_select:"",
+    Edit_Combobox_1_item:[],
+    Edit_Combobox_2_select:"",
+    Edit_Combobox_2_item:[],
+    Edit_checkbox : false,
 }),
 computed:{
     /** システムタイトル */
@@ -2878,18 +2977,29 @@ computed:{
 },
 methods:{
     Editinfo(item){
+        this.getEditTable(item.PART_NO,item.PART_REV_NO,1);
+        this.getEditTable(item.PART_NO,item.PART_REV_NO,2);
+    },
+    getEditTable(Part_NO,REV_NO,Table_NO){
         const url = "http://localhost:59272/api/KensakuBtnGet";
         const params = {
-            Edit_PART_NO : item.PART_NO,
-            Edit_REV_NO : item.PART_REV_NO,
+            Edit_PART_NO : Part_NO,
+            Edit_REV_NO : REV_NO,
         }
         this.$axios.get(url,{params}).then(res =>{
-            this.EditInfo_Value = res.data
+            if(Table_NO == 1)
+            {
+                this.EditInfo_Value = res.data;
+            }
+            else if(Table_NO == 2)
+            {
+                this.EditInfo2_Value = res.data;
+                this.getSokoType(false);
+            }
         }).catch(err=>{
 
         })
-    }
-    ,
+    },
     OpenCloseNav(){
         this.drawer = !this.drawer;
         if(this.drawer)
@@ -2941,21 +3051,30 @@ methods:{
 
         })
     },
-    getSokoType(){
+    getSokoType(value){
         const url = "http://localhost:59272/api/KensakuBtnGet";
         var JSON_RES=[{CM_CODE:"",CM_CODE_SETUMEI:"", }]
         var ITEM=[];
         const params ={
             CM_KOUNO : "010"
         }
-        if(this.shousaiSokoCodeCheckbox){
+        if(this.shousaiSokoCodeCheckbox || !value){
             this.$axios.get(url,{params}).then(res =>{
             JSON_RES = res.data;
             JSON_RES.forEach(index => {
                 ITEM.push(index.CM_CODE + "*" +index.CM_CODE_SETUMEI);
             });
             ITEM.push("--*全工房対象");
+
+           if(value)
+           {
             this.shousaiItemsSouko = ITEM;
+           }
+            else
+            {
+                this.Edit_Combobox_1_item = ITEM;
+                this.Edit_Combobox_2_item = ITEM;
+            }
             }).catch(err=>{
 
             })
