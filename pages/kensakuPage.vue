@@ -2985,6 +2985,7 @@ methods:{
         const params = {
             Edit_PART_NO : Part_NO,
             Edit_REV_NO : REV_NO,
+            USER_ID :"20A85",
         }
         this.$axios.get(url,{params}).then(res =>{
             if(Table_NO == 1)
