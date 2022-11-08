@@ -2335,6 +2335,12 @@
                     </v-tab>
                 </v-tabs>
                 <!--  手配画面表示 -->
+                <v-text-field
+                    v-model="Test_userID"
+                    label="Enter USER_ID"
+                    >
+                </v-text-field>
+                
                 <div v-if="tab_select == 0">
                     <v-container fluid>
                     <v-card outlined shaped tile>
@@ -2370,6 +2376,7 @@
                             item-key="PART_REV_NO"
                             :sort-by="['PART_REV_NO']"
                             dense
+                            hide-default-footer
                             @click:row="Editinfo" 
                             >
                             </v-data-table>
@@ -2394,20 +2401,37 @@
                                     :items="this.EditInfo_Value"
                                     :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                     dense
-                                    hide-default-footer
                                     :height="PM_height"
                                     >
                                     <template v-slot:item.CELL_TYPE="{item}">
+                                        <!--  共用マスター -->
                                         <v-btn 
-                                        v-if="item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                        v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
                                         x-small 
-                                        @click="getEditBtnClick(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1)"
+                                        @click="getEditDialogBtn1(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1)"
+                                        >...</v-btn>
+                                        <!-- 注文コードマスター -->
+                                        <v-btn
+                                        v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2'&& item.CELL_TYPE == 'B'"
+                                        @click = "getEditDialogBtn2()"
+                                        x-small
+                                        >...</v-btn>
+                                        <!-- 担当コードマスター -->
+                                        <v-btn
+                                        v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                        @click = "getEditDialogBtn3()"
+                                        x-small
+                                        >...</v-btn>
+                                        <v-btn
+                                        v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                        @click = "getEditDialogBtn4()"
+                                        x-small
                                         >...</v-btn>
                                     </template>
                                     <template v-slot:item.FIELD_VALUE="{item}">
                                         <v-text-field
                                             :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
-                                            :disabled = "item.AUTH_TYPE == '2'?false:true"
+                                            :disabled = "item.AUTH_TYPE == '2' && EditRevDate_Eable ?false:true"
                                             :filled= "item.AUTH_TYPE == '2'?false:true"
                                             :counter ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
                                             v-model = EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_VALUE
@@ -2460,20 +2484,37 @@
                                     :items="this.EditInfo2_Value"
                                     :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                     dense
-                                    hide-default-footer
                                     :height="Teihai_height"
                                     >
                                         <template v-slot:item.CELL_TYPE="{item}">
-                                                <v-btn 
-                                                v-if="item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
-                                                x-small 
-                                                @click="getEditBtnClick(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1)"
-                                                >...</v-btn>
+                                            <!--  共用マスター -->
+                                            <v-btn 
+                                            v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                            x-small 
+                                            @click="getEditDialogBtn1(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1)"
+                                            >...</v-btn>
+                                            <!-- 注文コードマスター -->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                            x-small
+                                            @click = "getEditDialogBtn2()"
+                                            >...</v-btn>
+                                            <!-- 担当コードマスター -->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                            x-small
+                                            @click = "getEditDialogBtn3()"
+                                            >...</v-btn>
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                            @click = "getEditDialogBtn4()"
+                                            x-small
+                                            >...</v-btn>
                                         </template>
                                         <template v-slot:item.FIELD_VALUE="{item}">
                                             <v-text-field
                                                 :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
-                                                :disabled = "item.AUTH_TYPE == '2'?false:true"
+                                                :disabled = "item.AUTH_TYPE == '2' && EditRevDate_Eable?false:true"
                                                 :filled= "item.AUTH_TYPE == '2'?false:true"
                                                 :counter ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
                                                 v-model = EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_VALUE
@@ -2567,7 +2608,10 @@
                 >
                 <v-card>
                     <v-system-bar window>
-                            <span>PMRA0191 参照画面（共用マスタ）</span>
+                            <span v-if="this.EditdialogStatus =='1' ">PMRA0191 参照画面（共用マスタ）</span>
+                            <span v-if="this.EditdialogStatus =='2' ">PMRA0194 参照画面（注文書コードマスター）</span>
+                            <span v-if="this.EditdialogStatus =='3' ">PMRA0195 参照画面（担当コードマスター）</span>
+                            <span v-if="this.EditdialogStatus =='4' ">PMRA0195 参照画面（単位読替マスター）</span>
                             <v-spacer></v-spacer>
                             <v-btn small @click="dialogEditInfo = false">
                                 <v-icon>mdi-close</v-icon>
@@ -2579,13 +2623,24 @@
                                 <span>参照画面</span>
                             </v-col>
                             <v-col sm=5>
-
-                                <p>項目No.{{dialogKoumokuNO}}:{{dialogKoumokuName}} Index :{{this.EditIndex}}</p>
-                                <p>項目の有効期限{{dialogEnableDate_1}}~{{dialogEnableDate_2}}</p>
+                                <div v-if="this.EditdialogStatus == '1'">
+                                    <p>項目No.{{dialogKoumokuNO}}:{{dialogKoumokuName}} Index :{{this.EditIndex}}</p>
+                                    <p>項目の有効期限{{dialogEnableDate_1}}~{{dialogEnableDate_2}}</p>
+                                </div>
+                                <div v-if="this.EditdialogStatus == '2'">
+                                
+                                </div>
+                                <div v-if="this.EditdialogStatus == '3'">
+                                
+                                </div>
+                                <div v-if="this.EditdialogStatus == '4'">
+                                
+                                </div>
                             </v-col>
                         </v-row>
                         <v-row>
                             <v-data-table
+                            v-if="this.EditdialogStatus == '1'"
                             v-model="dialogKoumokuTableSelected"
                             :headers ="dialogKoumokuTableHeader"
                             :items ="dialogKoumokuTableItem"
@@ -2596,7 +2651,45 @@
                             dense
                             height="500px"
                             show-select
-                            
+                            ></v-data-table>
+                            <v-data-table
+                            v-if="this.EditdialogStatus == '2'"
+                            v-model="dialogChoumonSelected"
+                            :headers ="dialogChoumonHeader"
+                            :items ="dialogChoumonItem"
+                            :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                            fixed-header
+                            singleSelect
+                            item-key="CH_CODE"
+                            dense
+                            height="500px"
+                            show-select
+                            ></v-data-table>
+                            <v-data-table
+                            v-if="this.EditdialogStatus == '3'"
+                            v-model="dialogTantouSelected"
+                            :headers ="dialogTantouHeader"
+                            :items ="dialogTantouItem"
+                            :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                            fixed-header
+                            singleSelect
+                            item-key="TANTO_CODE"
+                            dense
+                            height="500px"
+                            show-select
+                            ></v-data-table>
+                            <v-data-table
+                            v-if="this.EditdialogStatus == '4'"
+                            v-model="dialogTantaiSelected"
+                            :headers ="dialogTantaiHeader"
+                            :items ="dialogTantaiItem"
+                            :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                            fixed-header
+                            singleSelect
+                            item-key="TANI"
+                            dense
+                            height="500px"
+                            show-select
                             ></v-data-table>
                         </v-row>
                         <br>
@@ -2768,12 +2861,43 @@ data: () => ({
     dialogEnableDate_2:"",
     dialogKoumokuTableSelected:[],
     dialogKoumokuTableHeader:[
-    {text:"コード",value:"CM_CODE",},
-    {text:"コード説明",value:"CM_CODE_SETUMEI",width:"300px"},
-    {text:"使用開始日",value:"START_DATE"},
-    {text:"使用止め日",value:"STOP_DATE"},
+        {text:"コード",value:"CM_CODE",},
+        {text:"コード説明",value:"CM_CODE_SETUMEI",width:"300px"},
+        {text:"使用開始日",value:"START_DATE"},
+        {text:"使用止め日",value:"STOP_DATE"},
     ],
     dialogKoumokuTableItem:[],
+    dialogChoumonHeader:[
+        {text : "コード",value:"CH_CODE",},
+        {text :"コード説明",value:"CH_CODE_SETUMEI_1",width:"300px"},
+        {text :"使用開始日",value:"START_DATE"},
+        {text :"使用止め日",value:"STOP_DATE" },
+    ],
+    dialogChoumonItem:[],
+    dialogChoumonSelected:[],
+    dialogTantouHeader:[
+        {text:"担当コード",value:"TANTO_CODE"},
+        {text:"個人コード",value:"USER_ID"},
+        {text:"担当名",value:"USER_NAME"},
+        {text:"使用開始日",value:"START_DATE"},
+        {text:"使用止め日",value:"STOP_DATE"},
+    ],
+    dialogTantouItem:[],
+    dialogTantouSelected:[],
+    dialogTantaiHeader:[
+        {text:"TANI",value:"TANI"},
+        {text:"LANGUAGE",value:"LANGUAGE"},
+        {text:"TANI_X",value:"TANI_X"},
+        {text:"TANIS_X",value:"TANIS_X"},
+        {text:"UPD_WHO",value:"UPD_WHO"},
+        {text:"UPD_WHEN",value:"UPD_WHEN"},
+        {text:"ENT_DATE",value:"ENT_DATE"},
+        {text:"TANI_DIV_FLAG",value:"TANI_DIV_FLAG"},
+        {text:"COUNTABLE_TYPE",value:"COUNTABLE_TYPE"},
+        {text:"CONV_FLAG",value:"CONV_FLAG"},
+    ],
+    dialogTantaiItem:[],
+    dialogTantaiSelected:[],
     dialogKouteiCodeTableSelected:[],
     dialogKouteiCodeTableItem:[],
     KT_CODE:"",
@@ -2864,6 +2988,7 @@ data: () => ({
     EditInfo_Value:[],
     EditInfo2_Value:[],
     dialogEditInfo : false,
+    EditdialogStatus :"",
     EditdialogItemNo:"",
     EditdialogFIELD_NAME:"",
     EditIndex:"",
@@ -2872,6 +2997,10 @@ data: () => ({
     Edit_Combobox_2_select:"",
     Edit_Combobox_2_item:[],
     Edit_checkbox : false,
+    Test_userID : "2085",
+    EditRevDate_Eable : false,
+    TODAY:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+
 }),
 computed:{
     /** システムタイトル */
@@ -2977,6 +3106,15 @@ computed:{
 },
 methods:{
     Editinfo(item){
+        var TODAY_STR = this.TODAY.substr(0,4)+this.TODAY.substr(5,2)+this.TODAY.substr(8,2);
+        if(TODAY_STR >= item.REV_START_DATE && TODAY_STR <= item.REV_STOP_DATE)
+        {
+            this.EditRevDate_Eable = true;
+        }
+        else
+        {
+            this.EditRevDate_Eable = false;
+        }
         this.getEditTable(item.PART_NO,item.PART_REV_NO,1);
         this.getEditTable(item.PART_NO,item.PART_REV_NO,2);
     },
@@ -2985,7 +3123,7 @@ methods:{
         const params = {
             Edit_PART_NO : Part_NO,
             Edit_REV_NO : REV_NO,
-            USER_ID :"20A85",
+            USER_ID : this.Test_userID,
         }
         this.$axios.get(url,{params}).then(res =>{
             if(Table_NO == 1)
@@ -3196,6 +3334,43 @@ methods:{
 
         })
     },
+    getdialogChoumon(){
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const params ={
+            CH_CODE:"CH_CODE",
+            START_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            STOP_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.dialogChoumonItem = res.data;
+        }).catch(err=>{
+
+        })
+    },
+    getdialogTantou(){
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const params ={
+            TANTO_CODE:"TANTO_CODE",
+            START_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            STOP_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.dialogTantouItem = res.data;
+        }).catch(err=>{
+        
+        })
+    },
+    getdialogTantai(){
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const params ={
+            TANI:"  ",
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.dialogTantaiItem = res.data;
+        }).catch(err=>{
+        
+        })
+    },
     getDialogKouteiCode_Init(){
         const url = "http://localhost:59272/api/KensakuBtnGet";
         let cur_date = new Date(Date.now());
@@ -3270,12 +3445,28 @@ methods:{
         this.dialogEditInfo = false;
         this.dialogKoumokuTableSelected =[];
     },
-    getEditBtnClick(value,ITEM_NO,NAME_LOC1){
+    getEditDialogBtn1(value,ITEM_NO,NAME_LOC1){
+        this.EditdialogStatus='1';
         this.dialogEditInfo = true;
         this.EditIndex = value;
         this.EditdialogItemNo = ITEM_NO;
         this.EditdialogFIELD_NAME= NAME_LOC1;
         this.getDialogKoumoku(this.EditdialogItemNo,this.EditdialogFIELD_NAME);
+    },
+    getEditDialogBtn2(){
+        this.EditdialogStatus='2';
+        this.dialogEditInfo = true;
+        this.getdialogChoumon();
+    },
+    getEditDialogBtn3(){
+        this.EditdialogStatus='3';
+        this.dialogEditInfo = true;
+        this.getdialogTantou();
+    },
+    getEditDialogBtn4(){
+        this.EditdialogStatus='4'
+        this.dialogEditInfo = true;
+        this.getdialogTantai();
     },
     changeSearchMiniWidth(){
         this.mini = !this.mini;
@@ -3392,7 +3583,7 @@ methods:{
         this.shousaiChozouKaishiDate1="";
         this.shousaiChozouKaishiDate2="";
     },
-}
+    }
 }
 </script>
 
