@@ -23,7 +23,7 @@ export default {
   // router (ベースURLを指定。middlewareを指定)
   router: {
     base: '/PartsMaster',
-    middleware: ['dark', 'fujitecSso'],
+    middleware: ['dark', 'fujitecSso','headerInfo'],
   },
 
   // server (すべてのIPからアクセス可。)
