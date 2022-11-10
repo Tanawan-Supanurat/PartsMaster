@@ -2377,7 +2377,21 @@
                             </v-col>
                             <v-spacer></v-spacer>
                             <v-col class="mt-10 mr-2">
-                            <v-btn icon><v-icon right>mdi-image</v-icon></v-btn>
+                              <v-menu offset-x offset-y>
+                                <template v-slot:activator ="{on,attrs}">
+                                    <v-btn v-bind ="attrs" v-on ="on"  icon><v-icon right>mdi-image</v-icon></v-btn>
+                                </template>
+                                <v-card width="300" height="300" >
+                                  <v-container>
+                                    <v-row> 
+                                      <v-col>
+                                        <h1 class="d-flex justify-center">{{HeaderPic_Loc}}</h1>
+                                      </v-col>
+                                    </v-row>
+                                  </v-container> 
+                                  </v-card>
+                              </v-menu>
+                            <v-btn icon v-if ="HeaderPic_Loc == '写真未登録'"><v-icon right>mdi-camera-plus</v-icon></v-btn>
                             </v-col>
                         </v-row>
     
@@ -2409,7 +2423,14 @@
                                         <v-spacer>
                                         </v-spacer>
                                         <v-col class="d-flex">
-                                            <v-btn class = "ml-auto mr-2 my-1 mt-2 " outlined small>フィルター</v-btn>
+                                            <v-text-field
+                                             class = "mt-2 mr-2"
+                                             v-model = "EditTableSearch1"
+                                             label = "フィルター"
+                                             hide-details
+                                             dense
+                                             outlined
+                                            ></v-text-field>
                                         </v-col>
                                     </v-row>
                                     <v-data-table
@@ -2418,6 +2439,7 @@
                                     :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                     hide-default-footer
                                     :height="PM_height"
+                                    :search="EditTableSearch1"
                                     dense
                                     >
                                     <template v-slot:item.CELL_TYPE="{item}">
@@ -2489,8 +2511,6 @@
                                           </template>
                                           <span>保存時に右の工場へデータをコピーする</span>
                                         </v-tooltip>
-                                        
-
                                         <v-col class ="mr-2">
                                             <v-combobox 
                                             v-model="Edit_Combobox_2_select"
@@ -2499,17 +2519,30 @@
                                             class ="mt-2" 
                                             dense 
                                             outlined>
-                                        </v-combobox>
+                                            </v-combobox>
                                         </v-col>
                                     </v-row>
                                     <v-row no-gutters>
-                                        <v-btn class = "ml-auto mr-2 my-1 mt-n5" outlined small>フィルター</v-btn>
+                                        <v-spacer></v-spacer>
+                                        <v-col sm="4">
+                                            <v-text-field
+                                            class = "mt-n4 mr-2"
+                                            v-model = "EditTableSearch2"
+                                            label = "フィルター"
+                                            hide-details
+                                            dense
+                                            outlined
+                                            ></v-text-field>
+                                        </v-col>
                                     </v-row>
+                                    
+                                    
                                     <v-data-table
                                     :headers="this.Editinfo2_Header"
                                     :items="this.EditInfo2_Value"
                                     :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                     hide-default-footer
+                                    :search="EditTableSearch2"
                                     :height="Teihai_height"
                                     dense
                                     >
@@ -3065,6 +3098,9 @@ export default {
     Pic_Loc:"",
     Edit_Combobox_PART_NO:"",
     EditInfoDialog_Staus :"",
+    HeaderPic_Loc :"",
+    EditTableSearch1:"",
+    EditTableSearch2:"",
   }),
   created(){
     this.setListener()
@@ -3183,6 +3219,7 @@ export default {
       {
         this.Header_Data =this.headerItem;
         this.showHeader = true;
+        this.getHeaderPic(this.Header_Data[this.Header_Data.length-1].PART_NO);
       }
     },
     open_new_tab(url){
@@ -3295,7 +3332,24 @@ export default {
           if(res.data != "")
             this.Pic_Loc = res.data[0].DOC_FILE_NAME
           else
-            this.Pic_Loc =""
+            this.Pic_Loc ="写真未登録"
+        }).catch(err=>{
+
+        })
+        }
+    },
+    getHeaderPic(PART_NO){
+      if(PART_NO != "")
+      {
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const params = {
+          PIC_PART_NO : PART_NO
+        }
+        this.$axios.get(url,{params}).then(res =>{
+          if(res.data != "")
+            this.HeaderPic_Loc = res.data[0].DOC_FILE_NAME
+          else
+            this.HeaderPic_Loc ="写真未登録"
         }).catch(err=>{
 
         })
@@ -3499,17 +3553,18 @@ export default {
         this.dialogKouteiCode = false;
     },
     getHeaderInfo(value){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
-        
-        const params = {
-            Table_Id : value,
-        }
-        this.$axios.get(url,{params}).then(res =>{
-            this.Header_Data = res.data;
-            this.showHeader = true;
-        }).catch(err=>{
-            
-        })
+      this.getHeaderPic(value);
+      const url = "http://localhost:59272/api/KensakuBtnGet";
+      
+      const params = {
+          Table_Id : value,
+      }
+      this.$axios.get(url,{params}).then(res =>{
+          this.Header_Data = res.data;
+          this.showHeader = true;
+      }).catch(err=>{
+          
+      })
     },
     getSeihinbunruiCodeFromDialog(){
         this.shousaiSeihinbunruiCode = this.dialogKoumokuTableSelected[0].CM_CODE;
