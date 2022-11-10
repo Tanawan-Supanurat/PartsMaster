@@ -2378,8 +2378,13 @@
                             <v-spacer></v-spacer>
                             <v-col class="mt-10 mr-2">
                               <v-menu offset-x offset-y>
-                                <template v-slot:activator ="{on,attrs}">
-                                    <v-btn v-bind ="attrs" v-on ="on"  icon><v-icon right>mdi-image</v-icon></v-btn>
+                                <template #activator ="{on:onMenu}">
+                                    <v-tooltip bottom>
+                                    <template #activator="{ on: onTooltip }">
+                                        <v-btn  v-on ="{...onMenu,...onTooltip}" icon><v-icon right>mdi-image</v-icon></v-btn>
+                                    </template>
+                                    <span>写真を表示</span>
+                                    </v-tooltip>
                                 </template>
                                 <v-card width="300" height="300" >
                                   <v-container>
@@ -2390,8 +2395,14 @@
                                     </v-row>
                                   </v-container> 
                                   </v-card>
-                              </v-menu>
-                            <v-btn icon v-if ="HeaderPic_Loc == '写真未登録'"><v-icon right>mdi-camera-plus</v-icon></v-btn>
+                                </v-menu>
+                                <v-tooltip bottom v-if ="HeaderPic_Loc == '写真未登録'">
+                                    <template #activator = {on:onTooltip}>
+                                        <v-btn v-on="onTooltip" icon ><v-icon right>mdi-camera-plus</v-icon></v-btn>
+                                    </template>
+                                    <span>未登録写真を追加</span>
+                                </v-tooltip>
+                                
                             </v-col>
                         </v-row>
     
@@ -2590,16 +2601,6 @@
                     <v-container fluid>
                         <v-row no-gutters justify="end">
                             <v-col class="d-flex flex-row-reverse" >
-                                <v-btn large>
-                                    <v-icon
-                                        left
-                                        dark
-                                        large
-                                    >
-                                    mdi-content-save
-                                    </v-icon>
-                                    <h3>保存</h3>
-                                </v-btn>
                                 <v-btn class="mr-2" large>
                                     <v-icon
                                         left
@@ -2609,6 +2610,16 @@
                                         mdi-close-box-outline
                                     </v-icon> 
                                     <h3>閉じる</h3>
+                                </v-btn>
+                                <v-btn class="mr-2" large>
+                                    <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                    mdi-content-save
+                                    </v-icon>
+                                    <h3>保存</h3>
                                 </v-btn>
                             </v-col>
                         </v-row>
