@@ -2079,7 +2079,7 @@
                                                                                         :items ="dialogKouteiCodeTableItem"
                                                                                         fixed-header
                                                                                         singleSelect
-                                                                                        item-key="KT_CODE"
+                                                                                        item-key="KT_CODE,SG_CODE,CC_CODE,WC_CODE"
                                                                                         dense
                                                                                         height="500px"
                                                                                         show-select
@@ -2460,7 +2460,7 @@
                                         x-small 
                                         @click="getEditDialogBtn1(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
                                         >...</v-btn>
-                                        <!-- 注文コードマスター -->
+                                        <!-- 注文コードマスター  -->
                                         <v-btn
                                         v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2'&& item.CELL_TYPE == 'B'"
                                         @click = "getEditDialogBtn2(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
@@ -2469,14 +2469,22 @@
                                         <!-- 担当コードマスター -->
                                         <v-btn
                                         v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
-                                        @click = "getEditDialogBtn3(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
+                                        @click = "getEditDialogBtn3(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),1)"
                                         x-small
                                         >...</v-btn>
+                                        <!--　単位読替マスター　　　-->
                                         <v-btn
                                         v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
-                                        @click = "getEditDialogBtn4(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
+                                        x-small
+                                        @click = "getEditDialogBtn4(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,2)"
+                                        >...</v-btn>
+                                        
+                                        <v-btn
+                                        v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                        @click ="getEditDialogBtn6(EditInfo_Value.indexOf(item),item.FIELD_NAME,1)"
                                         x-small
                                         >...</v-btn>
+                                        
                                     </template>
                                     <template v-slot:item.FIELD_VALUE="{item}">
                                         <v-text-field
@@ -2574,11 +2582,16 @@
                                             <v-btn
                                             v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
                                             x-small
-                                            @click = "getEditDialogBtn3(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                            @click = "getEditDialogBtn3(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
                                             >...</v-btn>
                                             <v-btn
                                             v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
-                                            @click = "getEditDialogBtn4(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                            @click = "getEditDialogBtn4(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,2)"
+                                            x-small
+                                            >...</v-btn>
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                            @click ="getEditDialogBtn6(EditInfo2_Value.indexOf(item),item.FIELD_NAME,2)"
                                             x-small
                                             >...</v-btn>
                                         </template>
@@ -2675,7 +2688,7 @@
                 </div>
                 <v-dialog
                     v-model="dialogEditInfo"
-                    width="700"
+                    :width="TabledialogWidth"
                 >
                 <v-card>
                     <v-system-bar window>
@@ -2720,7 +2733,7 @@
                             singleSelect
                             item-key="CM_CODE"
                             dense
-                            height="500px"
+                            :height="TableHeight"
                             show-select
                             ></v-data-table>
                             <v-data-table
@@ -2733,7 +2746,7 @@
                             singleSelect
                             item-key="CH_CODE"
                             dense
-                            height="500px"
+                            :height="TableHeight"
                             show-select
                             ></v-data-table>
                             <v-data-table
@@ -2746,7 +2759,7 @@
                             singleSelect
                             item-key="TANTO_CODE"
                             dense
-                            height="500px"
+                            :height="TableHeight"
                             show-select
                             ></v-data-table>
                             <v-data-table
@@ -2759,7 +2772,20 @@
                             singleSelect
                             item-key="TANI"
                             dense
-                            height="500px"
+                            :height="TableHeight"
+                            show-select
+                            ></v-data-table>
+                            <v-data-table
+                            v-if="this.EditdialogStatus == '6'"
+                            v-model="dialogArraySelected"
+                            :headers ="dialogArrayHeader"
+                            :items ="dialogArrayItem"
+                            :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                            fixed-header
+                            singleSelect
+                            item-key="ARRAY_VALUE"
+                            dense
+                            :height="TableHeight"
                             show-select
                             ></v-data-table>
                         </v-row>
@@ -3004,6 +3030,12 @@ export default {
     ],
     dialogTantaiItem:[],
     dialogTantaiSelected:[],
+    dialogArrayHeader:[
+        {text:"値",value:"ARRAY_VALUE"},
+        {text:"説明",value:"ARRAY_SETUMEI"}
+    ],
+    dialogArrayItem:[],
+    dialogArraySelected:[],
     dialogKouteiCodeTableSelected:[],
     dialogKouteiCodeTableItem:[],
     KT_CODE:"",
@@ -3112,6 +3144,8 @@ export default {
     HeaderPic_Loc :"",
     EditTableSearch1:"",
     EditTableSearch2:"",
+    TableHeight:"500px",
+    TabledialogWidth:"700px"
   }),
   created(){
     this.setListener()
@@ -3264,9 +3298,237 @@ export default {
         }
         this.$axios.get(url,{params}).then(res =>{
             this.EditInfo_Value = res.data;
+            console.log(this.EditInfo_Value);
+            this.EditInfo_Value.forEach(Row =>{
+                var index = this.EditInfo_Value.indexOf(Row);
+                this.getEditTableSetsumei(index,Row.FIELD_NAME);
+                console.log(index + "/" +this.EditInfo_Value.length);
+            })
         }).catch(err=>{
 
         })
+    },
+    getEditTableSetsumei(index,item){
+        var Setsumei ="";
+        if(this.EditInfo_Value[index].FIELD_VALUE === null)
+        {
+            this.EditInfo_Value[index].FIELD_VALUE ="";
+        }
+        console.log(item)
+        if(item == "TRACE_TYPE")
+        {
+            Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                       this.EditInfo_Value[index].FIELD_VALUE == "1" ||
+                       this.EditInfo_Value[index].FIELD_VALUE == "2" ?
+                       "0=なし 1=あり 2=XIORマシン":"0,1,2を入力下さい。"
+        }
+        else if (item=="REMARKS_ENG")
+        {
+            console.log("IN RR" + this.EditInfo_Value[index].FIELD_VALUE);
+            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length > 200 ?
+                    "200文字以内で入力下さい。":"";
+            console.log("Setsumei is" +Setsumei);
+        }
+        else if (item=="REMARKS_LOC")
+        {
+            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 200 ?
+                        "200文字以内で入力下さい。":"";
+        }
+        else if (item=="PO_SPEC1")
+        {
+            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 50 ?
+                        "50文字以内で入力下さい。":"";
+        }
+        else if (item=="PO_SPEC2")
+        {
+            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 50 ?
+                        "50文字以内で入力下さい。":"";
+        }
+        else if (item=="PO_SPEC3")
+        {
+            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 50 ?
+                        "50文字以内で入力下さい。":"";
+        }
+        else if (item=="MAINT_PART_NAME")
+        {
+            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 200 ?
+                        "200文字以内で入力下さい。":"";
+        }
+        else if (item=="MAINT_PARTS_TYPE")
+        {
+            
+            Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0"?
+                        "なし": this.EditInfo_Value[index].FIELD_VALUE == "1" ? 
+                        "日精(CP)移管部品":this.EditInfo_Value[index].FIELD_VALUE == "2"?
+                        "1:日精(CP)とFJ(EV)共用部品":"0,1,2を入力下さい。"
+        }
+        else if (item=="RECYCLE_TYPE")
+        {
+            Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                       this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                       "0=無し 1=あり":"0,1を入力下さい。"
+        }
+        else if (item=="EMG_TYPE")
+        {
+            Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                       this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                       "0=無し 1=あり":"0,1を入力下さい。"
+        }
+        else if (item=="MAINT_CONTRACT_TYPE")
+        {
+            etsumei = this.EditInfo_Value[index].FIELD_VALUE == "0"?
+                        "チェック不要": this.EditInfo_Value[index].FIELD_VALUE == "1" ? 
+                        "POG+フルメンで使用":this.EditInfo_Value[index].FIELD_VALUE == "2"?
+                        "フルメンでのみ使用":"0,1,2を入力下さい。"
+        }
+        else if (item=="PART_DESCRIPTION")
+        {
+            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 400 ?
+                        "400文字以内で入力下さい。":"";
+        }
+        else if (item=="REPLACE_REASON")
+        {   
+            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 400 ?
+                        "400文字以内で入力下さい。":"";
+        }
+        else if (item=="REPLACE_TIME")
+        {
+
+        }
+        else if (item=="INSPECT_SHEET")
+        {
+
+        }
+        else if (item=="CERT_CONFORM")
+        {
+
+        }
+        else if (item=="TEST_REPORT")
+        {
+
+        }
+        else if (item=="MILL_SHEET")
+        {
+
+        }
+        else if (item=="SELLING_PRICE_TYPE")
+        {
+
+        }
+        else if (item=="START_DATE")
+        {
+
+        }
+        else if (item=="ORDER_STOP_DATE")
+        {
+
+        }
+        else if (item=="STOP_DATE")
+        {
+
+        }
+        else if (item=="M_START_DATE")
+        {
+
+        }
+        else if (item=="M_ORDER_STOP_DATE")
+        {
+
+        }
+        else if (item=="M_STOP_DATE")
+        {
+
+        }
+        else if (item=="CH_STOP_DATE")
+        {
+
+        }
+        else if (item=="STD_COST_UPD_TYPE")
+        {
+
+        }
+        else if (item=="PHOTO_TYPE")
+        {
+
+        }
+        else if (item=="RECORD_TYPE")
+        {
+
+        }
+        else if (item=="MODULE_TYPE")
+        {
+
+        }
+        else if (item=="PART_NAME_ENG")
+        {
+
+        }
+        else if (item=="PART_NAME_LOC1")
+        {
+
+        }
+        else if (item=="PART_NAME_LOC2")
+        {
+
+        }
+        else if (item=="MAKER_CODE")
+        {
+
+        }
+        else if (item=="MAKER_NAME_ENG")
+        {
+
+        }
+        else if (item=="MAKER_NAME_LOC")
+        {
+
+        }
+        else if (item=="MAKER_PART_NO")
+        {
+
+        }
+        else if (item=="MAKER_REM_ENG")
+        {
+
+        }
+        else if (item=="MAKER_REM_LOC")
+        {
+
+        }
+        else if (item=="MATERIAL_CODE")
+        {
+
+        }
+        else if (item=="WEIGHT")
+        {
+
+        }
+        else if (item=="PO_WIDTH")
+        {
+
+        }
+        else if (item=="PO_LENGTH")
+        {
+
+        }
+        else if (item=="THICKNESS")
+        {
+
+        }
+        else if (item=="DENSITY")
+        {
+
+        }
+        else if (item=="SUPPLEMENT")
+        {
+
+        }
+        else if (item=="SUB_PART_TYPE")
+        {
+
+        }
+        console.log("End check");
+        this.EditInfo_Value[index].FIELD_EXPLAIN = Setsumei; 
     },
     getEditTable2(Part_NO,PLANT_NO){
         const url = "http://localhost:59272/api/KensakuBtnGet";
@@ -3496,6 +3758,8 @@ export default {
     getDialogKoumoku(KoumokuNo,KoumokuName){
         this.dialogKoumokuNO = KoumokuNo;
         this.dialogKoumokuName = KoumokuName;
+        this.TableHeight ="500px"
+        this.TabledialogWidth ="700px"
         const url = "http://localhost:59272/api/KensakuBtnGet";
         const params ={
             CM_KOUNO : this.dialogKoumokuNO,
@@ -3509,11 +3773,14 @@ export default {
         }).catch(err=>{
 
         })
-    },
-    getdialogChoumon(){
+    }
+    ,
+    getdialogChoumon(KOUNO){
         const url = "http://localhost:59272/api/KensakuBtnGet";
+        this.TableHeight ="500px"
+        this.TabledialogWidth ="700px"
         const params ={
-            CH_CODE:"CH_CODE",
+            CH_KOUNO:KOUNO,
             START_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
             STOP_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
         }
@@ -3523,10 +3790,13 @@ export default {
 
         })
     },
-    getdialogTantou(){
+    getdialogTantou(TANTO_KUBUN,PLANT_NO){
         const url = "http://localhost:59272/api/KensakuBtnGet";
+        this.TableHeight ="500px"
+        this.TabledialogWidth ="700px"
         const params ={
-            TANTO_CODE:"TANTO_CODE",
+            TANTO_KUBUN: TANTO_KUBUN,
+            PLANT_NO: PLANT_NO,
             START_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
             STOP_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
         }
@@ -3536,16 +3806,66 @@ export default {
         
         })
     },
-    getdialogTantai(){
+    getdialogTantai(LANGU){
         const url = "http://localhost:59272/api/KensakuBtnGet";
+        this.TableHeight ="500px"
+        this.TabledialogWidth ="700px"
         const params ={
-            TANI:"  ",
+            LANGU:LANGU,
         }
         this.$axios.get(url,{params}).then(res =>{
             this.dialogTantaiItem = res.data;
         }).catch(err=>{
         
         })
+    },
+    getdialogArrary(NAME){
+        this.TableHeight ="200px"
+        this.TabledialogWidth ="500px"
+        if(NAME == 'TRANSFER_REQ_PLANT')
+        {
+            this.dialogArrayItem =[
+                {ARRAY_VALUE :"",ARRAY_SETUMEI:"指定なし"},
+                {ARRAY_VALUE :"1",ARRAY_SETUMEI:"BigFit"},
+                {ARRAY_VALUE :"2",ARRAY_SETUMEI:"BigWing"},
+                {ARRAY_VALUE :"3",ARRAY_SETUMEI:"BigStep"},
+                {ARRAY_VALUE :"5",ARRAY_SETUMEI:"PSC(大阪)"},
+            ]
+        }
+        else if(NAME == 'FC_FLAG')
+        {
+            this.dialogArrayItem =[
+                {ARRAY_VALUE :"0",ARRAY_SETUMEI:"しない"},
+                {ARRAY_VALUE :"1",ARRAY_SETUMEI:"計画のみ"},
+                {ARRAY_VALUE :"2",ARRAY_SETUMEI:"する"},
+            ]
+        }
+        else if(NAME =='STOCK_PLAN_COUNT')
+        {
+            this.dialogArrayItem =[
+                {ARRAY_VALUE :"",ARRAY_SETUMEI:"なし"},
+                {ARRAY_VALUE :"1",ARRAY_SETUMEI:"(回/月)"},
+                {ARRAY_VALUE :"2",ARRAY_SETUMEI:"(回/月)"},
+                {ARRAY_VALUE :"3",ARRAY_SETUMEI:"(回/月)"},
+                {ARRAY_VALUE :"4",ARRAY_SETUMEI:"(回/月)"},
+            ]
+        }
+        else if(NAME == 'STOCK_PLAN_TYPE')
+        {
+            this.dialogArrayItem =[
+                {ARRAY_VALUE :"",ARRAY_SETUMEI:"なし"},
+                {ARRAY_VALUE :"1",ARRAY_SETUMEI:"台数"},
+                {ARRAY_VALUE :"2",ARRAY_SETUMEI:"停止数"},
+            ]
+        }
+        else if (NAME == 'ISSUE_FC_METHOD')
+        {
+            this.dialogArrayItem =[
+                {ARRAY_VALUE :"",ARRAY_SETUMEI:"なし"},
+                {ARRAY_VALUE :"1",ARRAY_SETUMEI:"3ヶ月平均値より計算"},
+                {ARRAY_VALUE :"2",ARRAY_SETUMEI:"6ヶ月平均値より計算"},
+            ]
+        }
     },
     getDialogKouteiCode_Init(){
         const url = "http://localhost:59272/api/KensakuBtnGet";
@@ -3618,45 +3938,60 @@ export default {
         this.dialogKouteiCodeTableSelected =[];
     },
     getEditInfoDialog(){
-      console.log("1 status" + this.EditdialogStatus );
         switch(this.EditdialogStatus){
-          case '1':
-            this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogKoumokuTableSelected[0].CM_CODE;
-            this.dialogKoumokuTableSelected =[];
-            break;
-          case '2':
-            this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogChoumonSelected[0].CH_CODE;
-            this.dialogChoumonSelected =[];
-            break;
-          case '3':
-            this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogTantouSelected[0].TANTO_CODE;
-            this.dialogTantouSelected =[];
-            break;
-          case '4':
-            this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogTantaiSelected[0].TANI;
-            this.dialogTantaiSelected =[];
-            break;
+            case '1':
+                this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogKoumokuTableSelected[0].CM_CODE;
+                this.EditInfo_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogKoumokuTableSelected[0].CM_CODE_SETUMEI;
+                this.dialogKoumokuTableSelected =[];
+                break;
+            case '2':
+                this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogChoumonSelected[0].CH_CODE;
+                this.EditInfo_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogChoumonSelected[0].CH_CODE_SETUMEI_1;
+                this.dialogChoumonSelected =[];
+                break;
+            case '3':
+                this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogTantouSelected[0].TANTO_CODE;
+                this.EditInfo_Value[this.EditIndex].FIELD_EXPLAIN = "[" + this.dialogTantouSelected[0].USER_ID + "]"+this.dialogTantouSelected[0].USER_NAME;
+                this.dialogTantouSelected =[];
+                break;
+            case '4':
+                this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogTantaiSelected[0].TANI;
+                this.dialogTantaiSelected =[];
+                break;
+            case '6':
+                this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogArraySelected[0].ARRAY_VALUE;
+                this.EditInfo_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogArraySelected[0].ARRAY_SETUMEI;
+                this.dialogArraySelected =[];
+                break;
         }
         this.dialogEditInfo = false;
     },
     getEditInfoDialog2(){
         switch(this.EditdialogStatus){
-          case '1':
-            this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogKoumokuTableSelected[0].CM_CODE;
-            this.dialogKoumokuTableSelected =[];
-            break;
-          case '2':
-            this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogChoumonSelected[0].CH_CODE;
-            this.dialogChoumonSelected =[];
-            break;
-          case '3':
-            this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogTantouSelected[0].TANTO_CODE;
-            this.dialogTantouSelected =[];
-            break;
-          case '4':
-            this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogTantaiSelected[0].TANI;
-            this.dialogTantaiSelected =[];
-            break;
+            case '1':
+                this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogKoumokuTableSelected[0].CM_CODE;
+                this.EditInfo2_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogKoumokuTableSelected[0].CM_CODE_SETUMEI;
+                this.dialogKoumokuTableSelected =[];
+                break;
+            case '2':
+                this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogChoumonSelected[0].CH_CODE;
+                this.EditInfo2_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogChoumonSelected[0].CH_CODE_SETUMEI_1;
+                this.dialogChoumonSelected =[];
+                break;
+            case '3':
+                this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogTantouSelected[0].TANTO_CODE;
+                this.EditInfo2_Value[this.EditIndex].FIELD_EXPLAIN = "[" + this.dialogTantouSelected[0].USER_ID + "]"+this.dialogTantouSelected[0].USER_NAME;
+                this.dialogTantouSelected =[];
+                break;
+            case '4':
+                this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogTantaiSelected[0].TANI;
+                this.dialogTantaiSelected =[];
+                break;
+            case '6':
+                this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogArraySelected[0].ARRAY_VALUE;
+                this.EditInfo2_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogArraySelected[0].ARRAY_SETUMEI;
+                this.dialogArraySelected =[];
+                break;
         }
         this.dialogEditInfo = false;
     },
@@ -3676,25 +4011,30 @@ export default {
         this.EditdialogItemNo = ITEM_NO;
         this.EditdialogFIELD_NAME= NAME_LOC1;
         this.EditInfoDialog_Staus = Dialog;
-        this.getdialogChoumon();
+        this.getdialogChoumon(ITEM_NO);
     },
-    getEditDialogBtn3(value,ITEM_NO,NAME_LOC1,Dialog){
+    getEditDialogBtn3(value,ITEM_NO,PLANT_NO,Dialog){
         this.EditdialogStatus='3';
         this.dialogEditInfo = true;
         this.EditIndex = value;
         this.EditdialogItemNo = ITEM_NO;
-        this.EditdialogFIELD_NAME= NAME_LOC1;
         this.EditInfoDialog_Staus = Dialog;
-        this.getdialogTantou();
+        this.getdialogTantou(ITEM_NO,PLANT_NO);
     },
-    getEditDialogBtn4(value,ITEM_NO,NAME_LOC1,Dialog){ 
+    getEditDialogBtn4(value,ITEM_NO,Dialog){ 
         this.EditdialogStatus='4'
         this.dialogEditInfo = true;
         this.EditIndex = value;
         this.EditdialogItemNo = ITEM_NO;
-        this.EditdialogFIELD_NAME= NAME_LOC1;
         this.EditInfoDialog_Staus = Dialog;
-        this.getdialogTantai();
+        this.getdialogTantai(ITEM_NO);
+    },
+    getEditDialogBtn6(value,FIELD_NAME,Dialog){
+        this.EditdialogStatus='6';
+        this.dialogEditInfo = true;
+        this.EditIndex = value;
+        this.EditInfoDialog_Staus = Dialog;
+        this.getdialogArrary(FIELD_NAME);
     },
     changeSearchMiniWidth(){
         this.mini = !this.mini;
@@ -3798,7 +4138,7 @@ export default {
         this.shousaiCheckBox3=false;
         this.shousaiCheckBox4=false;
         this.shousaiCheckBox5=false;
-        this.shousaiSelectSouko="--";
+        this.shousaiSelectSouko="";
         this.shousaiZaikoSelected= [];
         this.shousaiSokoCodeCheckbox=false;
         this.toggle_none=0;
