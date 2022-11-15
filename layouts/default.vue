@@ -19,6 +19,7 @@
             <v-app-bar-nav-icon class = "mt-5" @click.stop="OpenCloseNav()"></v-app-bar-nav-icon>
             <v-toolbar-title ><br>Fujitec<br> Parts Master</v-toolbar-title>
             <v-spacer></v-spacer>
+            
             <!--　ユーザー設定画面　-->
             <v-dialog
                 v-model="setttingDialog"
@@ -2493,9 +2494,18 @@
                                             :filled= "item.AUTH_TYPE == '2'?false:true"
                                             :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
                                             v-model = EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_VALUE
+                                            @keyup="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
+                                            @change="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
+                                            
                                             dense
                                             outlined>
                                         </v-text-field>
+                                    </template>
+                                    <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                            <p
+                                            :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                            {{EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_EXPLAIN}} 
+                                            </p>
                                     </template>
                                     </v-data-table>
                                 </v-card>
@@ -2570,27 +2580,32 @@
                                             <v-btn 
                                             v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
                                             x-small 
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
                                             @click="getEditDialogBtn1(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
                                             >...</v-btn>
                                             <!-- 注文コードマスター -->
                                             <v-btn
                                             v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
                                             x-small
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
                                             @click = "getEditDialogBtn2(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
                                             >...</v-btn>
                                             <!-- 担当コードマスター -->
                                             <v-btn
                                             v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
                                             x-small
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
                                             @click = "getEditDialogBtn3(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
                                             >...</v-btn>
                                             <v-btn
                                             v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
                                             @click = "getEditDialogBtn4(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,2)"
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
                                             x-small
                                             >...</v-btn>
                                             <v-btn
                                             v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
                                             @click ="getEditDialogBtn6(EditInfo2_Value.indexOf(item),item.FIELD_NAME,2)"
                                             x-small
                                             >...</v-btn>
@@ -2602,10 +2617,18 @@
                                                 :filled= "Edit_Combobox_1_select.substr(0,1) != '-'&& item.AUTH_TYPE == '2' && EditRevDate_Eable?false:true"
                                                 :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
                                                 v-model = EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_VALUE
+                                                @keyup="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
+                                                @change="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
                                                 outlined
                                                 dense>
                                             </v-text-field>
                                         </template>
+                                        <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                            <p
+                                            :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                            {{EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_EXPLAIN}}
+                                            </p>
+                                    </template>
                                     </v-data-table>
                                 </v-card>
                             </v-col>    
@@ -2624,7 +2647,9 @@
                                     </v-icon> 
                                     <h3>閉じる</h3>
                                 </v-btn>
-                                <v-btn class="mr-2" large>
+                                <v-btn class="mr-2" large
+                                @click="teihaiPostReq()"
+                                >
                                     <v-icon
                                         left
                                         dark
@@ -3145,7 +3170,7 @@ export default {
     EditTableSearch1:"",
     EditTableSearch2:"",
     TableHeight:"500px",
-    TabledialogWidth:"700px"
+    TabledialogWidth:"700px",
   }),
   created(){
     this.setListener()
@@ -3254,12 +3279,26 @@ export default {
     
   },
   methods:{
+    check_date(value)
+    {
+        if(typeof value == "string"){
+            
+            var a = value.match(/^\d{8}$/);
+            if (a) { 
+                var y = parseInt(a[0].substring(0,4));
+                var m = parseInt(a[0].substring(5,6));
+                var d = parseInt(a[0].substring(7,8));
+                var x = new Date(y, m, d);
+                console.log(y == x.getFullYear() && m == x.getMonth() && d == x.getDate());
+                return (y == x.getFullYear() && m == x.getMonth() && d == x.getDate());
+            }
+        }
+        return false;
+    },
     setListener(){
       this.$nuxt.$on('updateHeader',this.setHeader)
     },
     setHeader(header){
-      console.log(header);
-      console.log(this.headerItem);
       if(header)
       {
         this.Header_Data =this.headerItem;
@@ -3297,12 +3336,14 @@ export default {
             USER_ID : this.Test_userID,
         }
         this.$axios.get(url,{params}).then(res =>{
-            this.EditInfo_Value = res.data;
-            console.log(this.EditInfo_Value);
+            this.EditInfo_Value = res.data.map(item => {
+                
+                item.Setsumei_Error = false;
+                return item;
+            });
             this.EditInfo_Value.forEach(Row =>{
                 var index = this.EditInfo_Value.indexOf(Row);
                 this.getEditTableSetsumei(index,Row.FIELD_NAME);
-                console.log(index + "/" +this.EditInfo_Value.length);
             })
         }).catch(err=>{
 
@@ -3310,225 +3351,747 @@ export default {
     },
     getEditTableSetsumei(index,item){
         var Setsumei ="";
+        var Setsumei_Error = false;
+        var check_change=false;
+        
         if(this.EditInfo_Value[index].FIELD_VALUE === null)
         {
-            this.EditInfo_Value[index].FIELD_VALUE ="";
+            if (item=="INSPECT_SHEET")
+            {
+                this.EditInfo_Value[index].FIELD_VALUE = "";
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length ==="" ||
+                            this.EditInfo_Value[index].FIELD_VALUE.length =="1" ?
+                            "空白=不要 1=要":"空白か1を入力下さい";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="CERT_CONFORM")
+            {
+                this.EditInfo_Value[index].FIELD_VALUE = "";
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="" ||
+                            this.EditInfo_Value[index].FIELD_VALUE.length =="1" ?
+                            "空白=不要 1=要":"空白か1を入力下さい";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="TEST_REPORT")
+            {
+                this.EditInfo_Value[index].FIELD_VALUE = "";
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="" ||
+                            this.EditInfo_Value[index].FIELD_VALUE.length =="1" ?
+                            "空白=不要 1=要":"空白か1を入力下さい";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="MILL_SHEET")
+            {
+                this.EditInfo_Value[index].FIELD_VALUE = "";
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="" ||
+                            this.EditInfo_Value[index].FIELD_VALUE.length =="1" ?
+                            "空白=不要 1=要":"空白か1を入力下さい";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="STD_COST_UPD_TYPE")
+            {
+                this.EditInfo_Value[index].FIELD_VALUE = "0";
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="" ||
+                            this.EditInfo_Value[index].FIELD_VALUE == "0" ||
+                            this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                            "0:可 1:不可": "空白か0か1を入力下さい"; 
+                Setsumei_Error =this.EditInfo_Value[index].FIELD_VALUE.length =="" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
         }
-        console.log(item)
-        if(item == "TRACE_TYPE")
+        else
         {
-            Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
-                       this.EditInfo_Value[index].FIELD_VALUE == "1" ||
-                       this.EditInfo_Value[index].FIELD_VALUE == "2" ?
-                       "0=なし 1=あり 2=XIORマシン":"0,1,2を入力下さい。"
-        }
-        else if (item=="REMARKS_ENG")
-        {
-            console.log("IN RR" + this.EditInfo_Value[index].FIELD_VALUE);
-            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length > 200 ?
-                    "200文字以内で入力下さい。":"";
-            console.log("Setsumei is" +Setsumei);
-        }
-        else if (item=="REMARKS_LOC")
-        {
-            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 200 ?
+            if(item == "TRACE_TYPE")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo_Value[index].FIELD_VALUE == "1" ||
+                        this.EditInfo_Value[index].FIELD_VALUE == "2" ?
+                        "0=なし 1=あり 2=XIORマシン":"0,1,2を入力下さい。"
+                Setsumei_Error =this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo_Value[index].FIELD_VALUE == "1" ||
+                        this.EditInfo_Value[index].FIELD_VALUE == "2" ?
+                        false:true;
+                check_change = true;
+            }
+            else if (item=="REMARKS_ENG")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 200 ?
                         "200文字以内で入力下さい。":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 200 ?
+                        true:false;
+                check_change = true;
+            }
+            else if (item=="REMARKS_LOC")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 200 ?
+                            "200文字以内で入力下さい。":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 200 ?
+                        true:false;
+                check_change = true;
+            }
+            else if (item=="PO_SPEC1")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 50 ?
+                            "50文字以内で入力下さい。":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 50 ?
+                        true:false;
+                        check_change = true;
+            }
+            else if (item=="PO_SPEC2")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 50 ?
+                            "50文字以内で入力下さい。":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 50 ?
+                        true:false;
+                check_change = true;
+            }
+            else if (item=="PO_SPEC3")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 50 ?
+                            "50文字以内で入力下さい。":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 50 ?
+                        true:false;
+                check_change = true;
+            }
+            else if (item=="MAINT_PART_NAME")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 200 ?
+                            "200文字以内で入力下さい。":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 200 ?
+                        true:false;
+                check_change = true;
+            }
+            else if (item=="MAINT_PARTS_TYPE")
+            {
+                
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0"?
+                            "0 なし": this.EditInfo_Value[index].FIELD_VALUE == "1" ? 
+                            "1 日精(CP)移管部品":this.EditInfo_Value[index].FIELD_VALUE == "2"?
+                            "2 日精(CP)とFJ(EV)共用部品":"0,1,2を入力下さい。"
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "2"?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="RECYCLE_TYPE")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                        "0=無し 1=あり":"0,1を入力下さい。"
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="EMG_TYPE")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                        "0=無し 1=あり":"0,1を入力下さい。"
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="MAINT_CONTRACT_TYPE")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0"?
+                            "0 チェック不要": this.EditInfo_Value[index].FIELD_VALUE == "1" ? 
+                            "1 POG+フルメンで使用":this.EditInfo_Value[index].FIELD_VALUE == "2"?
+                            "2 フルメンでのみ使用":"0,1,2を入力下さい。"
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "2"?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="PART_DESCRIPTION")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 400 ?
+                            "400文字以内で入力下さい。":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 400 ?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="REPLACE_REASON")
+            {   
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 400 ?
+                            "400文字以内で入力下さい。":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 400 ?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="REPLACE_TIME")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="" ? 
+                        "数値を入力して下さい": Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7?
+                        "整数部分は7桁以内で入力して下さい" : this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ?
+                        "少数部分2桁以内で入力して下さい" :"" ;
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length =="" || 
+                                Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7 || 
+                                this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="INSPECT_SHEET")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="" ||
+                            this.EditInfo_Value[index].FIELD_VALUE.length =="1" ?
+                            "空白=不要 1=要":"空白か1を入力下さい";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="CERT_CONFORM")
+            {
+                Setsumei =is.EditInfo_Value[index].FIELD_VALUE.length =="" ||
+                            this.EditInfo_Value[index].FIELD_VALUE.length =="1" ?
+                            "空白=不要 1=要":"空白か1を入力下さい";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="TEST_REPORT")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="" ||
+                            this.EditInfo_Value[index].FIELD_VALUE.length =="1" ?
+                            "空白=不要 1=要":"空白か1を入力下さい";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="MILL_SHEET")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="" ||
+                            this.EditInfo_Value[index].FIELD_VALUE.length =="1" ?
+                            "空白=不要 1=要":"空白か1を入力下さい";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="SELLING_PRICE_TYPE")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="0" ||
+                            this.EditInfo_Value[index].FIELD_VALUE.length =="1" ?
+                            "0=無し 1=あり":"0,1を入力下さい。";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="START_DATE")
+            {
+                check_change = true;
+                if(!this.check_date(this.EditInfo_Value[index].FIELD_VALUE))
+                {
+                    Setsumei = "yyyymmdd形式で入力して下さい"
+                    Setsumei_Error =true;
+                }
+            }
+            else if (item=="ORDER_STOP_DATE")
+            {
+                check_change = true;
+                if(!this.check_date(this.EditInfo_Value[index].FIELD_VALUE))
+                {
+                    Setsumei = "yyyymmdd形式で入力して下さい"
+                    Setsumei_Error =true;
+                }
+            }
+            else if (item=="STOP_DATE")
+            {
+                check_change = true;
+                if(!this.check_date(this.EditInfo_Value[index].FIELD_VALUE))
+                {
+                    Setsumei = "yyyymmdd形式で入力して下さい"
+                    Setsumei_Error =true;
+                }
+            }
+            else if (item=="M_START_DATE")
+            {
+                check_change = true;
+                if(!this.check_date(this.EditInfo_Value[index].FIELD_VALUE))
+                {
+                    Setsumei = "yyyymmdd形式で入力して下さい"
+                    Setsumei_Error =true;
+                }
+            }
+            else if (item=="M_ORDER_STOP_DATE")
+            {
+                check_change = true;
+                if(!this.check_date(this.EditInfo_Value[index].FIELD_VALUE))
+                {
+                    Setsumei = "yyyymmdd形式で入力して下さい"
+                    Setsumei_Error =true;
+                }
+            }
+            else if (item=="M_STOP_DATE")
+            {
+                check_change = true;
+                if(!this.check_date(this.EditInfo_Value[index].FIELD_VALUE))
+                {
+                    Setsumei = "yyyymmdd形式で入力して下さい"
+                    Setsumei_Error =true;
+                }
+            }
+            else if (item=="CH_STOP_DATE")
+            {
+                check_change = true;
+                if(!this.check_date(this.EditInfo_Value[index].FIELD_VALUE))
+                {
+                    Setsumei = "yyyymmdd形式で入力して下さい"
+                    Setsumei_Error =true;
+                }
+            }
+            else if (item=="STD_COST_UPD_TYPE")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0" ||
+                            this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                            "0:可 1:不可": "空白か0か1を入力下さい"; 
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="PHOTO_TYPE")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0" ||
+                            this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                            "1:不要、空白:要": "空白か0か1を入力下さい"; 
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="RECORD_TYPE")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0"?
+                            "0 変更なし":this.EditInfo_Value[index].FIELD_VALUE == "1"?
+                            "1 変更り":this.EditInfo_Value[index].FIELD_VALUE == "2"?
+                            "2 今回追加":this.EditInfo_Value[index].FIELD_VALUE == "3"?
+                            "3 今回使用止":this.EditInfo_Value[index].FIELD_VALUE == "4"?
+                            "4 今回使用禁止":""
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "2" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "3" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "4" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="MODULE_TYPE")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0"?
+                            "PDM3から作成":this.EditInfo_Value[index].FIELD_VALUE == "1"?
+                            "統合P/Mから作成":this.EditInfo_Value[index].FIELD_VALUE == "2"?
+                            "P/Sユニット":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "2" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="PART_NAME_ENG")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 100 ?
+                            "100文字以内で入力下さい":this.EditInfo_Value[index].FIELD_VALUE.match(/^[^\x01-\x7E\uFF61-\uFF9F]+$/)?
+                            "全角文字が含まれています。当フィールドは半角文字です。":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 100 || 
+                                this.EditInfo_Value[index].FIELD_VALUE.match(/^[^\x01-\x7E\uFF61-\uFF9F]+$/) ?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="PART_NAME_LOC1")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 100 ?
+                            "100文字以内で入力下さい":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 100  ?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="PART_NAME_LOC2")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 80?
+                            "80文字以内で入力下さい":this.EditInfo_Value[index].FIELD_VALUE.match(/^[^\x01-\x7E\uFF61-\uFF9F]+$/)?
+                            "全角文字が含まれています。当フィールドは半角文字です。":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 80 || 
+                                this.EditInfo_Value[index].FIELD_VALUE.match(/^[^\x01-\x7E\uFF61-\uFF9F]+$/) ?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="MAKER_CODE")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 10?
+                            "10文字以内で入力下さい":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 10  ?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="MAKER_NAME_ENG")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 100?
+                            "100文字以内で入力下さい":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 100  ?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="MAKER_NAME_LOC")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 100?
+                            "100文字以内で入力下さい":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 100  ?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="MAKER_PART_NO")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 60?
+                            "100文字以内で入力下さい":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 60  ?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="MAKER_REM_ENG")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 100?
+                            "100文字以内で入力下さい":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 100  ?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="MAKER_REM_LOC")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 100?
+                            "100文字以内で入力下さい":"";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length >= 100  ?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="MATERIAL_CODE")
+            {
+                check_change = true;
+                Setsumei ="--"
+            }
+            else if (item=="WEIGHT")
+            {
+                var Dotcheck = true;
+                if(this.EditInfo_Value[index].FIELD_VALUE === null)
+                {
+                    this.EditInfo_Value[index].FIELD_VALUE ="";
+                }
+                Dotcheck = this.EditInfo_Value[index].FIELD_VALUE.indexOf('.') >= 0 ? true :false;
+                
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE =="" ? 
+                        "数値を入力して下さい": Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7?
+                        "整数部分は7桁以内で入力して下さい" : Dotcheck?( this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ?
+                        "少数部分2桁以内で入力して下さい" :"") : "" ;
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE =="" || 
+                                Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7 ?true: 
+                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):true?
+                                true:false
+                check_change = true;
+            }
+            else if (item=="PO_WIDTH")
+            {
+                var Dotcheck = true;
+                Dotcheck = this.EditInfo_Value[index].FIELD_VALUE.indexOf('.') >= 0 ? true :false;
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="" ? 
+                        "数値を入力して下さい": Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7?
+                        "整数部分は7桁以内で入力して下さい" : Dotcheck?( this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ?
+                        "少数部分2桁以内で入力して下さい" :"") : "" ;
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length =="" || 
+                                Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7 ?true :
+                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):true?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="PO_LENGTH")
+            {
+                var Dotcheck = true;
+                Dotcheck = this.EditInfo_Value[index].FIELD_VALUE.indexOf('.') >= 0 ? true :false;
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="" ? 
+                        "数値を入力して下さい": Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7?
+                        "整数部分は7桁以内で入力して下さい" : Dotcheck?( this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ?
+                        "少数部分2桁以内で入力して下さい" :"") : "" ;
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length =="" || 
+                                Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7 ? true :
+                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):true?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="THICKNESS")
+            {
+                var Dotcheck = true;
+                Dotcheck = this.EditInfo_Value[index].FIELD_VALUE.indexOf('.') >= 0 ? true :false;
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="" ? 
+                        "数値を入力して下さい": Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7?
+                        "整数部分は7桁以内で入力して下さい" : Dotcheck?( this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ?
+                        "少数部分2桁以内で入力して下さい" :"") : "" ;
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length =="" || 
+                                Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7 ?true:
+                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):true?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="DENSITY")
+            {
+                var Dotcheck = true;
+                Dotcheck = this.EditInfo_Value[index].FIELD_VALUE.indexOf('.') >= 0 ? true :false;
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="" ? 
+                        "数値を入力して下さい": Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7?
+                        "整数部分は7桁以内で入力して下さい" : Dotcheck?( this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ?
+                        "少数部分2桁以内で入力して下さい" :"") : "" ;
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length =="" || 
+                                Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7 ?true:
+                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):true?
+                                true:false;
+                check_change = true;
+            }
+            else if (item=="SUPPLEMENT")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="0" ||
+                            this.EditInfo_Value[index].FIELD_VALUE.length =="1" ?
+                            "0=無し 1=あり":"0,1を入力下さい。";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
+            else if (item=="SUB_PART_TYPE")
+            {
+                Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length =="0" ||
+                            this.EditInfo_Value[index].FIELD_VALUE.length =="1" ?
+                            "0=無し 1=あり":"0,1を入力下さい。";
+                Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo_Value[index].FIELD_VALUE == "1" ?
+                                false:true;
+                check_change = true;
+            }
         }
-        else if (item=="PO_SPEC1")
+        if(check_change){
+            this.EditInfo_Value[index].FIELD_EXPLAIN = Setsumei; 
+        }
+        this.EditInfo_Value[index].Setsumei_Error =Setsumei_Error;
+    },
+    getEditTableSetsumei2(index,item){
+        var check_change=false;
+        var Setsumei ="";
+        var Setsumei_Error = false;
+
+        if(this.EditInfo2_Value[index].FIELD_VALUE === null)
         {
-            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 50 ?
-                        "50文字以内で入力下さい。":"";
+            if ( item == "SCRAP_PCNT")             
+            {
+                Setsumei = "数値を入力して下さい。";
+                Setsumei_Error = true;
+                check_change = true;
+            }
+            else if ( item == "YEAR_CH_QTY")            
+            {
+                Setsumei = "数値を入力して下さい。";
+                Setsumei_Error = true;
+                check_change = true;
+            }
+            else if ( item == "WCCC_FOLLOW_TYPE")       
+            {
+                Setsumei = "Null:継承なし 1:下位レベルに移送先を継承する";
+                Setsumei_Error = false;
+                check_change = true;
+            }
+            else if ( item == "MFG_LOT_SIZE")           
+            {
+                Setsumei = "数値を入力して下さい。";
+                Setsumei_Error = true;
+                check_change = true;
+            }
+            else if ( item == "MFG_LEADTIME")           
+            {
+                Setsumei = "数値を入力して下さい。";
+                Setsumei_Error = true;check_change = true;
+            }
+            else if ( item == "SUB_CHG_TYPE")           
+            {
+                Setsumei = "-";
+                Setsumei_Error = false;check_change = true;
+            }
         }
-        else if (item=="PO_SPEC2")
+        else
         {
-            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 50 ?
-                        "50文字以内で入力下さい。":"";
-        }
-        else if (item=="PO_SPEC3")
-        {
-            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 50 ?
-                        "50文字以内で入力下さい。":"";
-        }
-        else if (item=="MAINT_PART_NAME")
-        {
-            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 200 ?
-                        "200文字以内で入力下さい。":"";
-        }
-        else if (item=="MAINT_PARTS_TYPE")
-        {
-            
-            Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0"?
-                        "なし": this.EditInfo_Value[index].FIELD_VALUE == "1" ? 
-                        "日精(CP)移管部品":this.EditInfo_Value[index].FIELD_VALUE == "2"?
-                        "1:日精(CP)とFJ(EV)共用部品":"0,1,2を入力下さい。"
-        }
-        else if (item=="RECYCLE_TYPE")
-        {
-            Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
-                       this.EditInfo_Value[index].FIELD_VALUE == "1" ?
-                       "0=無し 1=あり":"0,1を入力下さい。"
-        }
-        else if (item=="EMG_TYPE")
-        {
-            Setsumei = this.EditInfo_Value[index].FIELD_VALUE == "0" || 
-                       this.EditInfo_Value[index].FIELD_VALUE == "1" ?
-                       "0=無し 1=あり":"0,1を入力下さい。"
-        }
-        else if (item=="MAINT_CONTRACT_TYPE")
-        {
-            etsumei = this.EditInfo_Value[index].FIELD_VALUE == "0"?
-                        "チェック不要": this.EditInfo_Value[index].FIELD_VALUE == "1" ? 
-                        "POG+フルメンで使用":this.EditInfo_Value[index].FIELD_VALUE == "2"?
-                        "フルメンでのみ使用":"0,1,2を入力下さい。"
-        }
-        else if (item=="PART_DESCRIPTION")
-        {
-            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 400 ?
-                        "400文字以内で入力下さい。":"";
-        }
-        else if (item=="REPLACE_REASON")
-        {   
-            Setsumei = this.EditInfo_Value[index].FIELD_VALUE.length >= 400 ?
-                        "400文字以内で入力下さい。":"";
-        }
-        else if (item=="REPLACE_TIME")
-        {
+            if ( item == "STOCK_CODE")
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length >= 2 ?
+                        "2桁以内で入力して下さい。":"";
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length >= 2 ?
+                        true:false;
+                check_change = true;
+            }
+            else if ( item == "TRANS_STOCK_TYPE")       
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo2_Value[index].FIELD_VALUE == "1" ?
+                        "":"0,1を入力下さい。"
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo2_Value[index].FIELD_VALUE == "1" ?
+                        false:true;
+                check_change = true;
+            }
+            else if ( item == "SCRAP_PCNT")             
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length >= 2 ?
+                        "2桁以内で入力して下さい。":"";
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length >= 2 ?
+                        true:false;
+                check_change = true;
+            }
+            else if ( item == "TRACE_TYPE")             
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo2_Value[index].FIELD_VALUE == "1" ||
+                        this.EditInfo2_Value[index].FIELD_VALUE == "2"?
+                        "":"0,1,2を入力下さい。"
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo2_Value[index].FIELD_VALUE == "1" ||
+                        this.EditInfo2_Value[index].FIELD_VALUE == "2"?
+                        false:true;
+                check_change = true;
+            }
+            else if ( item == "YEAR_CH_QTY")            
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length >= 8 ?
+                        "7桁以内で入力して下さい。":"";
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length >= 8 ?
+                        true:false;
+                check_change = true;
+            }
+            else if ( item == "WCCC_FOLLOW_TYPE")       
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE == "1" ?
+                        "Null:継承なし 1:下位レベルに移送先を継承する":"空白か1を入力下さい。"
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE == "1" ?
+                        false:true;
+                check_change = true;
+            }
+            else if ( item == "SET_COLOR_TYPE")         
+            {
+                check_change = true;
+            }
+            else if ( item == "AUTO_ARR_COMP_DATE")     
+            {
+                check_change = true;
+            }
+            else if ( item == "AUTO_CH_REQ_TYPE")       
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo2_Value[index].FIELD_VALUE == "1" ?
+                        "":"0,1を入力下さい。"
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo2_Value[index].FIELD_VALUE == "1" ?
+                        false:true;
+                check_change = true;
+            }
+            else if ( item == "LOT_PRINT_TYPE")         
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE == "1" || 
+                        this.EditInfo2_Value[index].FIELD_VALUE == "2" ?
+                        "1:納入単位でまとめて1枚 2:手配データ毎に1枚":"1か2を入力下さい。"
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE == "1" || 
+                        this.EditInfo2_Value[index].FIELD_VALUE == "2" ?
+                        false:true;
+                check_change = true;
+            }
+            else if ( item == "MFG_LOT_SIZE")           
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length >= 6 ?
+                        "6桁以内で入力して下さい。":"";
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length >= 6 ?
+                        true:false;
+                check_change = true;
+            }
+            else if ( item == "MFG_LEADTIME")           
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length >= 3 ?
+                        "3桁以内で入力して下さい。":"";
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length >= 3 ?
+                        true:false;
+                check_change = true;
+            }
+            else if ( item == "MFG_MIN_LOT_SIZE")       
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo2_Value[index].FIELD_VALUE == "1" ||
+                        this.EditInfo2_Value[index].FIELD_VALUE == "2"?
+                        "":"0,1,2を入力下さい。"
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo2_Value[index].FIELD_VALUE == "1" ||
+                        this.EditInfo2_Value[index].FIELD_VALUE == "2"?
+                        false:true;
+                check_change = true;
+            }
+            else if ( item == "VENDOR_SUPPLY_TYPE")     
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo2_Value[index].FIELD_VALUE == "1" ||
+                        this.EditInfo2_Value[index].FIELD_VALUE == "2"?
+                        "":"0,1,2を入力下さい。"
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE == "0" || 
+                        this.EditInfo2_Value[index].FIELD_VALUE == "1" ||
+                        this.EditInfo2_Value[index].FIELD_VALUE == "2"?
+                        false:true;
+                check_change = true;
+            }
+            else if ( item == "STOP_DATE")              
+            {
+                check_change = true;
+            }
+            else if ( item == "FM_ISSUE_FC_RATE")       
+            {
+                check_change = true;
+            }
+            else if ( item == "POG_ISSUE_FC_RATE")      
+            {
+                check_change = true;
+            }
+            else if ( item == "SUB_CHG_TYPE")           
+            {
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE == "0"?
+                            "0 手動（代替部品切替日にあわさない）": this.EditInfo_Value[index].FIELD_VALUE == "1" ? 
+                            "1 自動（代替部品切替日にあわす）":this.EditInfo_Value[index].FIELD_VALUE == "2"?
+                            "2 在庫消化後に切換日を自動設定":"0,1,2を入力下さい。"
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE == "0" || 
+                                this.EditInfo2_Value[index].FIELD_VALUE == "1" || 
+                                this.EditInfo2_Value[index].FIELD_VALUE == "2"?
+                                false:true;
+                check_change = true;
+            }
+            else if ( item == "SUB_START_DATE")         
+            {
+                check_change = true;
+            }
 
         }
-        else if (item=="INSPECT_SHEET")
-        {
-
+        if(check_change){
+            this.EditInfo2_Value[index].FIELD_EXPLAIN = Setsumei; 
         }
-        else if (item=="CERT_CONFORM")
-        {
-
-        }
-        else if (item=="TEST_REPORT")
-        {
-
-        }
-        else if (item=="MILL_SHEET")
-        {
-
-        }
-        else if (item=="SELLING_PRICE_TYPE")
-        {
-
-        }
-        else if (item=="START_DATE")
-        {
-
-        }
-        else if (item=="ORDER_STOP_DATE")
-        {
-
-        }
-        else if (item=="STOP_DATE")
-        {
-
-        }
-        else if (item=="M_START_DATE")
-        {
-
-        }
-        else if (item=="M_ORDER_STOP_DATE")
-        {
-
-        }
-        else if (item=="M_STOP_DATE")
-        {
-
-        }
-        else if (item=="CH_STOP_DATE")
-        {
-
-        }
-        else if (item=="STD_COST_UPD_TYPE")
-        {
-
-        }
-        else if (item=="PHOTO_TYPE")
-        {
-
-        }
-        else if (item=="RECORD_TYPE")
-        {
-
-        }
-        else if (item=="MODULE_TYPE")
-        {
-
-        }
-        else if (item=="PART_NAME_ENG")
-        {
-
-        }
-        else if (item=="PART_NAME_LOC1")
-        {
-
-        }
-        else if (item=="PART_NAME_LOC2")
-        {
-
-        }
-        else if (item=="MAKER_CODE")
-        {
-
-        }
-        else if (item=="MAKER_NAME_ENG")
-        {
-
-        }
-        else if (item=="MAKER_NAME_LOC")
-        {
-
-        }
-        else if (item=="MAKER_PART_NO")
-        {
-
-        }
-        else if (item=="MAKER_REM_ENG")
-        {
-
-        }
-        else if (item=="MAKER_REM_LOC")
-        {
-
-        }
-        else if (item=="MATERIAL_CODE")
-        {
-
-        }
-        else if (item=="WEIGHT")
-        {
-
-        }
-        else if (item=="PO_WIDTH")
-        {
-
-        }
-        else if (item=="PO_LENGTH")
-        {
-
-        }
-        else if (item=="THICKNESS")
-        {
-
-        }
-        else if (item=="DENSITY")
-        {
-
-        }
-        else if (item=="SUPPLEMENT")
-        {
-
-        }
-        else if (item=="SUB_PART_TYPE")
-        {
-
-        }
-        console.log("End check");
-        this.EditInfo_Value[index].FIELD_EXPLAIN = Setsumei; 
+        this.EditInfo2_Value[index].Setsumei_Error =Setsumei_Error;
     },
     getEditTable2(Part_NO,PLANT_NO){
         const url = "http://localhost:59272/api/KensakuBtnGet";
@@ -3538,7 +4101,14 @@ export default {
           PLANT_NO : PLANT_NO,
         }
         this.$axios.get(url,{params}).then(res =>{
-          this.EditInfo2_Value = res.data;
+            this.EditInfo2_Value = res.data.map(item => {
+                item.Setsumei_Error = false;
+                return item;
+            });
+            this.EditInfo2_Value.forEach(Row =>{
+                var index = this.EditInfo2_Value.indexOf(Row);
+                this.getEditTableSetsumei2(index,Row.FIELD_NAME);
+            })
         }).catch(err=>{
 
         })
@@ -4076,6 +4646,62 @@ export default {
         cur_date.setDate(cur_date.getDate()-value);
         this.kirikaeDate1 = cur_date.toISOString().substr(0, 10);
         this.kirikaeDate2 = cur_date.toISOString().substr(0, 10);
+    },
+    teihaiPostReq(){
+        this.POST_PPPMMMS();
+        if(this.Edit_Combobox_1_select.substr(0,1) != '-')
+        {
+            this.POST_PPPMORDER();
+            console.log("PPPMMORDER");
+        }
+    }
+    ,
+    POST_PPPMMMS(){
+        const url = "http://localhost:59272/api/KensakuBtnPost/PPPMMS";
+        var req ={};
+        this.EditInfo_Value.forEach(item =>{
+            if(item.AUTH_TYPE == "2")
+            {
+                req[item.FIELD_NAME] = item.FIELD_VALUE;
+            }
+            if(item.FIELD_NAME == "PART_NO" || item.FIELD_NAME == "PART_REV_NO")
+            {
+                req[item.FIELD_NAME] = item.FIELD_VALUE;
+            }
+        });
+        const params =req;
+        this.$axios.post(url,params).then(
+            
+        ).catch(err=>{
+            
+        })
+    },
+    POST_PPPMORDER(){
+        const url = "http://localhost:59272/api/KensakuBtnPost/PPPMORDER";
+        var req ={};
+        this.EditInfo2_Value.forEach(item =>{
+            if(item.AUTH_TYPE == "2")
+            {
+                req[item.FIELD_NAME] = item.FIELD_VALUE;
+            }
+            if(item.FIELD_NAME == "PART_NO")
+            {
+                req[item.FIELD_NAME] = item.FIELD_VALUE;
+            }
+        });
+        req["PLANT_NO"] =[];
+        req["PLANT_NO"].push(this.Edit_Combobox_1_select.substr(0,1));
+        if(this.Edit_checkbox && this.Edit_Combobox_2_select.substr(0,1) != "" &&
+        this.Edit_Combobox_2_select.substr(0,1) != "-")
+        {
+            req["PLANT_NO"].push(this.Edit_Combobox_2_select.substr(0,1));
+        } 
+        const params =req;
+        this.$axios.post(url,params).then(
+            
+        ).catch(err=>{
+            
+        })
     },
     
     //詳細検索クリアパラメータ
