@@ -8,6 +8,7 @@
 </script>
 
 <style>
+
 .v-text-field .v-input__control .v-input__slot {
     min-height: auto !important;
     display: flex !important;
