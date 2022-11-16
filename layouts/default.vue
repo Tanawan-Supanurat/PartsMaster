@@ -3,10 +3,7 @@
       <v-main>
         <Nuxt />
         <div>
-        <v-card
-            class="mx-auto overflow-hidden"
-            height=100vh
-        >
+            <v-btn @click ="check_pppmmsForm()">Test form</v-btn>
             <!-- Nav-bar -->
             <v-app-bar
             color="light-blue lighten-1"
@@ -23,7 +20,6 @@
             <!--　ユーザー設定画面　-->
             <v-dialog
                 v-model="setttingDialog"
-                max-width = "100vh"
             >
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn
@@ -133,6 +129,7 @@
                 floating
                 mini-variant-width = "3%"
                 :width = search_width
+                height="100vh"
             >
                 <v-list
                  nav
@@ -2260,6 +2257,7 @@
                 mini-variant-width = 3%
                 floating
                 :width = table_width
+                height ="100vh"
             >
                 <v-list
                  nav
@@ -2445,69 +2443,72 @@
                                             ></v-text-field>
                                         </v-col>
                                     </v-row>
-                                    <v-data-table
-                                    :headers="this.Editinfo_Header"
-                                    :items="this.EditInfo_Value"
-                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                    hide-default-footer
-                                    :height="PM_height"
-                                    :search="EditTableSearch1"
-                                    dense
-                                    >
-                                    <template v-slot:item.CELL_TYPE="{item}">
-                                        <!--  共用マスター -->
-                                        <v-btn 
-                                        v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
-                                        x-small 
-                                        @click="getEditDialogBtn1(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
-                                        >...</v-btn>
-                                        <!-- 注文コードマスター  -->
-                                        <v-btn
-                                        v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2'&& item.CELL_TYPE == 'B'"
-                                        @click = "getEditDialogBtn2(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
-                                        x-small
-                                        >...</v-btn>
-                                        <!-- 担当コードマスター -->
-                                        <v-btn
-                                        v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
-                                        @click = "getEditDialogBtn3(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),1)"
-                                        x-small
-                                        >...</v-btn>
-                                        <!--　単位読替マスター　　　-->
-                                        <v-btn
-                                        v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
-                                        x-small
-                                        @click = "getEditDialogBtn4(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,2)"
-                                        >...</v-btn>
-                                        
-                                        <v-btn
-                                        v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
-                                        @click ="getEditDialogBtn6(EditInfo_Value.indexOf(item),item.FIELD_NAME,1)"
-                                        x-small
-                                        >...</v-btn>
-                                        
-                                    </template>
-                                    <template v-slot:item.FIELD_VALUE="{item}">
-                                        <v-text-field
-                                            :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
-                                            :disabled = "item.AUTH_TYPE == '2' && EditRevDate_Eable ?false:true"
-                                            :filled= "item.AUTH_TYPE == '2'?false:true"
-                                            :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
-                                            v-model = EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_VALUE
-                                            @keyup="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
-                                            @change="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
+                                    <v-form ref ="PPPMMS_FORM">
+                                        <v-data-table
+                                        :headers="this.Editinfo_Header"
+                                        :items="this.EditInfo_Value"
+                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                        hide-default-footer
+                                        :height="PM_height"
+                                        :search="EditTableSearch1"
+                                        dense
+                                        >
+                                        <template v-slot:item.CELL_TYPE="{item}">
+                                            <!--  共用マスター -->
+                                            <v-btn 
+                                            v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                            x-small 
+                                            @click="getEditDialogBtn1(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
+                                            >...</v-btn>
+                                            <!-- 注文コードマスター  -->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2'&& item.CELL_TYPE == 'B'"
+                                            @click = "getEditDialogBtn2(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
+                                            x-small
+                                            >...</v-btn>
+                                            <!-- 担当コードマスター -->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                            @click = "getEditDialogBtn3(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),1)"
+                                            x-small
+                                            >...</v-btn>
+                                            <!--　単位読替マスター　　　-->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                            x-small
+                                            @click = "getEditDialogBtn4(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,2)"
+                                            >...</v-btn>
                                             
-                                            dense
-                                            outlined>
-                                        </v-text-field>
-                                    </template>
-                                    <template v-slot:item.FIELD_EXPLAIN="{ item }">
-                                            <p
-                                            :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
-                                            {{EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_EXPLAIN}} 
-                                            </p>
-                                    </template>
-                                    </v-data-table>
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                            @click ="getEditDialogBtn6(EditInfo_Value.indexOf(item),item.FIELD_NAME,1)"
+                                            x-small
+                                            >...</v-btn>
+                                            
+                                        </template>
+                                        <template v-slot:item.FIELD_VALUE="{item}">
+                                            <v-text-field
+                                                :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                :disabled = "item.AUTH_TYPE == '2' && EditRevDate_Eable ?false:true"
+                                                :filled= "item.AUTH_TYPE == '2'?false:true"
+                                                :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                :rules="item.RULES"
+                                                v-model = EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_VALUE
+                                                @keyup="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
+                                                @change="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
+                                                
+                                                dense
+                                                outlined>
+                                            </v-text-field>
+                                        </template>
+                                        <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                <p
+                                                :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                {{EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_EXPLAIN}} 
+                                                </p>
+                                        </template>
+                                        </v-data-table>
+                                    </v-form>
                                 </v-card>
                             </v-col>
                             <v-col cols ="6" sm ="6">
@@ -2565,16 +2566,16 @@
                                         </v-col>
                                     </v-row>
                                     
-                                    
-                                    <v-data-table
-                                    :headers="this.Editinfo2_Header"
-                                    :items="this.EditInfo2_Value"
-                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                    hide-default-footer
-                                    :search="EditTableSearch2"
-                                    :height="Teihai_height"
-                                    dense
-                                    >
+                                    <v-form ref="PPPMORDER_form">
+                                        <v-data-table
+                                        :headers="this.Editinfo2_Header"
+                                        :items="this.EditInfo2_Value"
+                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                        hide-default-footer
+                                        :search="EditTableSearch2"
+                                        :height="Teihai_height"
+                                        dense
+                                        >
                                         <template v-slot:item.CELL_TYPE="{item}">
                                             <!--  共用マスター -->
                                             <v-btn 
@@ -2616,6 +2617,7 @@
                                                 :disabled = "Edit_Combobox_1_select.substr(0,1) != '-' && item.AUTH_TYPE == '2' && EditRevDate_Eable?false:true"
                                                 :filled= "Edit_Combobox_1_select.substr(0,1) != '-'&& item.AUTH_TYPE == '2' && EditRevDate_Eable?false:true"
                                                 :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                :rules="item.RULES"
                                                 v-model = EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_VALUE
                                                 @keyup="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
                                                 @change="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
@@ -2629,7 +2631,9 @@
                                             {{EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_EXPLAIN}}
                                             </p>
                                     </template>
-                                    </v-data-table>
+                                        </v-data-table>
+                                    </v-form>
+                                    
                                 </v-card>
                             </v-col>    
                         </v-row>
@@ -2851,7 +2855,7 @@
                 </v-dialog>
             </v-card>
             </v-row>
-        </v-card>  
+            
         </div> 
       </v-main>
   </v-app>
@@ -2863,6 +2867,8 @@ import { mapState } from 'vuex'
 export default {
   name: 'DefaultLayout',
   data : () => ({
+    required :value => !!value || "Need Value",
+    limit_lenght : value => value.length <= 10 || "10文字以内で入力してください",
     clipped: false,
     drawer: false,
     fixed: false,
@@ -3171,6 +3177,51 @@ export default {
     EditTableSearch2:"",
     TableHeight:"500px",
     TabledialogWidth:"700px",
+    /*　フォームのルール */
+    formRules:{
+        required: value => !!value || "",//"数値を入力して下さい",
+        VoidOne: value => value == "" || value == "1" || "",//"空白か1を入力下さい" ,
+        voidZeroOne : value => value == "0" || value == "1" || value == "" ||"",//"空白か0か1を入力下さい",
+        ZeroOne: value => value === null ? true : value == "0" || value == "1" ||"",// "0,1を入力下さい。",
+        ZeroOneTwo: value => value === null ? true : value == "0" || value == "1" || value == "2" ||"",//"0,1,2を入力下さい。",
+        OneTwo: value => value === null ? true : value == "1" || value == "2" ||"",//"0,1,2を入力下さい。",
+        lengthThan2: value => value === null ? true : value.length <= 2 ||"2文字以内で入力下さい。",
+        lengthThan10: value => value === null ? true : value.length <= 10 ||"",// "10文字以内で入力下さい。",
+        lengthThan50: value => value === null ? true : value.length <= 50 || "",//"50文字以内で入力下さい。",
+        lengthThan60: value => value === null ? true : value.length <= 60 || "",//"60文字以内で入力下さい。",
+        lengthThan80: value => value === null ? true :  value.length <= 80 || "",//"80文字以内で入力下さい。",
+        lengthThan100: value => value === null ? true :  value.length <= 100 || "",//"100文字以内で入力下さい。",
+        lengthThan200: value => value === null ? true : value.length <= 200 || "",//"200文字以内で入力下さい。",
+        lengthThan400: value => value === null ? true : value.length <= 400 ||"",// "400文字以内で入力下さい。",
+        InterOnlyThan2: value => value == null ? true : value.match(/^\d{1,2}$/) ?true : "2桁以下の数字のみ入力可能です",
+        InterOnlyThan3: value => value == null ? true : value.match(/^\d{1,3}$/) ?true : "3桁以下の数字のみ入力可能です",
+        InterOnlyThan6: value => value == null ? true : value.match(/^\d{1,6}$/) ?true : "7桁以下の数字のみ入力可能です",
+        InterOnlyThan7: value => value == null ? true : value.match(/^\d{1,7}$/) ?true : "7桁以下の数字のみ入力可能です",
+        IntegetThan6 : value => value === null ? true :  value.indexOf(".") == -1 ? 
+                        value.length <= 6 ||""// "整数部分は6桁以内で入力して下さい"
+                        :value.split(".")[0].length <=6 || "",//"整数部分は6桁以内で入力して下さい",
+        IntegetThan7 : value => value === null ? true : value.indexOf(".") == "-1" ?
+                        value.length <= 7 || ""//"整数部分は7桁以内で入力して下さい"
+                        :value.split(".")[0].length <=7 || "",//"整数部分は7桁以内で入力して下さい",
+        FewThan2 :  value => value === null ? true : value.indexOf(".") == -1 || value.split(".")[1].length <=2 || "",//"少数部分2桁以内で入力して下さい",
+        FewThan3 : value => value === null ? true : value.indexOf(".") == -1 || value.split(".")[1].length <=3 || "",//"少数部分3桁以内で入力して下さい",
+        IsZenkaku :  value => value === null ? true : value.match(/^[^\x01-\x7E\uFF61-\uFF9F]+$/) || "",//"全角文字が含まれています。当フィールドは半角文字です。",
+        Datefomat : value => {
+            if(typeof value == "string"){
+            var a = value.match(/^\d{8}$/);
+            if (a) { 
+                var y = parseInt(a[0].substring(0,4));
+                var m = parseInt(a[0].substring(5,6));
+                var d = parseInt(a[0].substring(7,8));
+                var x = new Date(y, m, d);
+                return (y == x.getFullYear() && m == x.getMonth() && d == x.getDate());
+            }
+        }
+        return "";//"yyyymmdd形式で入力して下さい";
+        },
+        RecordCheck : value => value.match(/[01234]/)?true:"",//"マスタに未登録の値が入力されています",
+        ModuleCheck : value =>value.match(/[012]/)?true : "",//"マスタに未登録の値が入力されています",
+    },  
   }),
   created(){
     this.setListener()
@@ -3279,17 +3330,25 @@ export default {
     
   },
   methods:{
+    check_pppmmsForm()
+    {
+        if(this.$refs.PPPMMS_FORM.validate()){
+            console.log("The form is corrent");
+        }
+        else
+        {
+            console.log("The form is not corrent");
+        }
+    },
     check_date(value)
     {
         if(typeof value == "string"){
-            
             var a = value.match(/^\d{8}$/);
             if (a) { 
                 var y = parseInt(a[0].substring(0,4));
                 var m = parseInt(a[0].substring(5,6));
                 var d = parseInt(a[0].substring(7,8));
                 var x = new Date(y, m, d);
-                console.log(y == x.getFullYear() && m == x.getMonth() && d == x.getDate());
                 return (y == x.getFullYear() && m == x.getMonth() && d == x.getDate());
             }
         }
@@ -3337,18 +3396,214 @@ export default {
         }
         this.$axios.get(url,{params}).then(res =>{
             this.EditInfo_Value = res.data.map(item => {
-                
+                item.RULES = [];
                 item.Setsumei_Error = false;
                 return item;
             });
             this.EditInfo_Value.forEach(Row =>{
                 var index = this.EditInfo_Value.indexOf(Row);
                 this.getEditTableSetsumei(index,Row.FIELD_NAME);
+                this.getRule(index,Row.FIELD_NAME);
             })
         }).catch(err=>{
 
         })
     },
+    getRule(index,item){
+        if(item=="TRACE_TYPE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOneTwo );
+        }
+        if(item=="REMARKS_ENG")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan200 );
+        }
+        if(item=="REMARKS_LOC")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan200 );
+        }
+        if(item=="PO_SPEC1")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan50 );
+        }
+        if(item=="PO_SPEC2")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan50 );
+        }
+        if(item=="PO_SPEC3")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan50 );
+        }
+        if(item=="MAINT_PART_NAME")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan200 );
+        }
+        if(item=="MAINT_PARTS_TYPE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOneTwo );
+        }
+        if(item=="RECYCLE_TYPE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
+        }
+        if(item=="EMG_TYPE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
+        }
+        if(item=="MAINT_CONTRACT_TYPE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOneTwo );
+        }
+        if(item=="PART_DESCRIPTION")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan400 );
+        }
+        if(item=="REPLACE_REASON")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan400 );
+        }
+        if(item=="REPLACE_TIME")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan7 );
+            this.EditInfo_Value[index].RULES.push(this.formRules.FewThan2 );
+        }
+        if(item=="INSPECT_SHEET")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.VoidOne);
+        }
+        if(item=="CERT_CONFORM")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.VoidOne );
+        }
+        if(item=="TEST_REPORT")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.VoidOne );
+        }
+        if(item=="MILL_SHEET")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.VoidOne );
+        }
+        if(item=="SELLING_PRICE_TYPE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
+        }
+        if(item=="START_DATE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+        }
+        if(item=="ORDER_STOP_DATE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+        }
+        if(item=="STOP_DATE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+        }
+        if(item=="M_START_DATE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+        }
+        if(item=="M_ORDER_STOP_DATE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+        }
+        if(item=="M_STOP_DATE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+        }
+        if(item=="CH_STOP_DATE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+        }
+        if(item=="STD_COST_UPD_TYPE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.voidZeroOne );
+        }
+        if(item=="PHOTO_TYPE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.voidZeroOne );
+        }
+        if(item=="RECORD_TYPE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.RecordCheck );
+        }
+        
+        if(item=="MODULE_TYPE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.ModuleCheck );
+        }
+        if(item=="PART_NAME_ENG")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
+            this.EditInfo_Value[index].RULES.push(this.formRules.IsZenkaku );
+        }
+        if(item=="PART_NAME_LOC1")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
+        }
+        if(item=="PART_NAME_LOC2")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan80 );
+            this.EditInfo_Value[index].RULES.push(this.formRules.IsZenkaku );
+        }
+        if(item=="MAKER_CODE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan10 );
+        }
+        if(item=="MAKER_NAME_ENG")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
+        }
+        if(item=="MAKER_NAME_LOC")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
+        }
+        if(item=="MAKER_PART_NO")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan60 );
+        }
+        if(item=="MAKER_REM_ENG")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
+        }
+        if(item=="MAKER_REM_LOC")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
+        }
+        if(item=="WEIGHT")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan7 );
+            this.EditInfo_Value[index].RULES.push(this.formRules.FewThan2 );
+        }
+        if(item=="PO_WIDTH")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan7 );
+            this.EditInfo_Value[index].RULES.push(this.formRules.FewThan2 );
+        }
+        if(item=="PO_LENGTH")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan7 );
+            this.EditInfo_Value[index].RULES.push(this.formRules.FewThan2 );
+        }
+        if(item=="THICKNESS")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.required );
+        }
+        if(item=="DENSITY")
+        {   
+            this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan6 );
+            this.EditInfo_Value[index].RULES.push(this.formRules.FewThan3 );
+        }
+        if(item=="SUPPLEMENT")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
+        }
+        if(item=="SUB_PART_TYPE")
+        {
+            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
+        }
+    },
+    
     getEditTableSetsumei(index,item){
         var Setsumei ="";
         var Setsumei_Error = false;
@@ -3498,6 +3753,7 @@ export default {
                                 this.EditInfo_Value[index].FIELD_VALUE == "1" ?
                                 false:true;
                 check_change = true;
+                
             }
             else if (item=="EMG_TYPE")
             {
@@ -3892,6 +4148,112 @@ export default {
         }
         this.EditInfo_Value[index].Setsumei_Error =Setsumei_Error;
     },
+    
+    getEditTable2(Part_NO,PLANT_NO){
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const params = {
+          Edit_PART_NO : Part_NO,
+          USER_ID : this.Test_userID,
+          PLANT_NO : PLANT_NO,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.EditInfo2_Value = res.data.map(item => {
+                item.Setsumei_Error = false;
+                item.RULES = [];
+                return item;
+            });
+            this.EditInfo2_Value.forEach(Row =>{
+                var index = this.EditInfo2_Value.indexOf(Row);
+                this.getEditTableSetsumei2(index,Row.FIELD_NAME);
+                this.getRule2(index,Row.FIELD_NAME);
+            })
+        }).catch(err=>{
+
+        })
+    },
+    getRule2(index,item){
+        if(item=="STOCK_CODE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.lengthThan2);
+        }
+        if(item=="TRANS_STOCK_TYPE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.ZeroOne);
+        }
+        if(item=="SCRAP_PCNT")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.required);
+            this.EditInfo2_Value[index].RULES.push(this.formRules.InterOnlyThan2);
+        }
+        if(item=="TRACE_TYPE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.ZeroOneTwo);
+        }
+        if(item=="YEAR_CH_QTY")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.InterOnlyThan7);
+        }
+        if(item=="WCCC_FOLLOW_TYPE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.VoidOne);
+        }
+        if(item=="SET_COLOR_TYPE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.lengthThan10);
+        }
+        if(item=="AUTO_ARR_COMP_DATE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.Datefomat);
+        }
+        if(item=="AUTO_CH_REQ_TYPE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.ZeroOne);
+        }
+        if(item=="LOT_PRINT_TYPE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.OneTwo);
+        }
+        if(item=="MFG_LOT_SIZE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.required);
+            this.EditInfo2_Value[index].RULES.push(this.formRules.InterOnlyThan6);
+        }
+        if(item=="MFG_LEADTIME")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.required);
+            this.EditInfo2_Value[index].RULES.push(this.formRules.InterOnlyThan3);
+        }
+        if(item=="MFG_MIN_LOT_SIZE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.ZeroOneTwo);
+        }
+        if(item=="VENDOR_SUPPLY_TYPE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.ZeroOneTwo);
+        }
+        if(item=="STOP_DATE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.Datefomat);
+        }
+        if(item=="FM_ISSUE_FC_RATE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.required);
+            this.EditInfo2_Value[index].RULES.push(this.formRules.InterOnlyThan3);
+        }
+        if(item=="POG_ISSUE_FC_RATE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.required);
+            this.EditInfo2_Value[index].RULES.push(this.formRules.InterOnlyThan3);
+        }
+        if(item=="SUB_CHG_TYPE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.ZeroOneTwo);
+        }
+        if(item=="SUB_START_DATE")
+        {
+            this.EditInfo2_Value[index].RULES.push(this.formRules.Datefomat);
+        }
+    },
     getEditTableSetsumei2(index,item){
         var check_change=false;
         var Setsumei ="";
@@ -3938,9 +4300,9 @@ export default {
         {
             if ( item == "STOCK_CODE")
             {
-                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length >= 2 ?
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length > 2 ?
                         "2桁以内で入力して下さい。":"";
-                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length >= 2 ?
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length > 2 ?
                         true:false;
                 check_change = true;
             }
@@ -3956,9 +4318,9 @@ export default {
             }
             else if ( item == "SCRAP_PCNT")             
             {
-                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length >= 2 ?
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length > 2 ?
                         "2桁以内で入力して下さい。":"";
-                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length >= 2 ?
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length > 2 ?
                         true:false;
                 check_change = true;
             }
@@ -3976,9 +4338,9 @@ export default {
             }
             else if ( item == "YEAR_CH_QTY")            
             {
-                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length >= 8 ?
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length > 7 ?
                         "7桁以内で入力して下さい。":"";
-                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length >= 8 ?
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length > 7 ?
                         true:false;
                 check_change = true;
             }
@@ -3992,11 +4354,16 @@ export default {
             }
             else if ( item == "SET_COLOR_TYPE")         
             {
-                check_change = true;
+
             }
             else if ( item == "AUTO_ARR_COMP_DATE")     
             {
                 check_change = true;
+                if(!this.check_date(this.EditInfo2_Value[index].FIELD_VALUE))
+                {
+                    Setsumei = "yyyymmdd形式で入力して下さい"
+                    Setsumei_Error =true;
+                }
             }
             else if ( item == "AUTO_CH_REQ_TYPE")       
             {
@@ -4020,17 +4387,17 @@ export default {
             }
             else if ( item == "MFG_LOT_SIZE")           
             {
-                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length >= 6 ?
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length > 6 ?
                         "6桁以内で入力して下さい。":"";
-                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length >= 6 ?
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length > 6 ?
                         true:false;
                 check_change = true;
             }
             else if ( item == "MFG_LEADTIME")           
             {
-                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length >= 3 ?
+                Setsumei = this.EditInfo2_Value[index].FIELD_VALUE.length > 3 ?
                         "3桁以内で入力して下さい。":"";
-                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length >= 3 ?
+                Setsumei_Error = this.EditInfo2_Value[index].FIELD_VALUE.length > 3 ?
                         true:false;
                 check_change = true;
             }
@@ -4061,6 +4428,11 @@ export default {
             else if ( item == "STOP_DATE")              
             {
                 check_change = true;
+                if(!this.check_date(this.EditInfo2_Value[index].FIELD_VALUE))
+                {
+                    Setsumei = "yyyymmdd形式で入力して下さい"
+                    Setsumei_Error =true;
+                }
             }
             else if ( item == "FM_ISSUE_FC_RATE")       
             {
@@ -4092,26 +4464,6 @@ export default {
             this.EditInfo2_Value[index].FIELD_EXPLAIN = Setsumei; 
         }
         this.EditInfo2_Value[index].Setsumei_Error =Setsumei_Error;
-    },
-    getEditTable2(Part_NO,PLANT_NO){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
-        const params = {
-          Edit_PART_NO : Part_NO,
-          USER_ID : this.Test_userID,
-          PLANT_NO : PLANT_NO,
-        }
-        this.$axios.get(url,{params}).then(res =>{
-            this.EditInfo2_Value = res.data.map(item => {
-                item.Setsumei_Error = false;
-                return item;
-            });
-            this.EditInfo2_Value.forEach(Row =>{
-                var index = this.EditInfo2_Value.indexOf(Row);
-                this.getEditTableSetsumei2(index,Row.FIELD_NAME);
-            })
-        }).catch(err=>{
-
-        })
     },
     OpenCloseNav(){
         this.drawer = !this.drawer;
