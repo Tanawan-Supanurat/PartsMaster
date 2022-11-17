@@ -3398,6 +3398,9 @@ export default {
             this.EditInfo_Value = res.data.map(item => {
                 item.RULES = [];
                 item.Setsumei_Error = false;
+                item.CHECK_LIST = [];
+                item.UPDATE_ST = false;
+                item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
                 return item;
             });
             this.EditInfo_Value.forEach(Row =>{
@@ -3603,12 +3606,117 @@ export default {
             this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
         }
     },
-    
+    /*ボタンがあるText Fieldに入力確認*/ 
+    PPPMMSCheck_CellType(index){
+        /*Text Field規定が存在の確認*/
+        if(this.EditInfo_Value[index].CHECK_LIST == ""){
+            /*参照先確認（MS_TABLE）*/
+            switch(this.EditInfo_Value[index].MS_TABLE){
+                /*共用マスター(CMMSB)*/ 
+                case '1':
+                    this.getCM_CODE("PPPMMS",index,this.EditInfo_Value[index].MS_ITEM_NO,true)
+                    break;
+                /*注文コードマスタ(CHCDMS) */
+                case '2':
+                    break;
+                /*担当コードマスタ(CMTANTOMS) */
+                case'3':
+                    break;
+                /*単位読替マスタ(NRTANIMS) */
+                case'4':
+                    break;
+                /*工程コードマスタ(KTSTDTIME) */
+                case'5':
+                    break;
+            }
+        }
+        else
+        {
+            this.EditInfo_Value[index].CHECK_LIST.find(item =>{
+        
+                /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                if(this.EditInfo_Value[index].FIELD_VALUE !== null ||this.EditInfo_Value[index].FIELD_VALUE == "")
+                    {
+                    /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                        if(this.EditInfo_Value[index].FIELD_VALUE == item.CM_CODE){
+                            this.EditInfo_Value[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                            this.EditInfo_Value[index].Setsumei_Error =false;
+                            return true;
+                        }
+                        /*入力値と一致しない場合、テーブルにエラーを表示する */
+                        else 
+                        {
+                            this.EditInfo_Value[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                            this.EditInfo_Value[index].Setsumei_Error =true;
+                            return false;
+                        }
+                    }
+            })    
+        }
+        
+    },
+    PPPMORDERCheck_CellType(index){
+        /*Text Field規定が存在の確認*/
+        if(this.EditInfo2_Value[index].CHECK_LIST == ""){
+            /*参照先確認（MS_TABLE）*/
+            switch(this.EditInfo2_Value[index].MS_TABLE){
+                /*共用マスター(CMMSB)*/ 
+                case '1':
+                    this.getCM_CODE("PPPMORDER",index,this.EditInfo2_Value[index].MS_ITEM_NO,true)
+                    break;
+                /*注文コードマスタ(CHCDMS) */
+                case '2':
+                    break;
+                /*担当コードマスタ(CMTANTOMS) */
+                case'3':
+                    break;
+                /*単位読替マスタ(NRTANIMS) */
+                case'4':
+                    break;
+                /*工程コードマスタ(KTSTDTIME) */
+                case'5':
+                    break;
+            }
+        }
+        else
+        {
+            this.EditInfo2_Value[index].CHECK_LIST.find(item =>{
+        
+                /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                if(this.EditInfo2_Value[index].FIELD_VALUE !== null ||this.EditInfo2_Value[index].FIELD_VALUE == "")
+                    {
+                    /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                        if(this.EditInfo2_Value[index].FIELD_VALUE == item.CM_CODE){
+                            this.EditInfo2_Value[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                            this.EditInfo2_Value[index].Setsumei_Error =false;
+                            return true;
+                        }
+                        /*入力値と一致しない場合、テーブルにエラーを表示する */
+                        else 
+                        {
+                            this.EditInfo2_Value[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                            this.EditInfo2_Value[index].Setsumei_Error =true;
+                            return false;
+                        }
+                    }
+            })    
+        }
+        
+    },
+    PPPMMS_UPDATE_CHECK(index){
+        this.EditInfo_Value[index].UPDATE_ST = this.EditInfo_Value[index].FIELD_VALUE != this.EditInfo_Value[index].BEFORE_UPDATE_VALUE 
+            && !((this.EditInfo_Value[index].FIELD_VALUE == "") && (this.EditInfo_Value[index].BEFORE_UPDATE_VALUE === null) )? true: this.EditInfo_Value[index].UPDATE_ST ;
+            this.EditInfo_Value[index].BEFORE_UPDATE_VALUE =this.EditInfo_Value[index].FIELD_VALUE
+    },
+    PPPMORDER_UPDATE_CHECK(index){
+        this.EditInfo2_Value[index].UPDATE_ST = this.EditInfo2_Value[index].FIELD_VALUE != this.EditInfo2_Value[index].BEFORE_UPDATE_VALUE 
+            && !((this.EditInfo2_Value[index].FIELD_VALUE == "") && (this.EditInfo2_Value[index].BEFORE_UPDATE_VALUE === null) )? true: this.EditInfo2_Value[index].UPDATE_ST ;
+        this.EditInfo2_Value[index].BEFORE_UPDATE_VALUE =this.EditInfo2_Value[index].FIELD_VALUE
+    },
     getEditTableSetsumei(index,item){
         var Setsumei ="";
         var Setsumei_Error = false;
         var check_change=false;
-        
         if(this.EditInfo_Value[index].FIELD_VALUE === null)
         {
             if (item=="INSPECT_SHEET")
@@ -4145,8 +4253,13 @@ export default {
         }
         if(check_change){
             this.EditInfo_Value[index].FIELD_EXPLAIN = Setsumei; 
+            this.EditInfo_Value[index].Setsumei_Error =Setsumei_Error;
         }
-        this.EditInfo_Value[index].Setsumei_Error =Setsumei_Error;
+        if(this.EditInfo_Value[index].CELL_TYPE == 'B' && this.EditInfo_Value[index].AUTH_TYPE == 2)
+        {
+            this.PPPMMSCheck_CellType(index);
+        }
+        this.PPPMMS_UPDATE_CHECK(index);
     },
     
     getEditTable2(Part_NO,PLANT_NO){
@@ -4160,6 +4273,9 @@ export default {
             this.EditInfo2_Value = res.data.map(item => {
                 item.Setsumei_Error = false;
                 item.RULES = [];
+                item.CHECK_LIST = [];   
+                item.UPDATE_ST = false;
+                item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
                 return item;
             });
             this.EditInfo2_Value.forEach(Row =>{
@@ -4258,7 +4374,6 @@ export default {
         var check_change=false;
         var Setsumei ="";
         var Setsumei_Error = false;
-
         if(this.EditInfo2_Value[index].FIELD_VALUE === null)
         {
             if ( item == "SCRAP_PCNT")             
@@ -4462,8 +4577,14 @@ export default {
         }
         if(check_change){
             this.EditInfo2_Value[index].FIELD_EXPLAIN = Setsumei; 
+            this.EditInfo2_Value[index].Setsumei_Error =Setsumei_Error;
+            this.EditInfo2_Value[index].UPDATE_ST = true;
         }
-        this.EditInfo2_Value[index].Setsumei_Error =Setsumei_Error;
+        if(this.EditInfo2_Value[index].CELL_TYPE == 'B' && this.EditInfo2_Value[index].AUTH_TYPE == 2)
+        {
+            this.PPPMORDERCheck_CellType(index);
+        }
+        this.PPPMORDER_UPDATE_CHECK(index);
     },
     OpenCloseNav(){
         this.drawer = !this.drawer;
@@ -4549,6 +4670,73 @@ export default {
 
         })
         }
+    },
+    getCM_CODE(table_name,index,MS_ITEM_NO,CM_CODE_ONLY)
+    {
+        var ck_list = [];
+        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const params = {
+            CM_KOUNO : MS_ITEM_NO,
+            START_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            STOP_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            CM_CODE_ONLY : CM_CODE_ONLY
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            res.data.forEach(item =>{
+                ck_list.push({
+                    CM_CODE : item.CM_CODE,
+                    CM_CODE_SETUMEI : item.CM_CODE_SETUMEI, 
+                });
+            })
+            if(table_name == "PPPMMS")
+            {
+                this.EditInfo_Value[index].CHECK_LIST = ck_list;
+                /*入力確認開始 */
+                this.EditInfo_Value[index].CHECK_LIST.find(item =>{
+                    if(this.EditInfo_Value[index].FIELD_VALUE !== null ||this.EditInfo_Value[index].FIELD_VALUE == "")
+                    {
+                    /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                        if(this.EditInfo_Value[index].FIELD_VALUE == item.CM_CODE){
+                            this.EditInfo_Value[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                            this.EditInfo_Value[index].Setsumei_Error =false;
+                            return true;
+                        }
+                        /*入力値と一致しない場合、テーブルにエラーを表示する */
+                        else 
+                        {
+                            this.EditInfo_Value[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                            this.EditInfo_Value[index].Setsumei_Error =true;
+                            return false;
+                        }
+                    }
+                })    
+            }
+            else if (table_name == "PPPMORDER")
+            {
+                this.EditInfo2_Value[index].CHECK_LIST = ck_list;
+                /*入力確認開始 */
+                this.EditInfo2_Value[index].CHECK_LIST.find(item =>{
+                    if(this.EditInfo2_Value[index].FIELD_VALUE !== null ||this.EditInfo2_Value[index].FIELD_VALUE == "")
+                    {
+                    /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                        if(this.EditInfo2_Value[index].FIELD_VALUE == item.CM_CODE){
+                            this.EditInfo2_Value[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                            this.EditInfo2_Value[index].Setsumei_Error =false;
+                            return true;
+                        }
+                        /*入力値と一致しない場合、テーブルにエラーを表示する */
+                        else 
+                        {
+                            this.EditInfo2_Value[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                            this.EditInfo2_Value[index].Setsumei_Error =true;
+                            return false;
+                        }
+                    }
+                })    
+            }
+        }).catch(err=>{
+
+        })
     },
     getSokoType(value){
         const url = "http://localhost:59272/api/KensakuBtnGet";
@@ -5004,7 +5192,6 @@ export default {
         if(this.Edit_Combobox_1_select.substr(0,1) != '-')
         {
             this.POST_PPPMORDER();
-            console.log("PPPMMORDER");
         }
     }
     ,
@@ -5012,33 +5199,51 @@ export default {
         const url = "http://localhost:59272/api/KensakuBtnPost/PPPMMS";
         var req ={};
         this.EditInfo_Value.forEach(item =>{
-            if(item.AUTH_TYPE == "2")
+            if(item.UPDATE_ST)
             {
-                req[item.FIELD_NAME] = item.FIELD_VALUE;
-            }
-            if(item.FIELD_NAME == "PART_NO" || item.FIELD_NAME == "PART_REV_NO")
-            {
-                req[item.FIELD_NAME] = item.FIELD_VALUE;
-            }
+                if(item.AUTH_TYPE == "2")
+                {
+                    req[item.FIELD_NAME] = item.FIELD_VALUE;
+                }
+                if(item.FIELD_NAME == "PART_NO" || item.FIELD_NAME == "PART_REV_NO")
+                {
+                    req[item.FIELD_NAME] = item.FIELD_VALUE;
+                }
+            }   
         });
-        const params =req;
-        this.$axios.post(url,params).then(
-            
-        ).catch(err=>{
-            
+        
+        this.EditInfo_Value=this.EditInfo_Value.map(item =>{
+            item.UPDATE_ST = false;
+            return item;
         })
+        console.log("PPPMMS REQ: ");
+        console.log(req);
+        const params =req;
+        /*
+        if(req !== {})
+        {
+            this.$axios.post(url,params).then(
+            
+            ).catch(err=>{
+                
+            })
+        }*/
+        
     },
     POST_PPPMORDER(){
         const url = "http://localhost:59272/api/KensakuBtnPost/PPPMORDER";
         var req ={};
         this.EditInfo2_Value.forEach(item =>{
-            if(item.AUTH_TYPE == "2")
+            if(item.UPDATE_ST)
             {
-                req[item.FIELD_NAME] = item.FIELD_VALUE;
-            }
-            if(item.FIELD_NAME == "PART_NO")
-            {
-                req[item.FIELD_NAME] = item.FIELD_VALUE;
+                if(item.AUTH_TYPE == "2")
+                {
+                    req[item.FIELD_NAME] = item.FIELD_VALUE;
+                }
+                if(item.FIELD_NAME == "PART_NO")
+                {
+                    req[item.FIELD_NAME] = item.FIELD_VALUE;
+                }
             }
         });
         req["PLANT_NO"] =[];
@@ -5048,12 +5253,22 @@ export default {
         {
             req["PLANT_NO"].push(this.Edit_Combobox_2_select.substr(0,1));
         } 
-        const params =req;
-        this.$axios.post(url,params).then(
-            
-        ).catch(err=>{
-            
+        this.EditInfo2_Value=this.EditInfo2_Value.map(item =>{
+            item.UPDATE_ST = false;
+            return item;
         })
+        const params =req;
+        console.log("PPPMORDER REQ: ");
+        console.log(req);
+        /*
+        if(req !== {})
+        {
+            this.$axios.post(url,params).then(
+            
+            ).catch(err=>{
+                
+            })
+        }*/
     },
     
     //詳細検索クリアパラメータ
