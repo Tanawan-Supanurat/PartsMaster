@@ -3222,9 +3222,9 @@ export default {
     {text:"説明",value:"FIELD_EXPLAIN"}
     ],
     EditInfo_Value:[],
-    NRPMA_POST:[],
-    NRPMB_POST:[],
-    NRPMHIS_POST:[],
+    NRPMA_POST:{},
+    NRPMB_POST:{},
+    NRPMHIS_POST:{},
     EditInfo2_Value:[],
     dialogEditInfo : false,
     EditdialogStatus :"",
@@ -3425,490 +3425,491 @@ export default {
         return false;
     },
     convertPMtoNA(name,value){
-        if(name=='PARTCHG_TYPE')
+        console.log("Name : "+ name)
+        if(name =='PARTCHG_TYPE')
         {
-        NRPMA_POST[REV_GOKAN]=value;
+            this.NRPMA_POST["REV_GOKAN"]=value;
         }
         if(name=='PART_NAME_LOC2')
         {
-        NRPMA_POST[PART_NAME]=value;
+            this.NRPMA_POST["PART_NAME"]=value;
         }
 
         if(name=='PART_NAME_LOC1')
         {
-        NRPMA_POST[PART_NAME_J]=value;
+            this.NRPMA_POST["PART_NAME_J"]=value;
         }
 
         if(name=='MAKER_NAME_LOC')
         {
-        NRPMA_POST[MAKER_NAME]=value;
+            this.NRPMA_POST["MAKER_NAME"]=value;
         }
 
         if(name=='MAKER_PART_NO')
         {
-        NRPMA_POST[MAKER_KATABAN]=value;
+            this.NRPMA_POST["MAKER_KATABAN"]=value;
         }
 
         if(name=='PM_UNIT')
         {
-        NRPMA_POST[TANI]=value;
+            this.NRPMA_POST["TANI"]=value;
         }
 
         if(name=='RAW_MATERIAL')
         {
-        NRPMA_POST[RAW_MATL]=value;
+            this.NRPMA_POST["RAW_MATL"]=value;
         }
 
         if(name=='PO_WIDTH')
         {
-        NRPMA_POST[STD_W]=value;
+            this.NRPMA_POST["STD_W"]=value;
         }
 
         if(name=='PO_LENGTH')
         {
-        NRPMA_POST[STD_L]=value;
+            this.NRPMA_POST["STD_L"]=value;
         }
 
         if(name=='PS_CALC_CODE')
         {
-        NRPMA_POST[PS_KANSAN]=value;
+            this.NRPMA_POST["PS_KANSAN"]=value;
         }
 
         if(name=='PO_SPEC1')
         {
-        NRPMA_POST[CH_SIYO1]=value;
+            this.NRPMA_POST["CH_SIYO1"]=value;
         }
 
         if(name=='PO_SPEC2')
         {
-        NRPMA_POST[CH_SIYO2]=value;
+            this.NRPMA_POST["CH_SIYO2"]=value;
         }
 
         if(name=='PO_SPEC3')
         {
-        NRPMA_POST[CH_SIYO3]=value;
+            this.NRPMA_POST["CH_SIYO3"]=value;
         }
 
         if(name=='MACHINE_TYPE')
         {
-        NRPMA_POST[KISHU_BUNRUI]=value;
+            this.NRPMA_POST["KISHU_BUNRUI"]=value;
         }
 
         if(name=='PDM_TYPE')
         {
-        NRPMA_POST[PDM_FLAG]=value;
+            this.NRPMA_POST["PDM_FLAG"]=value;
         }
 
         if(name=='REMARKS_LOC')
         {
-        NRPMA_POST[TEKIYO]=value;
+            this.NRPMA_POST["TEKIYO"]=value;
         }
 
         if(name=='INSPECT_SHEET')
         {
-        NRPMA_POST[INSPECT_SH]=value;
+            this.NRPMA_POST["INSPECT_SH"]=value;
         }
 
         if(name=='TEST_REPORT')
         {
-        NRPMA_POST[TEST_REP]=value;
+            this.NRPMA_POST["TEST_REP"]=value;
         }
 
         if(name=='MILL_SHEET')
         {
-        NRPMA_POST[MILL_SH]=value;
+            this.NRPMA_POST["MILL_SH"]=value;
         }
 
         if(name=='PRODUCT_SIGN')
         {
-        NRPMA_POST[PRD_SIGN]=value;
+            this.NRPMA_POST["PRD_SIGN"]=value;
         }
 
         if (name == 'PART_NO')
         {
-        NRPMA_POST[PART_NO]=value;
+            this.NRPMA_POST["PART_NO"]=value;
         }
 
         if (name == 'PART_REV_NO')
         {
-        NRPMA_POST[REV_PART_NO]=value;
+            this.NRPMA_POST["REV_PART_NO"]=value;
         }
 
         if (name == 'DWG_NO')
         {
-        NRPMA_POST[DWG_NO]=value;
+            this.NRPMA_POST["DWG_NO"]=value;
         }
 
         if (name == 'PM_TYPE')
         {
-        NRPMA_POST[PM_TYPE]=value;
+            this.NRPMA_POST["PM_TYPE"]=value;
         }
 
         if (name == 'PART_TYPE')
         {
-        NRPMA_POST[PART_TYPE]=value;
+            this.NRPMA_POST["PART_TYPE"]=value;
         }
 
         if (name == 'PRODUCT_CODE')
         {
-        NRPMA_POST[PRODUCT_CODE]=value;
+            this.NRPMA_POST["PRODUCT_CODE"]=value;
         }
 
         if (name == 'THICKNESS')
         {
-        NRPMA_POST[THICKNESS]=value;
+            this.NRPMA_POST["THICKNESS"]=value;
         }
 
         if (name == 'DENSITY')
         {
-        NRPMA_POST[DENSITY]=value;
+            this.NRPMA_POST["DENSITY"]=value;
         }
 
         if (name == 'WEIGHT')
         {
-        NRPMA_POST[WEIGHT]=value;
+            this.NRPMA_POST["WEIGHT"]=value;
         }
 
         if (name == 'SHP_LABEL_RULE')
         {
-        NRPMA_POST[SHP_LABEL_RULE]=value;
+            this.NRPMA_POST["SHP_LABEL_RULE"]=value;
         }
 
         if (name == 'SUPPLEMENT')
         {
-        NRPMA_POST[SUPPLEMENT]=value;
+            this.NRPMA_POST["SUPPLEMENT"]=value;
         }
 
         if (name == 'START_DATE')
         {
-        NRPMA_POST[START_DATE]=value;
+            this.NRPMA_POST["START_DATE"]=value;
         }
 
         if (name == 'REV_START_DATE')
         {
-        NRPMA_POST[REV_START_DATE]=value;
+            this.NRPMA_POST["REV_START_DATE"]=value;
         }
 
         if (name == 'ORDER_STOP_DATE')
         {
-        NRPMA_POST[ORDER_STOP_DATE]=value;
+            this.NRPMA_POST["ORDER_STOP_DATE"]=value;
         }
 
         if (name == 'STOP_DATE')
         {
-        NRPMA_POST[STOP_DATE]=value;
+            this.NRPMA_POST["STOP_DATE"]=value;
         }
 
         if (name == 'UPD_WHO')
         {
-        NRPMA_POST[UPD_WHO]=value;
+            this.NRPMA_POST["UPD_WHO"]=value;
         }
 
         if (name == 'UPD_WHEN')
         {
-        NRPMA_POST[UPD_WHEN]=value;
+            this.NRPMA_POST["UPD_WHEN"]=value;
         }
 
         if (name == 'CERT_CONFORM')
         {
-        NRPMA_POST[CERT_CONFORM]=value;
+            this.NRPMA_POST["CERT_CONFORM"]=value;
         }
 
         if (name == 'TRACE_TYPE')
         {
-        NRPMA_POST[TRACE_TYPE]=value;
+            this.NRPMA_POST["TRACE_TYPE"]=value;
         }
 
         if (name == 'CH_STOP_DATE')
         {
-        NRPMA_POST[CH_STOP_DATE]=value;
+            this.NRPMA_POST["CH_STOP_DATE"]=value;
         }
 
         if (name == 'MAINT_PART_NAME')
         {
-        NRPMA_POST[MAINT_PART_NAME]=value;
+            this.NRPMA_POST["MAINT_PART_NAME"]=value;
         }
 
         if (name == 'EXP_CODE')
         {
-        NRPMA_POST[EXP_CODE]=value;
+            this.NRPMA_POST["EXP_CODE"]=value;
         }
 
         if (name == 'MAINT_PARTS_TYPE')
         {
-        NRPMA_POST[MAINT_PARTS_TYPE]=value;
+            this.NRPMA_POST["MAINT_PARTS_TYPE"]=value;
         }
 
         if (name == 'RECYCLE_TYPE')
         {
-        NRPMA_POST[RECYCLE_TYPE]=value;
+            this.NRPMA_POST["RECYCLE_TYPE"]=value;
         }
 
         if (name == 'EMG_TYPE')
         {
-        NRPMA_POST[EMG_TYPE]=value;
+            this.NRPMA_POST["EMG_TYPE"]=value;
         }
 
         if (name == 'MAINT_CONTRACT_TYPE')
         {
-        NRPMA_POST[MAINT_CONTRACT_TYPE]=value;
+            this.NRPMA_POST["MAINT_CONTRACT_TYPE"]=value;
         }
 
         if (name == 'STD_COST_UPD_TYPE')
         {
-        NRPMA_POST[STD_COST_UPD_TYPE]=value;
+            this.NRPMA_POST["STD_COST_UPD_TYPE"]=value;
         }
     },
     convertPMtoNH(name,value){
         if ( name == 'PART_NO')
         {
-            NRPMHIS_POST[PART_NO]=value;
+            this.NRPMHIS_POST["PART_NO"]=value;
         }
         if ( name == 'PART_REV_NO')
         {
-            NRPMHIS_POST[REV_PART_NO]=value;
+            this.NRPMHIS_POST["REV_PART_NO"]=value;
         }
         if ( name == 'PARTCHG_TYPE')
         {
-            NRPMHIS_POST[REV_GOKAN]=value;
+            this.NRPMHIS_POST["REV_GOKAN"]=value;
         }
         if ( name == 'REV_START_DATE')
         {
-            NRPMHIS_POST[REV_START_DATE]=value;
+            this.NRPMHIS_POST["REV_START_DATE"]=value;
         }
         if ( name == 'UPD_WHO')
         {
-            NRPMHIS_POST[UPD_WHO]=value;
+            this.NRPMHIS_POST["UPD_WHO"]=value;
         }
         if ( name == 'UPD_WHEN')
         {
-            NRPMHIS_POST[UPD_WHEN]=value;
+            this.NRPMHIS_POST["UPD_WHEN"]=value;
         }
         if ( name == 'REV_STOP_DATE')
         {
-            NRPMHIS_POST[REV_STOP_DATE]=value;
+            this.NRPMHIS_POST["REV_STOP_DATE"]=value;
         }
     },
     convertPOtoNB(name,value){
         if ( name == 'PART_NO')
         {
-        NRPMB_POST[PART_NO]=value;
+            this.NRPMB_POST["PART_NO"]=value;
         }
         if ( name == 'PLANT_NO')
         {
-        NRPMB_POST[PLANT_NO]=value;
+            this.NRPMB_POST["PLANT_NO"]=value;
         }
         if ( name == 'MFG_TYPE')
         {
-        NRPMB_POST[MFG_TYPE]=value;
+            this.NRPMB_POST["MFG_TYPE"]=value;
         }
         if ( name == 'STOCK_TYPE')
         {
-        NRPMB_POST[STOCK]=value;
+            this.NRPMB_POST["STOCK"]=value;
         }
         if ( name == 'AUTO_WAREHOUSE_CODE')
         {
-        NRPMB_POST[AUTO_SOKO]=value;
+            this.NRPMB_POST["AUTO_SOKO"]=value;
         }
         if ( name == 'ORDER_TYPE')
         {
-        NRPMB_POST[ORDER_TYPE]=value;
+            this.NRPMB_POST["ORDER_TYPE"]=value;
         }
         if ( name == 'TRANS_STOCK_TYPE')
         {
-        NRPMB_POST[ORDER_AUTO]=value;
+            this.NRPMB_POST["ORDER_AUTO"]=value;
         }
         if ( name == 'ROUTING_CODE')
         {
-        NRPMB_POST[KT_CODE]=value;
+            this.NRPMB_POST["KT_CODE"]=value;
         }
         if ( name == 'ARR_BRANCH_CODE')
         {
-        NRPMB_POST[TE_TENSHO]=value;
+            this.NRPMB_POST["TE_TENSHO"]=value;
         }
         if ( name == 'ARR_WHO')
         {
-        NRPMB_POST[TE_TANTO]=value;
+            this.NRPMB_POST["TE_TANTO"]=value;
         }
         if ( name == 'PO_BRANCH_CODE')
         {
-        NRPMB_POST[CH_TENSHO]=value;
+            this.NRPMB_POST["CH_TENSHO"]=value;
         }
         if ( name == 'PO_WHO')
         {
-        NRPMB_POST[CH_TANTO]=value;
+            this.NRPMB_POST["CH_TANTO"]=value;
         }
         if ( name == 'PO_TYPE')
         {
-        NRPMB_POST[CH_HANTEI]=value;
+            this.NRPMB_POST["CH_HANTEI"]=value;
         }
         if ( name == 'FILING_REC_CODE1')
         {
-        NRPMB_POST[TEISHUTU_CD_1]=value;
+            this.NRPMB_POST["TEISHUTU_CD_1"]=value;
         }
         if ( name == 'FILING_REC_CODE2')
         {
-        NRPMB_POST[TEISHUTU_CD_2]=value;
+            this.NRPMB_POST["TEISHUTU_CD_2"]=value;
         }
         if ( name == 'QC_BRANCH_CODE')
         {
-        NRPMB_POST[QC_TENSHO]=value;
+            this.NRPMB_POST["QC_TENSHO"]=value;
         }
         if ( name == 'ABC_TYPE')
         {
-        NRPMB_POST[ABC_TYPE]=value;
+            this.NRPMB_POST["ABC_TYPE"]=value;
         }
         if ( name == 'SCRAP_PCNT')
         {
-        NRPMB_POST[SCRAP_PCNT]=value;
+            this.NRPMB_POST["SCRAP_PCNT"]=value;
         }
         if ( name == 'BUCKET')
         {
-        NRPMB_POST[BUCKET]=value;
+            this.NRPMB_POST["BUCKET"]=value;
         }
         if ( name == 'MFG_LOT_SIZE')
         {
-        NRPMB_POST[MFG_LOT_SIZE]=value;
+            this.NRPMB_POST["MFG_LOT_SIZE"]=value;
         }
         if ( name == 'MFG_LEADTIME')
         {
-        NRPMB_POST[MFG_LEADTIME]=value;
+            this.NRPMB_POST["MFG_LEADTIME"]=value;
         }
         if ( name == 'STOP_DATE')
         {
-        NRPMB_POST[STOP_DATE]=value;
+            this.NRPMB_POST["STOP_DATE"]=value;
         }
         if ( name == 'UPD_WHO')
         {
-        NRPMB_POST[UPD_WHO]=value;
+            this.NRPMB_POST["UPD_WHO"]=value;
         }
         if ( name == 'UPD_WHEN')
         {
-        NRPMB_POST[UPD_WHEN]=value;
+            this.NRPMB_POST["UPD_WHEN"]=value;
         }
         if ( name == 'ENT_WHEN')
         {
-        NRPMB_POST[ENT_DATE]=value;
+            this.NRPMB_POST["ENT_DATE"]=value;
         }
         if ( name == 'STOCK_CODE')
         {
-        NRPMB_POST[STOCK_KANRI]=value;
+            this.NRPMB_POST["STOCK_KANRI"]=value;
         }
         if ( name == 'MATL_BRANCH_CODE1')
         {
-        NRPMB_POST[HOZAI_KANRI1]=value;
+            this.NRPMB_POST["HOZAI_KANRI1"]=value;
         }
         if ( name == 'MATL_BRANCH_CODE2')
         {
-        NRPMB_POST[HOZAI_KANRI2]=value;
+            this.NRPMB_POST["HOZAI_KANRI2"]=value;
         }
         if ( name == 'MATL_BRANCH_CODE3')
         {
-        NRPMB_POST[HOZAI_KANRI3]=value;
+            this.NRPMB_POST["HOZAI_KANRI3"]=value;
         }
         if ( name == 'MATL_BRANCH_CODE4')
         {
-        NRPMB_POST[HOZAI_KANRI4]=value;
+            this.NRPMB_POST["HOZAI_KANRI4"]=value;
         }
         if ( name == 'MATL_BRANCH_CODE5')
         {
-        NRPMB_POST[HOZAI_KANRI5]=value;
+            this.NRPMB_POST["HOZAI_KANRI5"]=value;
         }
         if ( name == 'MATL_BRANCH_CODE6')
         {
-        NRPMB_POST[HOZAI_KANRI6]=value;
+            this.NRPMB_POST["HOZAI_KANRI6"]=value;
         }
         if ( name == 'MATL_BRANCH_CODE7')
         {
-        NRPMB_POST[HOZAI_KANRI7]=value;
+            this.NRPMB_POST["HOZAI_KANRI7"]=value;
         }
         if ( name == 'MATL_BRANCH_CODE8')
         {
-        NRPMB_POST[HOZAI_KANRI8]=value;
+            this.NRPMB_POST["HOZAI_KANRI8"]=value;
         }
         if ( name == 'MATL_BRANCH_CODE9')
         {
-        NRPMB_POST[HOZAI_KANRI9]=value;
+            this.NRPMB_POST["HOZAI_KANRI9"]=value;
         }
         if ( name == 'MATL_BRANCH_CODE10')
         {
-        NRPMB_POST[HOZAI_KANRI10]=value;
+            this.NRPMB_POST["HOZAI_KANRI10"]=value;
         }
         if ( name == 'MATL_BRANCH_CODE11')
         {
-        NRPMB_POST[HOZAI_KANRI11]=value;
+            this.NRPMB_POST["HOZAI_KANRI11"]=value;
         }
         if ( name == 'MATL_BRANCH_CODE12')
         {
-        NRPMB_POST[HOZAI_KANRI12]=value;
+            this.NRPMB_POST["HOZAI_KANRI12"]=value;
         }
         if ( name == 'MFG_MIN_LOT_SIZE')
         {
-        NRPMB_POST[MFG_MIN_LOT_SIZE]=value;
+            this.NRPMB_POST["MFG_MIN_LOT_SIZE"]=value;
         }
         if ( name == 'SET_COLOR_TYPE')
         {
-        NRPMB_POST[SET_COLOR_FLAG]=value;
+            this.NRPMB_POST["SET_COLOR_FLAG"]=value;
         }
         if ( name == 'WCCC_FOLLOW_TYPE')
         {
-        NRPMB_POST[WCCC_FOLLOW_FLAG]=value;
+            this.NRPMB_POST["WCCC_FOLLOW_FLAG"]=value;
         }
         if ( name == 'AUTO_ARR_COMP_DATE')
         {
-        NRPMB_POST[AUTO_TE_COMP_DATE]=value;
+            this.NRPMB_POST["AUTO_TE_COMP_DATE"]=value;
         }
         if ( name == 'TRACE_TYPE')
         {
-        NRPMB_POST[TRACE_FLAG]=value;
+            this.NRPMB_POST["TRACE_FLAG"]=value;
         }
         if ( name == 'VENDOR_SUPPLY_TYPE')
         {
-        NRPMB_POST[VENDOR_SIKYU_FLAG]=value;
+            this.NRPMB_POST["VENDOR_SIKYU_FLAG"]=value;
         }
         if ( name == 'AUTO_CH_REQ_TYPE')
         {
-        NRPMB_POST[AUTO_CH_REQ_FLAG]=value;
+            this.NRPMB_POST["AUTO_CH_REQ_FLAG"]=value;
         }
         if ( name == 'YEAR_CH_QTY')
         {
-        NRPMB_POST[YEAR_CH_QTY]=value;
+            this.NRPMB_POST["YEAR_CH_QTY"]=value;
         }
         if ( name == 'LOT_PRINT_TYPE')
         {
-        NRPMB_POST[LOT_PRINT_TYPE]=value;
+            this.NRPMB_POST["LOT_PRINT_TYPE"]=value;
         }
         if ( name == 'MATL_AUTO_ORD_TYPE')
         {
-        NRPMB_POST[HOZAI_AUTO_ORD_FLAG]=value;
+            this.NRPMB_POST["HOZAI_AUTO_ORD_FLAG"]=value;
         }
         if ( name == 'TRANSFER_REQ_PLANT')
         {
-        NRPMB_POST[TRANSFER_REQ_PLANT]=value;
+            this.NRPMB_POST["TRANSFER_REQ_PLANT"]=value;
         }
         if ( name == 'FC_FLAG')
         {
-        NRPMB_POST[FC_FLAG]=value;
+            this.NRPMB_POST["FC_FLAG"]=value;
         }
         if ( name == 'STOCK_PLAN_COUNT')
         {
-        NRPMB_POST[STOCK_PLAN_COUNT]=value;
+            this.NRPMB_POST["STOCK_PLAN_COUNT"]=value;
         }
         if ( name == 'STOCK_PLAN_TYPE')
         {
-        NRPMB_POST[STOCK_PLAN_TYPE]=value;
+            this.NRPMB_POST["STOCK_PLAN_TYPE"]=value;
         }
         if ( name == 'ISSUE_FC_METHOD')
         {
-        NRPMB_POST[ISSUE_FC_METHOD]=value;
+            this.NRPMB_POST["ISSUE_FC_METHOD"]=value;
         }
         if ( name == 'FM_ISSUE_FC_RATE')
         {
-        NRPMB_POST[FM_ISSUE_FC_RATE]=value;
+            this.NRPMB_POST["FM_ISSUE_FC_RATE"]=value;
         }
         if ( name == 'POG_ISSUE_FC_RATE')
         {
-        NRPMB_POST[POG_ISSUE_FC_RATE]=value;
+            this.NRPMB_POST["POG_ISSUE_FC_RATE"]=value;
         }
     },
     setListener(){
@@ -4195,7 +4196,7 @@ export default {
                 if(this.EditInfo_Value[index].FIELD_VALUE !== null ||this.EditInfo_Value[index].FIELD_VALUE == "")
                     {
                     /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
-                        if(this.EditInfo_Value[index].FIELD_VALUE == item.CM_CODE){
+                        if(this.EditInfo_Value[index].FIELD_VALUE == item.CM_CODE || this.EditInfo_Value[index].FIELD_VALUE ==""){
                             this.EditInfo_Value[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
                             this.EditInfo_Value[index].Setsumei_Error =false;
                             return true;
@@ -4243,7 +4244,7 @@ export default {
                 if(this.EditInfo2_Value[index].FIELD_VALUE !== null ||this.EditInfo2_Value[index].FIELD_VALUE == "")
                     {
                     /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
-                        if(this.EditInfo2_Value[index].FIELD_VALUE == item.CM_CODE){
+                        if(this.EditInfo2_Value[index].FIELD_VALUE == item.CM_CODE || this.EditInfo2_Value[index].FIELD_VALUE ==""){
                             this.EditInfo2_Value[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
                             this.EditInfo2_Value[index].Setsumei_Error =false;
                             return true;
@@ -5629,25 +5630,30 @@ export default {
             case '1':
                 this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogKoumokuTableSelected[0].CM_CODE;
                 this.EditInfo_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogKoumokuTableSelected[0].CM_CODE_SETUMEI;
+                this.EditInfo_Value[this.EditIndex].UPDATE_ST=true;
                 this.dialogKoumokuTableSelected =[];
                 break;
             case '2':
                 this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogChoumonSelected[0].CH_CODE;
                 this.EditInfo_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogChoumonSelected[0].CH_CODE_SETUMEI_1;
+                this.EditInfo_Value[this.EditIndex].UPDATE_ST=true;
                 this.dialogChoumonSelected =[];
                 break;
             case '3':
                 this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogTantouSelected[0].TANTO_CODE;
                 this.EditInfo_Value[this.EditIndex].FIELD_EXPLAIN = "[" + this.dialogTantouSelected[0].USER_ID + "]"+this.dialogTantouSelected[0].USER_NAME;
+                this.EditInfo_Value[this.EditIndex].UPDATE_ST=true;
                 this.dialogTantouSelected =[];
                 break;
             case '4':
                 this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogTantaiSelected[0].TANI;
+                this.EditInfo_Value[this.EditIndex].UPDATE_ST=true;
                 this.dialogTantaiSelected =[];
                 break;
             case '6':
                 this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogArraySelected[0].ARRAY_VALUE;
                 this.EditInfo_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogArraySelected[0].ARRAY_SETUMEI;
+                this.EditInfo_Value[this.EditIndex].UPDATE_ST=true;
                 this.dialogArraySelected =[];
                 break;
         }
@@ -5658,25 +5664,30 @@ export default {
             case '1':
                 this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogKoumokuTableSelected[0].CM_CODE;
                 this.EditInfo2_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogKoumokuTableSelected[0].CM_CODE_SETUMEI;
+                this.EditInfo2_Value[this.EditIndex].UPDATE_ST=true;
                 this.dialogKoumokuTableSelected =[];
                 break;
             case '2':
                 this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogChoumonSelected[0].CH_CODE;
                 this.EditInfo2_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogChoumonSelected[0].CH_CODE_SETUMEI_1;
+                this.EditInfo2_Value[this.EditIndex].UPDATE_ST=true;
                 this.dialogChoumonSelected =[];
                 break;
             case '3':
                 this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogTantouSelected[0].TANTO_CODE;
                 this.EditInfo2_Value[this.EditIndex].FIELD_EXPLAIN = "[" + this.dialogTantouSelected[0].USER_ID + "]"+this.dialogTantouSelected[0].USER_NAME;
+                this.EditInfo2_Value[this.EditIndex].UPDATE_ST=true;
                 this.dialogTantouSelected =[];
                 break;
             case '4':
                 this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogTantaiSelected[0].TANI;
+                this.EditInfo2_Value[this.EditIndex].UPDATE_ST=true;
                 this.dialogTantaiSelected =[];
                 break;
             case '6':
                 this.EditInfo2_Value[this.EditIndex].FIELD_VALUE = this.dialogArraySelected[0].ARRAY_VALUE;
                 this.EditInfo2_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogArraySelected[0].ARRAY_SETUMEI;
+                this.EditInfo2_Value[this.EditIndex].UPDATE_ST=true;
                 this.dialogArraySelected =[];
                 break;
         }
@@ -5814,11 +5825,11 @@ export default {
     ,
     POST_PPPMMMS(){
         const url = "http://localhost:59272/api/KensakuBtnPost/PPPMMS";
-        this.NRPMA_POST=[];
-        this.NRPMHIS_POST=[]
+        this.NRPMA_POST={};
+        this.NRPMHIS_POST={};
         var req ={};
         this.EditInfo_Value.forEach(item =>{
-            if(item.UPDATE_ST || item.FIELD_NAME == "PART_NO" || item.FIELD_NAME == "PART_REV_NO")
+            if(item.UPDATE_ST)
             {
                 if(item.AUTH_TYPE == "2")
                 {
@@ -5826,15 +5837,16 @@ export default {
                     this.convertPMtoNA(item.FIELD_NAME,item.FIELD_VALUE);
                     this.convertPMtoNH(item.FIELD_NAME,item.FIELD_VALUE);
                 }
-                if(item.FIELD_NAME == "PART_NO" || item.FIELD_NAME == "PART_REV_NO")
+                
+            }
+            if(item.FIELD_NAME == "PART_NO" || item.FIELD_NAME == "PART_REV_NO")
                 {
                     req[item.FIELD_NAME] = item.FIELD_VALUE;
                     this.convertPMtoNA(item.FIELD_NAME,item.FIELD_VALUE);
                     this.convertPMtoNH(item.FIELD_NAME,item.FIELD_VALUE);
-                }
-            }   
+                }   
         });
-        
+        console.log("PN HERE!!");
         this.EditInfo_Value=this.EditInfo_Value.map(item =>{
             item.UPDATE_ST = false;
             return item;
@@ -5842,8 +5854,7 @@ export default {
         console.log("PPPMMS REQ: ");
         console.log(req);
         const params =req;
-        /*
-        if(req !== {})
+        if(req != {})
         {
             this.$axios.post(url,params).then(
             
@@ -5852,7 +5863,7 @@ export default {
             })
             this.POST_NRPMA();
             this.POST_NRPHIS();
-        }*/
+        }
         
     },
     POST_NRPMA(){
@@ -5863,17 +5874,19 @@ export default {
         ).catch(err=>{
             
         })
-        this.NRPMA_POST=[];
+        this.NRPMA_POST={};
     },
     POST_NRPMB(){
         const url = "http://localhost:59272/api/KensakuBtnPost/NRPMB";
         const params = this.NRPMB_POST;
+        console.log("NRPMB_POST");
+        console.log( params);
         this.$axios.post(url,params).then(
             
         ).catch(err=>{
             
         })
-        this.NRPMB_POST=[];
+        this.NRPMB_POST={};
     },
     POST_NRPHIS(){
         const url = "http://localhost:59272/api/KensakuBtnPost/NRPMHIS";
@@ -5883,37 +5896,37 @@ export default {
         ).catch(err=>{
             
         })
-        this.NRPMHIS_POST=[];
+        this.NRPMHIS_POST={};
 
     },
     POST_PPPMORDER(){
         const url = "http://localhost:59272/api/KensakuBtnPost/PPPMORDER";
-        this.NRPMB_POST=[];
+        this.NRPMB_POST={};
         var req ={};
         this.EditInfo2_Value.forEach(item =>{
-            if(item.UPDATE_ST || item.FIELD_NAME == "PART_NO")
+            if(item.UPDATE_ST)
             {
                 if(item.AUTH_TYPE == "2")
                 {
                     req[item.FIELD_NAME] = item.FIELD_VALUE;
                     this.convertPOtoNB(item.FIELD_NAME,item.FIELD_VALUE);
                 }
-                if(item.FIELD_NAME == "PART_NO")
-                {
-                    req[item.FIELD_NAME] = item.FIELD_VALUE;
-                    this.convertPOtoNB(item.FIELD_NAME,item.FIELD_VALUE);
-                }
+            }
+            if(item.FIELD_NAME == "PART_NO")
+            {
+                req[item.FIELD_NAME] = item.FIELD_VALUE;
+                this.convertPOtoNB(item.FIELD_NAME,item.FIELD_VALUE);
             }
         });
         req["PLANT_NO"] =[];
         req["PLANT_NO"].push(this.Edit_Combobox_1_select.substr(0,1));
-        this.NRPMB_POST["PLANT_NO"].push(this.Edit_Combobox_1_select.substr(0,1));
+        this.NRPMB_POST["PLANT_NO"]=req["PLANT_NO"];
         if(this.Edit_checkbox && this.Edit_Combobox_2_select.substr(0,1) != "" &&
         this.Edit_Combobox_2_select.substr(0,1) != "-")
         {
             req["PLANT_NO"].push(this.Edit_Combobox_2_select.substr(0,1));
-            this.NRPMB_POST["PLANT_NO"].push(this.Edit_Combobox_2_select.substr(0,1));
         } 
+        this.NRPMB_POST["PLANT_NO"]=req["PLANT_NO"];
         this.EditInfo2_Value=this.EditInfo2_Value.map(item =>{
             item.UPDATE_ST = false;
             return item;
@@ -5921,7 +5934,6 @@ export default {
         const params =req;
         console.log("PPPMORDER REQ: ");
         console.log(req);
-        /*
         if(req !== {})
         {
             this.$axios.post(url,params).then(
@@ -5930,7 +5942,7 @@ export default {
                 
             })
             this.POST_NRPMB();
-        }*/
+        }
     },
     
     //詳細検索クリアパラメータ
