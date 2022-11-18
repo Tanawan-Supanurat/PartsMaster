@@ -3,7 +3,12 @@
       <v-main>
         <Nuxt />
         <div>
-            <v-btn @click ="check_pppmmsForm()">Test form</v-btn>
+            <v-row>
+                <v-col>
+                    <v-btn @click ="check_pppmmsForm()">Test form</v-btn>
+                </v-col>
+            </v-row>
+            
             <!-- Nav-bar -->
             <v-app-bar
             color="light-blue lighten-1"
@@ -124,12 +129,15 @@
             
             <!-- 基本検索条件 -->
             <v-navigation-drawer
-                v-model="drawer"
-                :mini-variant.sync="mini"
-                floating
+                v-model="drawer1"
+                :mini-variant="$vuetify.breakpoint.mobile ?mini : mini"
                 mini-variant-width = "3%"
-                :width = search_width
-                height="100vh"
+                :floating="$vuetify.breakpoint.mobile ?false:true"
+                :bottom ="$vuetify.breakpoint.mobile ?true:false"
+                :fixed = "$vuetify.breakpoint.mobile ?true:false"
+                
+                :width = "search_width"
+                :height="$vuetify.breakpoint.mobile ?this.search_height:'100vh'"
             >
                 <v-list
                  nav
@@ -144,13 +152,38 @@
                          v-model="kensakuForm"
                          lazy-validation
                         >
-                             <v-btn class = "mb-2"
-                             icon
-                            @click.stop="changeSearchMiniWidth()"
-                            >
-                             <v-icon>mdi-step-backward</v-icon>
-                            </v-btn>検索条件
-                            <v-content class ="pl-10">
+                            <v-row class="d-flex" >
+                                <v-col >
+                                    <div v-if="!$vuetify.breakpoint.mobile">
+                                        <v-btn class = "mb-2"
+                                        icon
+                                        @click.stop="changeSearchMiniWidth()"
+                                        >
+                                            <v-icon v-if ="!mini">mdi-step-backward</v-icon>
+                                            <v-icon v-if ="mini">mdi-step-forward</v-icon>
+                                        </v-btn>検索条件
+                                    </div>
+                                    <div v-if="$vuetify.breakpoint.mobile">
+                                        <v-btn class = "mb-2"
+                                        icon
+                                        @click.stop="changeSerachHeight()"
+                                        >
+                                            <v-icon v-if ="!mini">mdi-menu-down</v-icon>
+                                            <v-icon v-if ="mini">mdi-menu-up</v-icon>
+                                        </v-btn>検索条件
+                                    </div>
+                                </v-col>
+                                <v-col class=" d-flex justify-end mt-2"  v-if="$vuetify.breakpoint.mobile">
+                                    検索結果
+                                    <v-btn 
+                                    @click.stop ="changeNavBar(1)"
+                                    class="mt-n2" icon>
+                                    <v-icon>mdi-step-forward</v-icon>
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+                            <div v-if="!mini" >
+                                <v-content class ="pl-10">
                                 <!--　基本検索条件1 -->
                                 <p class="ma-0">部品コード</p>
                                 <v-text-field
@@ -247,7 +280,7 @@
                                 </v-row>
                                 <p class="mb-2">標準図発行日</p>
                                 <v-row no-gutters class="py-0">
-                                    <v-col col="5" sm="5">
+                                    <v-col cols="5" sm="5">
                                         <v-menu
                                         ref="menu"
                                         v-model="hakkouMenu1"
@@ -277,7 +310,7 @@
                                         </v-menu>
                                     </v-col>
                                     <v-col class = "ml-2" sm="1"><p>~</p></v-col>
-                                    <v-col col="5" sm="5">
+                                    <v-col cols="5" sm="5">
                                         <v-menu
                                         ref="menu"
                                         v-model="hakkouMenu2"
@@ -347,7 +380,7 @@
                                 </v-row>
                                 <p class="mb-2">標準図切替日</p>
                                 <v-row no-gutters class="py-0">
-                                    <v-col col="5" sm="5">
+                                    <v-col cols="5" sm="5">
                                         <v-menu
                                         ref="menu"
                                         v-model="kirikaeMenu1"
@@ -377,7 +410,7 @@
                                         </v-menu>
                                     </v-col>
                                     <v-col class = "ml-2" sm="1"><p>~</p></v-col>
-                                    <v-col col="5" sm="5">
+                                    <v-col cols="5" sm="5">
                                         <v-menu
                                         ref="menu"
                                         v-model="kirikaeMenu2"
@@ -571,7 +604,7 @@
                                                 v-model="shousaiForm"
                                             >
                                                 <v-row no-gutters>
-                                                    <v-col>
+                                                    <v-col :cols="$vuetify.breakpoint.mobile?'12':'4'">
                                                         <p class="ma-0">・部品コード</p>
                                                         <v-row no-gutters justify="end">
                                                             <v-col cols="9" sm="9" >
@@ -809,644 +842,110 @@
                                                                     <v-divider></v-divider>
                                                                 </template>
                                                             </v-data-table>
+                                                            <br>
                                                             </v-col>
                                                         </v-row>
                                                     </v-col>
-                                                <v-col>
-                                                    <v-row no-gutters>
-                                                        <v-col>
-                                                            <p class="ma-0">・工場区分</p>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <p class="ma-0">・置場/棚番</p>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row  no-gutters>
-                                                        <v-col col=6 sm=6>
-                                                            <v-row no-gutters>
-                                                                <v-col class="ml-10" col="4" sm="4">
-                                                                    <v-text-field
-                                                                    class="mb-n4"
-                                                                    v-model="shousaiKoban"
-                                                                    dense outlined></v-text-field>
-                                                                </v-col>
-                                                                <v-col>
-                                                                    <p class="ml-2 mt-2">1,2,3,4,5,6</p>
-                                                                </v-col>
-                                                            </v-row>
-                                                        </v-col>
-                                                        <v-col col=6 sm=6>
-                                                            <v-row no-gutters>
-                                                                <v-col class="ml-5" col="9" sm="9">
-                                                                    <v-text-field 
-                                                                    class="mb-n4"
-                                                                    v-model="shousaiTanban"
-                                                                    dense outlined></v-text-field>
-                                                                </v-col>
-                                                            </v-row>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <p class="ma-0">・倉庫担当</p>
-                                                    <v-row  no-gutters>
-                                                        <v-col class="ml-10" col="10" sm="10">
-                                                            <v-text-field
-                                                            class="mb-n4"
-                                                            v-model="shousaiSokotantou"
-                                                            dense outlined></v-text-field>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters justify="space-between">
-                                                        <v-col>
-                                                            <p class="ma-0">・P/S展開区分</p>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <p class="ma-0">・自動購入指示</p>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row  no-gutters>
-                                                        <v-col col=6 sm=6>
-                                                            <v-row no-gutters>
-                                                                <v-col class="ml-10" col="8" sm="8">
-                                                                    <v-text-field
-                                                                    class="mb-n4"
-                                                                    v-model="shousaiPStenkai"
-                                                                    dense outlined></v-text-field>
-                                                                </v-col>
-                                                            </v-row>
-                                                        </v-col>
-                                                        <v-col col=6 sm=6>
-                                                            <v-row no-gutters>
-                                                                <v-col class="ml-5" col="8" sm="8">
-                                                                    <v-text-field 
-                                                                    class="mb-n4"
-                                                                    v-model="shousaiJidouKounyuu"
-                                                                    dense outlined></v-text-field>
-                                                                </v-col>
-                                                            </v-row>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters justify="space-between">
-                                                        <v-col>
-                                                            <p class="ma-0">・製品分類コード</p>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <p class="ma-0">・部品区分</p>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row  no-gutters justify="space-between">
-                                                        <v-col class="ml-10" col="2" sm="2">
-                                                            <v-text-field
-                                                            class="mb-n4"
-                                                            v-model="shousaiSeihinbunruiCode"
-                                                            dense outlined>
-                                                            </v-text-field>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <v-dialog
-                                                             v-model="dialogSeihinbunru"
-                                                             width="700"
-                                                            >
-                                                                <template v-slot:activator = "{ on ,attrs}">
-                                                                    <v-btn 
-                                                                     v-bind="attrs"
-                                                                     v-on="on"
-                                                                     class = "ml-2 mt-2" 
-                                                                     @click="getDialogKoumoku(210,'製品分類コード')"
-                                                                     x-small>
-                                                                     ...
-                                                                     </v-btn>
-                                                                </template>
-                                                                <v-card>
-                                                                    <v-system-bar window dark>
-                                                                            <span>PMRA0191 参照画面（共用マスタ）</span>
-                                                                            <v-spacer></v-spacer>
-                                                                            <v-btn small @click="dialogSeihinbunru = false">
-                                                                                <v-icon>mdi-close</v-icon>
-                                                                            </v-btn>
-                                                                    </v-system-bar>
-                                                                    <v-container>
-                                                                        <v-row justify="space-between" no-gutters>
-                                                                            <v-col>
-                                                                                <span>参照画面</span>
-                                                                            </v-col>
-                                                                            <v-col sm=5>
-                                                                                <p>項目No.{{this.dialogKoumokuNO}}:{{this.dialogKoumokuName}}</p>
-                                                                                <p>項目の有効期限{{this.dialogEnableDate_1}}~{{this.dialogEnableDate_2}}</p>
-                                                                            </v-col>
-                                                                        </v-row>
-                                                                        <v-row>
-                                                                            <v-data-table
-                                                                             v-model="dialogKoumokuTableSelected"
-                                                                             :headers ="dialogKoumokuTableHeader"
-                                                                             :items ="dialogKoumokuTableItem"
-                                                                             :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                                                             fixed-header
-                                                                             singleSelect
-                                                                             item-key="CM_CODE"
-                                                                             dense
-                                                                             height="500px"
-                                                                             show-select
-                                                                             
-                                                                            ></v-data-table>
-                                                                        </v-row>
-                                                                        <br>
-                                                                        <v-divider></v-divider>
-                                                                        <v-row class= "mt-2 mb-1 mr-2">
-                                                                            <v-spacer></v-spacer>
-                                                                            <v-btn small @click="getSeihinbunruiCodeFromDialog()" >
-                                                                                <v-icon
-                                                                                    left
-                                                                                    dark
-                                                                                >
-                                                                                    mdi-check-outline
-                                                                                </v-icon>  
-                                                                                選択(S)
-                                                                            </v-btn>
-                                                                            <v-btn small class="ml-2" @click ="dialogSeihinbunru = false">
-                                                                                <v-icon
-                                                                                    left
-                                                                                    dark
-                                                                                >
-                                                                                    mdi-close-box-outline
-                                                                                </v-icon> 
-                                                                                閉じる(C)
-                                                                            </v-btn>
-                                                                        </v-row>
-                                                                    </v-container>
-                                                                </v-card>
-                                                            </v-dialog>
-                                                        </v-col>
-                                                        <v-col class="my-0 mr-8 mr-auto" col="2" sm="2">
-                                                            <v-text-field 
-                                                            class="mb-n4"
-                                                            v-model="shousaiBuhinkubun"
-                                                            dense outlined></v-text-field>
-                                                        </v-col>
-                                                        <v-col>
-                                                             <v-dialog
-                                                             v-model="dialogBuhinkubun"
-                                                             width="700"
-                                                            >
-                                                                <template v-slot:activator = "{ on ,attrs}">
-                                                                    <v-btn 
-                                                                     v-bind="attrs"
-                                                                     v-on="on"
-                                                                     class = "ml-2 mt-2" 
-                                                                     @click="getDialogKoumoku('A14','部品区分')"
-                                                                     x-small>
-                                                                     ...
-                                                                     </v-btn>
-                                                                </template>
-                                                                <v-card>
-                                                                    <v-system-bar window dark>
-                                                                            <span>PMRA0191 参照画面（共用マスタ）</span>
-                                                                            <v-spacer></v-spacer>
-                                                                            <v-btn small @click="dialogBuhinkubun = false">
-                                                                                <v-icon>mdi-close</v-icon>
-                                                                            </v-btn>
-                                                                    </v-system-bar>
-                                                                    <v-container>
-                                                                        <v-row justify="space-between" no-gutters>
-                                                                            <v-col>
-                                                                                <span>参照画面</span>
-                                                                            </v-col>
-                                                                            <v-col sm=5>
-                                                                                <p>項目No.{{this.dialogKoumokuNO}}:{{this.dialogKoumokuName}}</p>
-                                                                                <p>項目の有効期限{{this.dialogEnableDate_1}}~{{this.dialogEnableDate_2}}</p>
-                                                                            </v-col>
-                                                                        </v-row>
-                                                                        <v-row>
-                                                                            <v-data-table
-                                                                             v-model="dialogKoumokuTableSelected"
-                                                                             :headers ="dialogKoumokuTableHeader"
-                                                                             :items ="dialogKoumokuTableItem"
-                                                                             :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                                                             fixed-header
-                                                                             singleSelect
-                                                                             item-key="CM_CODE"
-                                                                             dense
-                                                                             height="500px"
-                                                                             show-select
-                                                                             
-                                                                            ></v-data-table>
-                                                                        </v-row>
-                                                                        <br>
-                                                                        <v-divider></v-divider>
-                                                                        <v-row class= "mt-2 mb-1 mr-2">
-                                                                            <v-spacer></v-spacer>
-                                                                            <v-btn small @click="getBuhinkubaFromDialog()" >
-                                                                                <v-icon
-                                                                                    left
-                                                                                    dark
-                                                                                >
-                                                                                    mdi-check-outline
-                                                                                </v-icon>  
-                                                                                選択(S)
-                                                                            </v-btn>
-                                                                            <v-btn small class="ml-2" @click ="dialogBuhinkubun = false">
-                                                                                <v-icon
-                                                                                    left
-                                                                                    dark
-                                                                                >
-                                                                                    mdi-close-box-outline
-                                                                                </v-icon> 
-                                                                                閉じる(C)
-                                                                            </v-btn>
-                                                                        </v-row>
-                                                                    </v-container>
-                                                                </v-card>
-                                                            </v-dialog>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters justify="space-between">
-                                                        <v-col>
-                                                            <p class="ma-0">・PDM判定</p>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <p class="ma-0">・機種</p>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row  no-gutters>
-                                                        <v-col col=6 sm=6>
-                                                            <v-row no-gutters>
-                                                                <v-col class="ml-10" col="4" sm="4">
-                                                                    <v-text-field
-                                                                    class="mb-n4"
-                                                                    v-model="shousaiPDM"
-                                                                    dense outlined>
-                                                                    </v-text-field>
-                                                                </v-col>
-                                                                <v-col>
-                                                                     <v-dialog
-                                                                    v-model="dialogPDM"
-                                                                    width="700"
-                                                                    >
-                                                                        <template v-slot:activator = "{ on ,attrs}">
-                                                                            <v-btn 
-                                                                            v-bind="attrs"
-                                                                            v-on="on"
-                                                                            class = "ml-2 mt-2" 
-                                                                            @click="getDialogKoumoku('A13','PDMタイプ')"
-                                                                            x-small>
-                                                                            ...
-                                                                            </v-btn>
-                                                                        </template>
-                                                                        <v-card>
-                                                                            <v-system-bar window dark>
-                                                                                    <span>PMRA0191 参照画面（共用マスタ）</span>
-                                                                                    <v-spacer></v-spacer>
-                                                                                    <v-btn small @click="dialogPDM = false">
-                                                                                        <v-icon>mdi-close</v-icon>
-                                                                                    </v-btn>
-                                                                            </v-system-bar>
-                                                                            <v-container>
-                                                                                <v-row justify="space-between" no-gutters>
-                                                                                    <v-col>
-                                                                                        <span>参照画面</span>
-                                                                                    </v-col>
-                                                                                    <v-col sm=5>
-                                                                                        <p>項目No.{{this.dialogKoumokuNO}}:{{this.dialogKoumokuName}}</p>
-                                                                                        <p>項目の有効期限{{this.dialogEnableDate_1}}~{{this.dialogEnableDate_2}}</p>
-                                                                                    </v-col>
-                                                                                </v-row>
-                                                                                <v-row>
-                                                                                    <v-data-table
-                                                                                    v-model="dialogKoumokuTableSelected"
-                                                                                    :headers ="dialogKoumokuTableHeader"
-                                                                                    :items ="dialogKoumokuTableItem"
-                                                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                                                                    fixed-header
-                                                                                    singleSelect
-                                                                                    item-key="CM_CODE"
-                                                                                    dense
-                                                                                    height="500px"
-                                                                                    show-select
-                                                                                    
-                                                                                    ></v-data-table>
-                                                                                </v-row>
-                                                                                <br>
-                                                                                <v-divider></v-divider>
-                                                                                <v-row class= "mt-2 mb-1 mr-2">
-                                                                                    <v-spacer></v-spacer>
-                                                                                    <v-btn small @click="getPDMFromDialog()" >
-                                                                                        <v-icon
-                                                                                            left
-                                                                                            dark
-                                                                                        >
-                                                                                            mdi-check-outline
-                                                                                        </v-icon>  
-                                                                                        選択(S)
-                                                                                    </v-btn>
-                                                                                    <v-btn small class="ml-2" @click ="dialogPDM = false">
-                                                                                        <v-icon
-                                                                                            left
-                                                                                            dark
-                                                                                        >
-                                                                                            mdi-close-box-outline
-                                                                                        </v-icon> 
-                                                                                        閉じる(C)
-                                                                                    </v-btn>
-                                                                                </v-row>
-                                                                            </v-container>
-                                                                        </v-card>
-                                                                    </v-dialog>
-                                                                </v-col>
-                                                            </v-row>
-                                                        </v-col>
-                                                        <v-col col=6 sm=6>
-                                                            <v-row no-gutters>
-                                                                <v-col class="ml-5" col="7" sm="7">
-                                                                    <v-text-field
-                                                                    class="mb-n4" 
-                                                                    v-model="shousaikishuu"
-                                                                    dense outlined></v-text-field>
-                                                                </v-col>
-                                                                <v-col>
-                                                                    <v-dialog
-                                                                     v-model="dialogKishuu"
-                                                                     width="700"
-                                                                    >
-                                                                        <template v-slot:activator = "{ on ,attrs}">
-                                                                            <v-btn 
-                                                                            v-bind="attrs"
-                                                                            v-on="on"
-                                                                            class = "ml-2 mt-2" 
-                                                                            @click="getDialogKoumoku('160','機種')"
-                                                                            x-small>
-                                                                            ...
-                                                                            </v-btn>
-                                                                        </template>
-                                                                        <v-card>
-                                                                            <v-system-bar window dark>
-                                                                                    <span>PMRA0191 参照画面（共用マスタ）</span>
-                                                                                    <v-spacer></v-spacer>
-                                                                                    <v-btn small @click="dialogKishuu = false">
-                                                                                        <v-icon>mdi-close</v-icon>
-                                                                                    </v-btn>
-                                                                            </v-system-bar>
-                                                                            <v-container>
-                                                                                <v-row justify="space-between" no-gutters>
-                                                                                    <v-col>
-                                                                                        <span>参照画面</span>
-                                                                                    </v-col>
-                                                                                    <v-col sm=5>
-                                                                                        <p>項目No.{{this.dialogKoumokuNO}}:{{this.dialogKoumokuName}}</p>
-                                                                                        <p>項目の有効期限{{this.dialogEnableDate_1}}~{{this.dialogEnableDate_2}}</p>
-                                                                                    </v-col>
-                                                                                </v-row>
-                                                                                <v-row>
-                                                                                    <v-data-table
-                                                                                    v-model="dialogKoumokuTableSelected"
-                                                                                    :headers ="dialogKoumokuTableHeader"
-                                                                                    :items ="dialogKoumokuTableItem"
-                                                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                                                                    fixed-header
-                                                                                    singleSelect
-                                                                                    item-key="CM_CODE"
-                                                                                    dense
-                                                                                    height="500px"
-                                                                                    show-select
-                                                                                    
-                                                                                    ></v-data-table>
-                                                                                </v-row>
-                                                                                <br>
-                                                                                <v-divider></v-divider>
-                                                                                <v-row class= "mt-2 mb-1 mr-2">
-                                                                                    <v-spacer></v-spacer>
-                                                                                    <v-btn small @click="getkishuuFromDialog()" >
-                                                                                        <v-icon
-                                                                                            left
-                                                                                            dark
-                                                                                        >
-                                                                                            mdi-check-outline
-                                                                                        </v-icon>  
-                                                                                        選択(S)
-                                                                                    </v-btn>
-                                                                                    <v-btn small class="ml-2" @click ="dialogKishuu = false">
-                                                                                        <v-icon
-                                                                                            left
-                                                                                            dark
-                                                                                        >
-                                                                                            mdi-close-box-outline
-                                                                                        </v-icon> 
-                                                                                        閉じる(C)
-                                                                                    </v-btn>
-                                                                                </v-row>
-                                                                            </v-container>
-                                                                        </v-card>
-                                                                    </v-dialog>
-                                                                </v-col>
-                                                            </v-row>
-                                                        </v-col>                                                    
-                                                    </v-row>
-                                                    <p class="ma-0">・メーカー型番</p>
-                                                    <v-row  no-gutters>
-                                                        <v-col class="ml-10" col="10" sm="10">
-                                                            <v-text-field
-                                                            class="mb-n4"
-                                                            v-model="shousaiMakerKataban"
-                                                            dense outlined></v-text-field>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters justify="space-between">
-                                                        <v-col>
-                                                            <p class="ma-0">・内外作区分</p>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <p class="ma-0">・貯蔵区分</p>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row  no-gutters>
-                                                        <v-col class="ml-10" col="2" sm="2">
-                                                            <v-text-field
-                                                            class="mb-n4"
-                                                            v-model="shousaiNaigai"
-                                                            dense outlined>
-                                                            </v-text-field>
-                                                        </v-col>
-                                                        <v-col col="1">
-                                                            <v-dialog
-                                                             v-model="dialogNaigai"
-                                                             width="700"
-                                                            >
-                                                                <template v-slot:activator = "{ on ,attrs}">
-                                                                    <v-btn 
-                                                                    v-bind="attrs"
-                                                                    v-on="on"
-                                                                    class = "ml-2 mt-2" 
-                                                                    @click="getDialogKoumoku('A10','内外作区分')"
-                                                                    x-small>
-                                                                    ...
-                                                                    </v-btn>
-                                                                </template>
-                                                                <v-card>
-                                                                    <v-system-bar window dark>
-                                                                            <span>PMRA0191 参照画面（共用マスタ）</span>
-                                                                            <v-spacer></v-spacer>
-                                                                            <v-btn small @click="dialogNaigai = false">
-                                                                                <v-icon>mdi-close</v-icon>
-                                                                            </v-btn>
-                                                                    </v-system-bar>
-                                                                    <v-container>
-                                                                        <v-row justify="space-between" no-gutters>
-                                                                            <v-col>
-                                                                                <span>参照画面</span>
-                                                                            </v-col>
-                                                                            <v-col sm=5>
-                                                                                <p class="ml-16">項目No.{{this.dialogKoumokuNO}}:{{this.dialogKoumokuName}}</p>
-                                                                                <p>項目の有効期限{{this.dialogEnableDate_1}}~{{this.dialogEnableDate_2}}</p>
-                                                                            </v-col>
-                                                                        </v-row>
-                                                                        <v-row>
-                                                                            <v-data-table
-                                                                            v-model="dialogKoumokuTableSelected"
-                                                                            :headers ="dialogKoumokuTableHeader"
-                                                                            :items ="dialogKoumokuTableItem"
-                                                                            :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                                                            fixed-header
-                                                                            singleSelect
-                                                                            item-key="CM_CODE"
-                                                                            dense
-                                                                            height="500px"
-                                                                            show-select
-                                                                            
-                                                                            ></v-data-table>
-                                                                        </v-row>
-                                                                        <br>
-                                                                        <v-divider></v-divider>
-                                                                        <v-row class= "mt-2 mb-1 mr-2">
-                                                                            <v-spacer></v-spacer>
-                                                                            <v-btn small @click="getNaigaiFromDialog()" >
-                                                                                <v-icon
-                                                                                    left
-                                                                                    dark
-                                                                                >
-                                                                                    mdi-check-outline
-                                                                                </v-icon>  
-                                                                                選択(S)
-                                                                            </v-btn>
-                                                                            <v-btn small class="ml-2" @click ="dialogNaigai = false">
-                                                                                <v-icon
-                                                                                    left
-                                                                                    dark
-                                                                                >
-                                                                                    mdi-close-box-outline
-                                                                                </v-icon> 
-                                                                                閉じる(C)
-                                                                            </v-btn>
-                                                                        </v-row>
-                                                                    </v-container>
-                                                                </v-card>
-                                                            </v-dialog>
-                                                        </v-col>
-                                                        <v-col class="my-0 " col="2" sm="2">
-                                                            <v-text-field
-                                                            class="mb-n4" 
-                                                            v-model="shousaiChozou"
-                                                            dense outlined></v-text-field>
-                                                        </v-col>
-                                                        <v-col>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters >
-                                                        <v-col>
-                                                            <p class="ma-0">・管理点所</p>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <p class ="ma-0">・在庫担当</p>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters>
-                                                        <v-col col=6 sm=6>
-                                                            <v-row no-gutters>
-                                                                <v-col class= "ml-10" col="4" sm="4">
-                                                            <v-text-field
-                                                            class="mb-n4"
-                                                            v-model="shousaiKanriTenshou"
-                                                            dense outlined></v-text-field>
-                                                        </v-col>
-                                                            </v-row>
-                                                        </v-col>
-                                                        <v-col col=6 sm=6>
-                                                            <v-row no-gutters>
-                                                                <v-col class="ml-5" col="4" sm="4">
-                                                                    <v-text-field
-                                                                    class="mb-n4"
-                                                                    v-model="shousaiZaikoTantou"
-                                                                    dense outlined></v-text-field>
-                                                                </v-col>
-                                                            </v-row>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters >
-                                                        <v-col>
-                                                            <p class="ma-0">・発注店所</p>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <p class ="ma-0">・発注担当</p>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters>
-                                                        <v-col col=6 sm=6>
-                                                            <v-row no-gutters>
-                                                                <v-col class= "ml-10" col="4" sm="4">
-                                                                    <v-text-field
-                                                                    class="mb-n4"
-                                                                    v-model="shousaiHachuTenshou"
-                                                                    dense outlined>
-                                                                    </v-text-field>
-                                                                </v-col>
-                                                            </v-row>
-                                                        </v-col>
-                                                        <v-col col=6 sm=6>
-                                                            <v-row no-gutters>
-                                                                <v-col class="ml-5" col="4" sm="4">
-                                                                    <v-text-field
-                                                                    class="mb-n4"
-                                                                    v-model="shousaiHachuTantou"
-                                                                    dense outlined></v-text-field>
-                                                                </v-col>
-                                                            </v-row>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters >
-                                                        <v-col>
-                                                            <p class="ma-0">・パッケト</p>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <p class ="ma-0">・管理基準</p>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters>
-                                                        <v-col col=6 sm=6>
-                                                            <v-row no-gutters>
-                                                                <v-col class= "ml-10" col="4" sm="4">
-                                                                    <v-text-field
-                                                                    class="mb-n4"
-                                                                    v-model="shousaiBacker"
-                                                                    dense outlined></v-text-field>
-                                                                </v-col>
-                                                            </v-row>
-                                                        </v-col>
-                                                        <v-col col=6 sm=6>
-                                                            <v-row no-gutters>
-                                                                <v-col class="ml-5" col="4" sm="4">
-                                                                    <v-text-field
-                                                                    class="mb-n4"
-                                                                    v-model="shousaiKanriKijun"
-                                                                    dense outlined></v-text-field>
-                                                                </v-col>
-                                                                <v-col col="1">
-                                                                    <v-dialog
-                                                                     v-model="dialogKanriKijun"
-                                                                     width="700"
-                                                                    >
+                                                    <v-col :cols="$vuetify.breakpoint.mobile?'12':'4'">
+                                                        <v-row no-gutters>
+                                                            <v-col>
+                                                                <p class="ma-0">・工場区分</p>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <p class="ma-0">・置場/棚番</p>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row  no-gutters>
+                                                            <v-col col=6 sm=6>
+                                                                <v-row no-gutters>
+                                                                    <v-col class="ml-10" col="4" sm="4">
+                                                                        <v-text-field
+                                                                        class="mb-n4"
+                                                                        v-model="shousaiKoban"
+                                                                        dense outlined></v-text-field>
+                                                                    </v-col>
+                                                                    <v-col>
+                                                                        <p class="ml-2 mt-2">1,2,3,4,5,6</p>
+                                                                    </v-col>
+                                                                </v-row>
+                                                            </v-col>
+                                                            <v-col col=6 sm=6>
+                                                                <v-row no-gutters>
+                                                                    <v-col class="ml-5" col="9" sm="9">
+                                                                        <v-text-field 
+                                                                        class="mb-n4"
+                                                                        v-model="shousaiTanban"
+                                                                        dense outlined></v-text-field>
+                                                                    </v-col>
+                                                                </v-row>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <p class="ma-0">・倉庫担当</p>
+                                                        <v-row  no-gutters>
+                                                            <v-col class="ml-10" col="10" sm="10">
+                                                                <v-text-field
+                                                                class="mb-n4"
+                                                                v-model="shousaiSokotantou"
+                                                                dense outlined></v-text-field>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters justify="space-between">
+                                                            <v-col>
+                                                                <p class="ma-0">・P/S展開区分</p>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <p class="ma-0">・自動購入指示</p>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row  no-gutters>
+                                                            <v-col col=6 sm=6>
+                                                                <v-row no-gutters>
+                                                                    <v-col class="ml-10" col="8" sm="8">
+                                                                        <v-text-field
+                                                                        class="mb-n4"
+                                                                        v-model="shousaiPStenkai"
+                                                                        dense outlined></v-text-field>
+                                                                    </v-col>
+                                                                </v-row>
+                                                            </v-col>
+                                                            <v-col col=6 sm=6>
+                                                                <v-row no-gutters>
+                                                                    <v-col class="ml-5" col="8" sm="8">
+                                                                        <v-text-field 
+                                                                        class="mb-n4"
+                                                                        v-model="shousaiJidouKounyuu"
+                                                                        dense outlined></v-text-field>
+                                                                    </v-col>
+                                                                </v-row>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters justify="space-between">
+                                                            <v-col>
+                                                                <p class="ma-0">・製品分類コード</p>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <p class="ma-0">・部品区分</p>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row  no-gutters justify="space-between">
+                                                            <v-col class="ml-10" col="2" sm="2">
+                                                                <v-text-field
+                                                                class="mb-n4"
+                                                                v-model="shousaiSeihinbunruiCode"
+                                                                dense outlined>
+                                                                </v-text-field>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <v-dialog
+                                                                v-model="dialogSeihinbunru"
+                                                                width="700"
+                                                                >
                                                                     <template v-slot:activator = "{ on ,attrs}">
                                                                         <v-btn 
                                                                         v-bind="attrs"
                                                                         v-on="on"
                                                                         class = "ml-2 mt-2" 
-                                                                        @click="getDialogKoumoku('A12','管理基準')"
+                                                                        @click="getDialogKoumoku(210,'製品分類コード')"
                                                                         x-small>
                                                                         ...
                                                                         </v-btn>
@@ -1455,7 +954,370 @@
                                                                         <v-system-bar window dark>
                                                                                 <span>PMRA0191 参照画面（共用マスタ）</span>
                                                                                 <v-spacer></v-spacer>
-                                                                                <v-btn small @click="dialogKanriKijun = false">
+                                                                                <v-btn small @click="dialogSeihinbunru = false">
+                                                                                    <v-icon>mdi-close</v-icon>
+                                                                                </v-btn>
+                                                                        </v-system-bar>
+                                                                        <v-container>
+                                                                            <v-row justify="space-between" no-gutters>
+                                                                                <v-col>
+                                                                                    <span>参照画面</span>
+                                                                                </v-col>
+                                                                                <v-col sm=5>
+                                                                                    <p>項目No.{{this.dialogKoumokuNO}}:{{this.dialogKoumokuName}}</p>
+                                                                                    <p>項目の有効期限{{this.dialogEnableDate_1}}~{{this.dialogEnableDate_2}}</p>
+                                                                                </v-col>
+                                                                            </v-row>
+                                                                            <v-row>
+                                                                                <v-data-table
+                                                                                v-model="dialogKoumokuTableSelected"
+                                                                                :headers ="dialogKoumokuTableHeader"
+                                                                                :items ="dialogKoumokuTableItem"
+                                                                                :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                                                fixed-header
+                                                                                singleSelect
+                                                                                item-key="CM_CODE"
+                                                                                dense
+                                                                                height="500px"
+                                                                                show-select
+                                                                                
+                                                                                ></v-data-table>
+                                                                            </v-row>
+                                                                            <br>
+                                                                            <v-divider></v-divider>
+                                                                            <v-row class= "mt-2 mb-1 mr-2">
+                                                                                <v-spacer></v-spacer>
+                                                                                <v-btn small @click="getSeihinbunruiCodeFromDialog()" >
+                                                                                    <v-icon
+                                                                                        left
+                                                                                        dark
+                                                                                    >
+                                                                                        mdi-check-outline
+                                                                                    </v-icon>  
+                                                                                    選択(S)
+                                                                                </v-btn>
+                                                                                <v-btn small class="ml-2" @click ="dialogSeihinbunru = false">
+                                                                                    <v-icon
+                                                                                        left
+                                                                                        dark
+                                                                                    >
+                                                                                        mdi-close-box-outline
+                                                                                    </v-icon> 
+                                                                                    閉じる(C)
+                                                                                </v-btn>
+                                                                            </v-row>
+                                                                        </v-container>
+                                                                    </v-card>
+                                                                </v-dialog>
+                                                            </v-col>
+                                                            <v-col class="my-0 mr-8 mr-auto" col="2" sm="2">
+                                                                <v-text-field 
+                                                                class="mb-n4"
+                                                                v-model="shousaiBuhinkubun"
+                                                                dense outlined></v-text-field>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <v-dialog
+                                                                v-model="dialogBuhinkubun"
+                                                                width="700"
+                                                                >
+                                                                    <template v-slot:activator = "{ on ,attrs}">
+                                                                        <v-btn 
+                                                                        v-bind="attrs"
+                                                                        v-on="on"
+                                                                        class = "ml-2 mt-2" 
+                                                                        @click="getDialogKoumoku('A14','部品区分')"
+                                                                        x-small>
+                                                                        ...
+                                                                        </v-btn>
+                                                                    </template>
+                                                                    <v-card>
+                                                                        <v-system-bar window dark>
+                                                                                <span>PMRA0191 参照画面（共用マスタ）</span>
+                                                                                <v-spacer></v-spacer>
+                                                                                <v-btn small @click="dialogBuhinkubun = false">
+                                                                                    <v-icon>mdi-close</v-icon>
+                                                                                </v-btn>
+                                                                        </v-system-bar>
+                                                                        <v-container>
+                                                                            <v-row justify="space-between" no-gutters>
+                                                                                <v-col>
+                                                                                    <span>参照画面</span>
+                                                                                </v-col>
+                                                                                <v-col sm=5>
+                                                                                    <p>項目No.{{this.dialogKoumokuNO}}:{{this.dialogKoumokuName}}</p>
+                                                                                    <p>項目の有効期限{{this.dialogEnableDate_1}}~{{this.dialogEnableDate_2}}</p>
+                                                                                </v-col>
+                                                                            </v-row>
+                                                                            <v-row>
+                                                                                <v-data-table
+                                                                                v-model="dialogKoumokuTableSelected"
+                                                                                :headers ="dialogKoumokuTableHeader"
+                                                                                :items ="dialogKoumokuTableItem"
+                                                                                :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                                                fixed-header
+                                                                                singleSelect
+                                                                                item-key="CM_CODE"
+                                                                                dense
+                                                                                height="500px"
+                                                                                show-select
+                                                                                
+                                                                                ></v-data-table>
+                                                                            </v-row>
+                                                                            <br>
+                                                                            <v-divider></v-divider>
+                                                                            <v-row class= "mt-2 mb-1 mr-2">
+                                                                                <v-spacer></v-spacer>
+                                                                                <v-btn small @click="getBuhinkubaFromDialog()" >
+                                                                                    <v-icon
+                                                                                        left
+                                                                                        dark
+                                                                                    >
+                                                                                        mdi-check-outline
+                                                                                    </v-icon>  
+                                                                                    選択(S)
+                                                                                </v-btn>
+                                                                                <v-btn small class="ml-2" @click ="dialogBuhinkubun = false">
+                                                                                    <v-icon
+                                                                                        left
+                                                                                        dark
+                                                                                    >
+                                                                                        mdi-close-box-outline
+                                                                                    </v-icon> 
+                                                                                    閉じる(C)
+                                                                                </v-btn>
+                                                                            </v-row>
+                                                                        </v-container>
+                                                                    </v-card>
+                                                                </v-dialog>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters justify="space-between">
+                                                            <v-col>
+                                                                <p class="ma-0">・PDM判定</p>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <p class="ma-0">・機種</p>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row  no-gutters>
+                                                            <v-col col=6 sm=6>
+                                                                <v-row no-gutters>
+                                                                    <v-col class="ml-10" col="4" sm="4">
+                                                                        <v-text-field
+                                                                        class="mb-n4"
+                                                                        v-model="shousaiPDM"
+                                                                        dense outlined>
+                                                                        </v-text-field>
+                                                                    </v-col>
+                                                                    <v-col>
+                                                                        <v-dialog
+                                                                        v-model="dialogPDM"
+                                                                        width="700"
+                                                                        >
+                                                                            <template v-slot:activator = "{ on ,attrs}">
+                                                                                <v-btn 
+                                                                                v-bind="attrs"
+                                                                                v-on="on"
+                                                                                class = "ml-2 mt-2" 
+                                                                                @click="getDialogKoumoku('A13','PDMタイプ')"
+                                                                                x-small>
+                                                                                ...
+                                                                                </v-btn>
+                                                                            </template>
+                                                                            <v-card>
+                                                                                <v-system-bar window dark>
+                                                                                        <span>PMRA0191 参照画面（共用マスタ）</span>
+                                                                                        <v-spacer></v-spacer>
+                                                                                        <v-btn small @click="dialogPDM = false">
+                                                                                            <v-icon>mdi-close</v-icon>
+                                                                                        </v-btn>
+                                                                                </v-system-bar>
+                                                                                <v-container>
+                                                                                    <v-row justify="space-between" no-gutters>
+                                                                                        <v-col>
+                                                                                            <span>参照画面</span>
+                                                                                        </v-col>
+                                                                                        <v-col sm=5>
+                                                                                            <p>項目No.{{this.dialogKoumokuNO}}:{{this.dialogKoumokuName}}</p>
+                                                                                            <p>項目の有効期限{{this.dialogEnableDate_1}}~{{this.dialogEnableDate_2}}</p>
+                                                                                        </v-col>
+                                                                                    </v-row>
+                                                                                    <v-row>
+                                                                                        <v-data-table
+                                                                                        v-model="dialogKoumokuTableSelected"
+                                                                                        :headers ="dialogKoumokuTableHeader"
+                                                                                        :items ="dialogKoumokuTableItem"
+                                                                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                                                        fixed-header
+                                                                                        singleSelect
+                                                                                        item-key="CM_CODE"
+                                                                                        dense
+                                                                                        height="500px"
+                                                                                        show-select
+                                                                                        
+                                                                                        ></v-data-table>
+                                                                                    </v-row>
+                                                                                    <br>
+                                                                                    <v-divider></v-divider>
+                                                                                    <v-row class= "mt-2 mb-1 mr-2">
+                                                                                        <v-spacer></v-spacer>
+                                                                                        <v-btn small @click="getPDMFromDialog()" >
+                                                                                            <v-icon
+                                                                                                left
+                                                                                                dark
+                                                                                            >
+                                                                                                mdi-check-outline
+                                                                                            </v-icon>  
+                                                                                            選択(S)
+                                                                                        </v-btn>
+                                                                                        <v-btn small class="ml-2" @click ="dialogPDM = false">
+                                                                                            <v-icon
+                                                                                                left
+                                                                                                dark
+                                                                                            >
+                                                                                                mdi-close-box-outline
+                                                                                            </v-icon> 
+                                                                                            閉じる(C)
+                                                                                        </v-btn>
+                                                                                    </v-row>
+                                                                                </v-container>
+                                                                            </v-card>
+                                                                        </v-dialog>
+                                                                    </v-col>
+                                                                </v-row>
+                                                            </v-col>
+                                                            <v-col col=6 sm=6>
+                                                                <v-row no-gutters>
+                                                                    <v-col class="ml-5" col="7" sm="7">
+                                                                        <v-text-field
+                                                                        class="mb-n4" 
+                                                                        v-model="shousaikishuu"
+                                                                        dense outlined></v-text-field>
+                                                                    </v-col>
+                                                                    <v-col>
+                                                                        <v-dialog
+                                                                        v-model="dialogKishuu"
+                                                                        width="700"
+                                                                        >
+                                                                            <template v-slot:activator = "{ on ,attrs}">
+                                                                                <v-btn 
+                                                                                v-bind="attrs"
+                                                                                v-on="on"
+                                                                                class = "ml-2 mt-2" 
+                                                                                @click="getDialogKoumoku('160','機種')"
+                                                                                x-small>
+                                                                                ...
+                                                                                </v-btn>
+                                                                            </template>
+                                                                            <v-card>
+                                                                                <v-system-bar window dark>
+                                                                                        <span>PMRA0191 参照画面（共用マスタ）</span>
+                                                                                        <v-spacer></v-spacer>
+                                                                                        <v-btn small @click="dialogKishuu = false">
+                                                                                            <v-icon>mdi-close</v-icon>
+                                                                                        </v-btn>
+                                                                                </v-system-bar>
+                                                                                <v-container>
+                                                                                    <v-row justify="space-between" no-gutters>
+                                                                                        <v-col>
+                                                                                            <span>参照画面</span>
+                                                                                        </v-col>
+                                                                                        <v-col sm=5>
+                                                                                            <p>項目No.{{this.dialogKoumokuNO}}:{{this.dialogKoumokuName}}</p>
+                                                                                            <p>項目の有効期限{{this.dialogEnableDate_1}}~{{this.dialogEnableDate_2}}</p>
+                                                                                        </v-col>
+                                                                                    </v-row>
+                                                                                    <v-row>
+                                                                                        <v-data-table
+                                                                                        v-model="dialogKoumokuTableSelected"
+                                                                                        :headers ="dialogKoumokuTableHeader"
+                                                                                        :items ="dialogKoumokuTableItem"
+                                                                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                                                        fixed-header
+                                                                                        singleSelect
+                                                                                        item-key="CM_CODE"
+                                                                                        dense
+                                                                                        height="500px"
+                                                                                        show-select
+                                                                                        
+                                                                                        ></v-data-table>
+                                                                                    </v-row>
+                                                                                    <br>
+                                                                                    <v-divider></v-divider>
+                                                                                    <v-row class= "mt-2 mb-1 mr-2">
+                                                                                        <v-spacer></v-spacer>
+                                                                                        <v-btn small @click="getkishuuFromDialog()" >
+                                                                                            <v-icon
+                                                                                                left
+                                                                                                dark
+                                                                                            >
+                                                                                                mdi-check-outline
+                                                                                            </v-icon>  
+                                                                                            選択(S)
+                                                                                        </v-btn>
+                                                                                        <v-btn small class="ml-2" @click ="dialogKishuu = false">
+                                                                                            <v-icon
+                                                                                                left
+                                                                                                dark
+                                                                                            >
+                                                                                                mdi-close-box-outline
+                                                                                            </v-icon> 
+                                                                                            閉じる(C)
+                                                                                        </v-btn>
+                                                                                    </v-row>
+                                                                                </v-container>
+                                                                            </v-card>
+                                                                        </v-dialog>
+                                                                    </v-col>
+                                                                </v-row>
+                                                            </v-col>                                                    
+                                                        </v-row>
+                                                        <p class="ma-0">・メーカー型番</p>
+                                                        <v-row  no-gutters>
+                                                            <v-col class="ml-10" col="10" sm="10">
+                                                                <v-text-field
+                                                                class="mb-n4"
+                                                                v-model="shousaiMakerKataban"
+                                                                dense outlined></v-text-field>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters justify="space-between">
+                                                            <v-col>
+                                                                <p class="ma-0">・内外作区分</p>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <p class="ma-0">・貯蔵区分</p>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row  no-gutters>
+                                                            <v-col class="ml-10" col="2" sm="2">
+                                                                <v-text-field
+                                                                class="mb-n4"
+                                                                v-model="shousaiNaigai"
+                                                                dense outlined>
+                                                                </v-text-field>
+                                                            </v-col>
+                                                            <v-col col="1">
+                                                                <v-dialog
+                                                                v-model="dialogNaigai"
+                                                                width="700"
+                                                                >
+                                                                    <template v-slot:activator = "{ on ,attrs}">
+                                                                        <v-btn 
+                                                                        v-bind="attrs"
+                                                                        v-on="on"
+                                                                        class = "ml-2 mt-2" 
+                                                                        @click="getDialogKoumoku('A10','内外作区分')"
+                                                                        x-small>
+                                                                        ...
+                                                                        </v-btn>
+                                                                    </template>
+                                                                    <v-card>
+                                                                        <v-system-bar window dark>
+                                                                                <span>PMRA0191 参照画面（共用マスタ）</span>
+                                                                                <v-spacer></v-spacer>
+                                                                                <v-btn small @click="dialogNaigai = false">
                                                                                     <v-icon>mdi-close</v-icon>
                                                                                 </v-btn>
                                                                         </v-system-bar>
@@ -1488,7 +1350,7 @@
                                                                             <v-divider></v-divider>
                                                                             <v-row class= "mt-2 mb-1 mr-2">
                                                                                 <v-spacer></v-spacer>
-                                                                                <v-btn small @click="getKanriKijunFromDialog()" >
+                                                                                <v-btn small @click="getNaigaiFromDialog()" >
                                                                                     <v-icon
                                                                                         left
                                                                                         dark
@@ -1497,7 +1359,7 @@
                                                                                     </v-icon>  
                                                                                     選択(S)
                                                                                 </v-btn>
-                                                                                <v-btn small class="ml-2" @click ="dialogKanriKijun = false">
+                                                                                <v-btn small class="ml-2" @click ="dialogNaigai = false">
                                                                                     <v-icon
                                                                                         left
                                                                                         dark
@@ -1510,720 +1372,892 @@
                                                                         </v-container>
                                                                     </v-card>
                                                                 </v-dialog>
-                                                                </v-col>
-                                                            </v-row>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters justify="space-between">
-                                                        <v-col>
-                                                            <p class="ma-0">・ABC区分</p>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <p class="ma-0">・在庫管理コード</p>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row  no-gutters>
-                                                        <v-col class="ml-10" col="2" sm="2">
-                                                            <v-text-field
-                                                            class="mb-n4"
-                                                            v-model="shousaiABCKanriCodeKubun"
-                                                            dense outlined>
-                                                            </v-text-field>
-                                                        </v-col>
-                                                        <v-col col="1">
-                                                            <v-dialog
-                                                             v-model="dialogABCKanriCodeKubun"
-                                                             width="700"
-                                                            >
-                                                            <template v-slot:activator = "{ on ,attrs}">
-                                                                <v-btn 
-                                                                v-bind="attrs"
-                                                                v-on="on"
-                                                                class = "ml-2 mt-2" 
-                                                                @click="getDialogKoumoku('A16','ABC区分')"
-                                                                x-small>
-                                                                ...
-                                                                </v-btn>
-                                                            </template>
-                                                            <v-card>
-                                                                <v-system-bar window dark>
-                                                                        <span>PMRA0191 参照画面（共用マスタ）</span>
-                                                                        <v-spacer></v-spacer>
-                                                                        <v-btn small @click="dialogABCKanriCodeKubun = false">
-                                                                            <v-icon>mdi-close</v-icon>
-                                                                        </v-btn>
-                                                                </v-system-bar>
-                                                                <v-container>
-                                                                    <v-row justify="space-between" no-gutters>
-                                                                        <v-col>
-                                                                            <span>参照画面</span>
-                                                                        </v-col>
-                                                                        <v-col sm=5>
-                                                                            <p class="ml-16">項目No.{{this.dialogKoumokuNO}}:{{this.dialogKoumokuName}}</p>
-                                                                            <p>項目の有効期限{{this.dialogEnableDate_1}}~{{this.dialogEnableDate_2}}</p>
-                                                                        </v-col>
-                                                                    </v-row>
-                                                                    <v-row>
-                                                                        <v-data-table
-                                                                        v-model="dialogKoumokuTableSelected"
-                                                                        :headers ="dialogKoumokuTableHeader"
-                                                                        :items ="dialogKoumokuTableItem"
-                                                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                                                        fixed-header
-                                                                        singleSelect
-                                                                        item-key="CM_CODE"
-                                                                        dense
-                                                                        height="500px"
-                                                                        show-select
-                                                                        
-                                                                        ></v-data-table>
-                                                                    </v-row>
-                                                                    <br>
-                                                                    <v-divider></v-divider>
-                                                                    <v-row class= "mt-2 mb-1 mr-2">
-                                                                        <v-spacer></v-spacer>
-                                                                        <v-btn small @click="getABCKanriCodeKubunFromDialog()" >
-                                                                            <v-icon
-                                                                                left
-                                                                                dark
-                                                                            >
-                                                                                mdi-check-outline
-                                                                            </v-icon>  
-                                                                            選択(S)
-                                                                        </v-btn>
-                                                                        <v-btn small class="ml-2" @click ="dialogABCKanriCodeKubun = false">
-                                                                            <v-icon
-                                                                                left
-                                                                                dark
-                                                                            >
-                                                                                mdi-close-box-outline
-                                                                            </v-icon> 
-                                                                            閉じる(C)
-                                                                        </v-btn>
-                                                                    </v-row>
-                                                                </v-container>
-                                                            </v-card>
-                                                        </v-dialog>
-                                                        </v-col>
-                                                        <v-col class="my-0 mr-2" col="2" sm="2">
-                                                            <v-text-field 
-                                                            v-model="shousaiZaikoKanriCode"
-                                                            dense outlined></v-text-field>
-                                                        </v-col>
-                                                        <v-col>
-                                                        </v-col>
-                                                    </v-row>
-                                                    
-                                                </v-col>
-                                                <v-col>
-                                                    <v-row no-gutters> 
-                                                        <v-col>
-                                                            <p class ="my-0">・在庫数</p>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <v-checkbox 
-                                                            class ="mt-n1 mb-n5"
-                                                            v-model="shousaiZaikoZeroCheckBox"
-                                                            label="在庫0ではない。"
-                                                            dense
-                                                            >
-                                                            </v-checkbox>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters>
-                                                        <v-col class="ml-8" col="3" sm="3">
-                                                            <v-text-field
-                                                            class ="mb-n3"
-                                                            v-model="shousaiZaikousuu1"
-                                                            dense outlined
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col class="ml-2" col="2" sm="2" >
-                                                            <p class="mt-2">≦数量≦</p>
-                                                        </v-col>
-                                                        <v-col col="3" sm="3">
-                                                            <v-text-field
-                                                            class ="mb-n3"
-                                                            v-model="shousaiZaikousuu2"
-                                                            dense outlined></v-text-field>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters> 
-                                                        <v-col>
-                                                            <p class ="mt-n1">・在庫金額</p>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row class="mt-1" no-gutters>
-                                                        <v-col class="ml-8" col="3" sm="3">
-                                                            <v-text-field
-                                                            class ="mb-n4"
-                                                            v-model="shousaiZaikouKingaku1"
-                                                            dense outlined
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col class="ml-2" col="2" sm="2" >
-                                                            <p class="mt-2 mb-n4">≦金額≦</p>
-                                                        </v-col>
-                                                        <v-col col="3" sm="3">
-                                                            <v-text-field
-                                                            class ="mb-n4"
-                                                            v-model="shousaiZaikouKingaku2"
-                                                            dense outlined></v-text-field>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters> 
-                                                        <v-col>
-                                                            <p class ="ma-0">・標準単価（ゼロの抜き出しは0以上0以下）</p>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters>
-                                                        <v-col class="ml-8" col="3" sm="3">
-                                                            <v-text-field
-                                                            class ="mb-n4"
-                                                            v-model="shousaihyoujunTanka1"
-                                                            dense outlined
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col class="ml-2" col="2" sm="2" >
-                                                            <p class="mt-2 mb-n4">≦単価≦</p>
-                                                        </v-col>
-                                                        <v-col col="3" sm="3">
-                                                            <v-text-field
-                                                            class ="mb-n4"
-                                                            v-model="shousaihyoujunTanka2"
-                                                            dense outlined></v-text-field>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters> 
-                                                        <v-col>
-                                                            <p class ="my-0">・最終入庫日</p>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <v-checkbox 
-                                                            class ="mt-n2 mb-n5"
-                                                            v-model="shousaiNyuukoubiCheck"
-                                                            label="入庫履歴なし"
-                                                            dense
-                                                            >
-                                                            </v-checkbox>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row class="ma-0" no-gutters>
-                                                        <v-col col="5" sm="5">
-                                                            <v-menu
-                                                            ref="menu"
-                                                            v-model="shousaiNyuukoMenu1"
-                                                            :close-on-content-click="false"
-                                                            :nudge-right="40"
-                                                            transition="scale-transition"
-                                                            offset-y
-                                                            min-width="auto"
-                                                            >
-                                                                <template v-slot:activator="{ on, attrs }">
-                                                                <v-text-field
-                                                                    class="mb-n6 mt-1"
-                                                                    v-model="shousaiNyuukoDate1"
-                                                                    label="YYYY/MM/DD"
-                                                                     
-                                                                    dense
-                                                                    outlined
-                                                                    readonly
-                                                                    v-bind="attrs"
-                                                                    v-on="on"
-                                                                ></v-text-field>
-                                                                </template>
-                                                                <v-date-picker
-                                                                v-model="shousaiNyuukoDate1"
-                                                                @input="shousaiNyuukoMenu1 = false"
-                                                                >
-                                                                </v-date-picker>
-                                                            </v-menu>
-                                                        </v-col>
-                                                        <v-col col="1" sm ="1"><p class="ml-2 mt-2">～</p></v-col>
-                                                        <v-col col="5" sm="5">
-                                                            <v-menu
-                                                            ref="menu"
-                                                            v-model="shousaiNyuukoMenu2"
-                                                            :close-on-content-click="false"
-                                                            :nudge-right="40"
-                                                            transition="scale-transition"
-                                                            offset-y
-                                                            left
-                                                            min-width="auto"
-                                                            >
-                                                                <template v-slot:activator="{ on, attrs }">
-                                                                <v-text-field
-                                                                    class="mb-n6 mt-1"
-                                                                    v-model="shousaiNyuukoDate2"
-                                                                    label="YYYY/MM/DD"
-                                                                     
-                                                                    dense
-                                                                    outlined
-                                                                    readonly
-                                                                    v-bind="attrs"
-                                                                    v-on="on"
-                                                                ></v-text-field>
-                                                                </template>
-                                                                <v-date-picker
-                                                                v-model="shousaiNyuukoDate2"
-                                                                @input="shousaiNyuukoMenu2 = false"
-                                                                >
-                                                                </v-date-picker>
-                                                            </v-menu>
                                                             </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters> 
-                                                        <v-col>
-                                                            <p class ="my-0">・最終出庫日</p>
-                                                        </v-col>
-                                                        <v-col>
-                                                            <v-checkbox 
-                                                            class ="mt-n1 mb-n5"
-                                                            v-model="shousaiShukkobiCheck"
-                                                            label="出庫履歴なし"
-                                                            dense
-                                                            >
-                                                            </v-checkbox>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row class="ma-0"  no-gutters>
-                                                        <v-col col="5" sm="5">
-                                                            <v-menu
-                                                            ref="menu"
-                                                            v-model="shousaiShukkokoMenu1"
-                                                            :close-on-content-click="false"
-                                                            :nudge-right="40"
-                                                            transition="scale-transition"
-                                                            offset-y
-                                                            min-width="auto"
-                                                            >
-                                                                <template v-slot:activator="{ on, attrs }">
+                                                            <v-col class="my-0 " col="2" sm="2">
                                                                 <v-text-field
-                                                                    class="mb-n6 mt-1"
-                                                                    v-model="shousaiShukkokoDate1"
-                                                                    label="YYYY/MM/DD"
-                                                                     
-                                                                    dense
-                                                                    outlined
-                                                                    readonly
-                                                                    v-bind="attrs"
-                                                                    v-on="on"
-                                                                ></v-text-field>
-                                                                </template>
-                                                                <v-date-picker
-                                                                v-model="shousaiShukkokoDate1"
-                                                                @input="shousaiShukkokoMenu1 = false"
-                                                                >
-                                                                </v-date-picker>
-                                                            </v-menu>
-                                                        </v-col>
-                                                        <v-col col="1" sm ="1"><p class="ml-2 mt-2">～</p></v-col>
-                                                        <v-col col="5" sm="5">
-                                                            <v-menu
-                                                            ref="menu"
-                                                            v-model="shousaiShukkokoMenu2"
-                                                            :close-on-content-click="false"
-                                                            :nudge-right="40"
-                                                            transition="scale-transition"
-                                                            offset-y
-                                                            left
-                                                            min-width="auto"
-                                                            >
-                                                                <template v-slot:activator="{ on, attrs }">
-                                                                <v-text-field
-                                                                    class="mb-n6 mt-1"
-                                                                    v-model="shousaiShukkokoDate2"
-                                                                    label="YYYY/MM/DD"
-                                                                     
-                                                                    dense
-                                                                    outlined
-                                                                    readonly
-                                                                    v-bind="attrs"
-                                                                    v-on="on"
-                                                                ></v-text-field>
-                                                                </template>
-                                                                <v-date-picker
-                                                                v-model="shousaiShukkokoDate2"
-                                                                @input="shousaiShukkokoMenu2 = false"
-                                                                >
-                                                                </v-date-picker>
-                                                            </v-menu>
+                                                                class="mb-n4" 
+                                                                v-model="shousaiChozou"
+                                                                dense outlined></v-text-field>
                                                             </v-col>
-                                                    </v-row>
-                                                    <v-row no-gutters> 
-                                                        <v-col>
-                                                            <p class ="ma-0">・貯蔵開始日</p>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row class="ma-0" no-gutters>
-                                                        <v-col col="5" sm="5">
-                                                            <v-menu
-                                                            ref="menu"
-                                                            v-model="shousaiChozouKaishiMenu1"
-                                                            :close-on-content-click="false"
-                                                            :nudge-right="40"
-                                                            transition="scale-transition"
-                                                            offset-y
-                                                            min-width="auto"
-                                                            >
-                                                                <template v-slot:activator="{ on, attrs }">
-                                                                <v-text-field
-                                                                    class="mb-n6 mt-1"
-                                                                    v-model="shousaiChozouKaishiDate1"
-                                                                    label="YYYY/MM/DD"
-                                                                     
-                                                                    dense
-                                                                    outlined
-                                                                    readonly
-                                                                    v-bind="attrs"
-                                                                    v-on="on"
-                                                                ></v-text-field>
-                                                                </template>
-                                                                <v-date-picker
-                                                                v-model="shousaiChozouKaishiDate1"
-                                                                @input="shousaiChozouKaishiMenu1 = false"
-                                                                >
-                                                                </v-date-picker>
-                                                            </v-menu>
-                                                        </v-col>
-                                                        <v-col col="1" sm ="1"><p class="ml-2 mt-2">～</p></v-col>
-                                                        <v-col col="5" sm="5">
-                                                            <v-menu
-                                                            ref="menu"
-                                                            v-model="shousaiChozouKaishiMenu2"
-                                                            :close-on-content-click="false"
-                                                            :nudge-right="40"
-                                                            transition="scale-transition"
-                                                            offset-y
-                                                            left
-                                                            min-width="auto"
-                                                            >
-                                                                <template v-slot:activator="{ on, attrs }">
-                                                                <v-text-field
-                                                                    class="mb-n6 mt-1"
-                                                                    v-model="shousaiChozouKaishiDate2"
-                                                                    label="YYYY/MM/DD"
-                                                                     
-                                                                    dense
-                                                                    outlined
-                                                                    readonly
-                                                                    v-bind="attrs"
-                                                                    v-on="on"
-                                                                ></v-text-field>
-                                                                </template>
-                                                                <v-date-picker
-                                                                v-model="shousaiChozouKaishiDate2"
-                                                                @input="shousaiChozouKaishiMenu2 = false"
-                                                                >
-                                                                </v-date-picker>
-                                                            </v-menu>
+                                                            <v-col>
                                                             </v-col>
                                                         </v-row>
-                                                        <v-row no-gutters> 
+                                                        <v-row no-gutters >
                                                             <v-col>
-                                                                <p class ="ma-0 mt-2">・貯蔵中止予定</p>
+                                                                <p class="ma-0">・管理点所</p>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <p class ="ma-0">・在庫担当</p>
                                                             </v-col>
                                                         </v-row>
                                                         <v-row no-gutters>
-                                                            <v-col>
-                                                                <v-radio-group class="ma-0 mb-n4" v-model="shousaiChoushiYoutei" row >
-                                                                    <v-radio
-                                                                    label="含む"
-                                                                    value=""
-                                                                    ></v-radio>
-                                                                    <v-radio
-                                                                    label="除く"
-                                                                    value="0"
-                                                                    ></v-radio>
-                                                                    <v-radio
-                                                                    label="中止予定のみ"
-                                                                    value="1"
-                                                                    ></v-radio>
-                                                                </v-radio-group>
+                                                            <v-col col=6 sm=6>
+                                                                <v-row no-gutters>
+                                                                    <v-col class= "ml-10" col="4" sm="4">
+                                                                <v-text-field
+                                                                class="mb-n4"
+                                                                v-model="shousaiKanriTenshou"
+                                                                dense outlined></v-text-field>
                                                             </v-col>
-                                                        </v-row>
-                                                        <v-row no-gutters> 
-                                                            <v-col>
-                                                                <p class ="ma-0">・貯蔵止め部品</p>
+                                                                </v-row>
                                                             </v-col>
-                                                        </v-row>
-                                                        <v-row no-gutters>
-                                                            <v-col>
-                                                                <v-radio-group class="ma-0 mb-n4" v-model="shousaiChoushi" row >
-                                                                    <v-radio
-                                                                    label="含む"
-                                                                    value=""
-                                                                    ></v-radio>
-                                                                    <v-radio
-                                                                    label="除く"
-                                                                    value="0"
-                                                                    ></v-radio>
-                                                                    <v-radio
-                                                                    label="貯蔵中止のみ"
-                                                                    value="1"
-                                                                    ></v-radio>
-                                                                </v-radio-group>
-                                                            </v-col>
-                                                        </v-row>
-                                                        <v-row class="mt-n3">
-                                                            <v-col>
-                                                                <p class = "ma-0">・取引先コード</p>
-                                                            </v-col>
-                                                            <v-col>
-                                                                <p class= "ma-0">・工程コード</p>
-                                                            </v-col>
-                                                        </v-row>
-                                                        <v-row class="mt-1" no-gutters>
-                                                            <v-col cols="6" sm="6">
-                                                                <v-row>
-                                                                    <v-col class="ml-3" col="8" sm="8">
-                                                                        <v-combobox
-                                                                        v-model="shousaiTorisakiCode"
+                                                            <v-col col=6 sm=6>
+                                                                <v-row no-gutters>
+                                                                    <v-col class="ml-5" col="4" sm="4">
+                                                                        <v-text-field
                                                                         class="mb-n4"
-                                                                        dense outlined>
-                                                                        </v-combobox>
+                                                                        v-model="shousaiZaikoTantou"
+                                                                        dense outlined></v-text-field>
                                                                     </v-col>
                                                                 </v-row>
                                                             </v-col>
-                                                            <v-col cols="6" sm="6">
+                                                        </v-row>
+                                                        <v-row no-gutters >
+                                                            <v-col>
+                                                                <p class="ma-0">・発注店所</p>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <p class ="ma-0">・発注担当</p>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters>
+                                                            <v-col col=6 sm=6>
                                                                 <v-row no-gutters>
-                                                                    <v-col class="ml-3" col="7" sm="7" >
-                                                                        <v-text-field 
-                                                                        v-model="shousaiKoteiCode"
+                                                                    <v-col class= "ml-10" col="4" sm="4">
+                                                                        <v-text-field
                                                                         class="mb-n4"
+                                                                        v-model="shousaiHachuTenshou"
                                                                         dense outlined>
                                                                         </v-text-field>
                                                                     </v-col>
-                                                                    <v-col class="ml-2" col="1" sm="1">
-                                                                        <v-dialog
-                                                                            v-model="dialogKouteiCode"
-                                                                            width="700"
-                                                                            >
-                                                                            <template v-slot:activator = "{ on ,attrs}">
-                                                                                <v-btn 
-                                                                                v-bind="attrs"
-                                                                                v-on="on"
-                                                                                class = "ml-2 mt-2" 
-                                                                                @click="getDialogKouteiCode_Init()"
-                                                                                x-small>
-                                                                                ...
-                                                                                </v-btn>
-                                                                            </template>
-                                                                            <v-card>
-                                                                                <v-system-bar window dark>
-                                                                                        <span>PMRA0191 参照画面（工程コードマスタ）</span>
-                                                                                        <v-spacer></v-spacer>
-                                                                                        <v-btn small @click="dialogKouteiCode = false">
-                                                                                            <v-icon>mdi-close</v-icon>
-                                                                                        </v-btn>
-                                                                                </v-system-bar>
-                                                                                <v-container>
-                                                                                    <v-row no-gutters>
-                                                                                        <v-col>
-                                                                                            <span>参照画面　-工程コードマスター</span>
-                                                                                        </v-col>
-                                                                                    </v-row>
-                                                                                    <v-row>
-                                                                                        <v-col cols ="3" sm="3"><p>工程コード</p></v-col>
-                                                                                        <v-col cols ="2" sm="2"><p>ワークセンター</p></v-col>
-                                                                                        <v-col cols ="2" sm="2"><p>コストセンター</p></v-col>
-                                                                                        <v-col cols ="2" sm="2"><p>作業コード</p></v-col>
-                                                                                    </v-row>
-                                                                                    <v-row>
-                                                                                        <v-col cols ="3" sm="3">
-                                                                                            <v-text-field
-                                                                                             class="mr-4"
-                                                                                             v-model="KT_CODE"
-                                                                                             dense
-                                                                                             outlined
-                                                                                            >    
-                                                                                            </v-text-field>
-                                                                                        </v-col>
-                                                                                        <v-col cols ="2" sm="2">
-                                                                                            <v-text-field
-                                                                                             class="mr-10"
-                                                                                             v-model="WC_CODE"
-                                                                                             dense
-                                                                                             outlined
-                                                                                            >
-                                                                                            </v-text-field>
-                                                                                        </v-col>
-                                                                                        <v-col cols ="2" sm="2">
-                                                                                            <v-text-field
-                                                                                             class="mr-10"
-                                                                                             v-model="CC_CODE"
-                                                                                             dense
-                                                                                             outlined
-                                                                                            >
-                                                                                            </v-text-field>
-                                                                                        </v-col>
-                                                                                        <v-col cols ="2" sm="2">
-                                                                                            <v-text-field
-                                                                                             class="mr-10"
-                                                                                             v-model="SG_CODE"
-                                                                                             dense
-                                                                                             outlined
-                                                                                            >
-                                                                                            </v-text-field>
-                                                                                        </v-col>
-                                                                                        <v-col>
-                                                                                            <v-btn small @click="getClearKouteiCodeText()"><v-icon left>mdi-close-circle</v-icon>クリア（C）</v-btn>
-                                                                                        </v-col>
-                                                                                    </v-row>
-                                                                                    <v-row>
-                                                                                        <v-data-table
-                                                                                        v-model="dialogKouteiCodeTableSelected"
-                                                                                        :headers ="dialogKouteiCodeTableHeader"
-                                                                                        :items ="dialogKouteiCodeTableItem"
-                                                                                        fixed-header
-                                                                                        singleSelect
-                                                                                        item-key="KT_CODE,SG_CODE,CC_CODE,WC_CODE"
-                                                                                        dense
-                                                                                        height="500px"
-                                                                                        show-select
-                                                                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                                                                        >
-                                                                                        </v-data-table>
-                                                                                    </v-row>
-                                                                                    <br>
-                                                                                    <v-divider></v-divider>
-                                                                                    <v-row class= "mt-2 mb-1 mr-2">
-                                                                                        <v-spacer></v-spacer>
-                                                                                        <v-btn small @click="getKouteicode()" >
-                                                                                            <v-icon
-                                                                                                left
-                                                                                                dark
-                                                                                            >
-                                                                                                mdi-check-outline
-                                                                                            </v-icon>  
-                                                                                            選択(S)
-                                                                                        </v-btn>
-                                                                                        <v-btn small class="ml-2" @click ="dialogKouteiCode = false">
-                                                                                            <v-icon
-                                                                                                left
-                                                                                                dark
-                                                                                            >
-                                                                                                mdi-close-box-outline
-                                                                                            </v-icon> 
-                                                                                            閉じる(C)
-                                                                                        </v-btn>
-                                                                                    </v-row>
-                                                                                </v-container>
-                                                                            </v-card>
-                                                                        </v-dialog>
+                                                                </v-row>
+                                                            </v-col>
+                                                            <v-col col=6 sm=6>
+                                                                <v-row no-gutters>
+                                                                    <v-col class="ml-5" col="4" sm="4">
+                                                                        <v-text-field
+                                                                        class="mb-n4"
+                                                                        v-model="shousaiHachuTantou"
+                                                                        dense outlined></v-text-field>
                                                                     </v-col>
                                                                 </v-row>
                                                             </v-col>
                                                         </v-row>
-                                                        <v-row class="mt-n3">
+                                                        <v-row no-gutters >
                                                             <v-col>
-                                                                <p class = "my-n2">・作業コード</p>
+                                                                <p class="ma-0">・パッケト</p>
                                                             </v-col>
                                                             <v-col>
-                                                                <p class= "my-n2">・部位（保守マスタ）</p>
+                                                                <p class ="ma-0">・管理基準</p>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters>
+                                                            <v-col col=6 sm=6>
+                                                                <v-row no-gutters>
+                                                                    <v-col class= "ml-10" col="4" sm="4">
+                                                                        <v-text-field
+                                                                        class="mb-n4"
+                                                                        v-model="shousaiBacker"
+                                                                        dense outlined></v-text-field>
+                                                                    </v-col>
+                                                                </v-row>
+                                                            </v-col>
+                                                            <v-col col=6 sm=6>
+                                                                <v-row no-gutters>
+                                                                    <v-col class="ml-5" col="4" sm="4">
+                                                                        <v-text-field
+                                                                        class="mb-n4"
+                                                                        v-model="shousaiKanriKijun"
+                                                                        dense outlined></v-text-field>
+                                                                    </v-col>
+                                                                    <v-col col="1">
+                                                                        <v-dialog
+                                                                        v-model="dialogKanriKijun"
+                                                                        width="700"
+                                                                        >
+                                                                        <template v-slot:activator = "{ on ,attrs}">
+                                                                            <v-btn 
+                                                                            v-bind="attrs"
+                                                                            v-on="on"
+                                                                            class = "ml-2 mt-2" 
+                                                                            @click="getDialogKoumoku('A12','管理基準')"
+                                                                            x-small>
+                                                                            ...
+                                                                            </v-btn>
+                                                                        </template>
+                                                                        <v-card>
+                                                                            <v-system-bar window dark>
+                                                                                    <span>PMRA0191 参照画面（共用マスタ）</span>
+                                                                                    <v-spacer></v-spacer>
+                                                                                    <v-btn small @click="dialogKanriKijun = false">
+                                                                                        <v-icon>mdi-close</v-icon>
+                                                                                    </v-btn>
+                                                                            </v-system-bar>
+                                                                            <v-container>
+                                                                                <v-row justify="space-between" no-gutters>
+                                                                                    <v-col>
+                                                                                        <span>参照画面</span>
+                                                                                    </v-col>
+                                                                                    <v-col sm=5>
+                                                                                        <p class="ml-16">項目No.{{this.dialogKoumokuNO}}:{{this.dialogKoumokuName}}</p>
+                                                                                        <p>項目の有効期限{{this.dialogEnableDate_1}}~{{this.dialogEnableDate_2}}</p>
+                                                                                    </v-col>
+                                                                                </v-row>
+                                                                                <v-row>
+                                                                                    <v-data-table
+                                                                                    v-model="dialogKoumokuTableSelected"
+                                                                                    :headers ="dialogKoumokuTableHeader"
+                                                                                    :items ="dialogKoumokuTableItem"
+                                                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                                                    fixed-header
+                                                                                    singleSelect
+                                                                                    item-key="CM_CODE"
+                                                                                    dense
+                                                                                    height="500px"
+                                                                                    show-select
+                                                                                    
+                                                                                    ></v-data-table>
+                                                                                </v-row>
+                                                                                <br>
+                                                                                <v-divider></v-divider>
+                                                                                <v-row class= "mt-2 mb-1 mr-2">
+                                                                                    <v-spacer></v-spacer>
+                                                                                    <v-btn small @click="getKanriKijunFromDialog()" >
+                                                                                        <v-icon
+                                                                                            left
+                                                                                            dark
+                                                                                        >
+                                                                                            mdi-check-outline
+                                                                                        </v-icon>  
+                                                                                        選択(S)
+                                                                                    </v-btn>
+                                                                                    <v-btn small class="ml-2" @click ="dialogKanriKijun = false">
+                                                                                        <v-icon
+                                                                                            left
+                                                                                            dark
+                                                                                        >
+                                                                                            mdi-close-box-outline
+                                                                                        </v-icon> 
+                                                                                        閉じる(C)
+                                                                                    </v-btn>
+                                                                                </v-row>
+                                                                            </v-container>
+                                                                        </v-card>
+                                                                    </v-dialog>
+                                                                    </v-col>
+                                                                </v-row>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters justify="space-between">
+                                                            <v-col>
+                                                                <p class="ma-0">・ABC区分</p>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <p class="ma-0">・在庫管理コード</p>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row  no-gutters>
+                                                            <v-col class="ml-10" col="2" sm="2">
+                                                                <v-text-field
+                                                                class="mb-n4"
+                                                                v-model="shousaiABCKanriCodeKubun"
+                                                                dense outlined>
+                                                                </v-text-field>
+                                                            </v-col>
+                                                            <v-col col="1">
+                                                                <v-dialog
+                                                                v-model="dialogABCKanriCodeKubun"
+                                                                width="700"
+                                                                >
+                                                                <template v-slot:activator = "{ on ,attrs}">
+                                                                    <v-btn 
+                                                                    v-bind="attrs"
+                                                                    v-on="on"
+                                                                    class = "ml-2 mt-2" 
+                                                                    @click="getDialogKoumoku('A16','ABC区分')"
+                                                                    x-small>
+                                                                    ...
+                                                                    </v-btn>
+                                                                </template>
+                                                                <v-card>
+                                                                    <v-system-bar window dark>
+                                                                            <span>PMRA0191 参照画面（共用マスタ）</span>
+                                                                            <v-spacer></v-spacer>
+                                                                            <v-btn small @click="dialogABCKanriCodeKubun = false">
+                                                                                <v-icon>mdi-close</v-icon>
+                                                                            </v-btn>
+                                                                    </v-system-bar>
+                                                                    <v-container>
+                                                                        <v-row justify="space-between" no-gutters>
+                                                                            <v-col>
+                                                                                <span>参照画面</span>
+                                                                            </v-col>
+                                                                            <v-col sm=5>
+                                                                                <p class="ml-16">項目No.{{this.dialogKoumokuNO}}:{{this.dialogKoumokuName}}</p>
+                                                                                <p>項目の有効期限{{this.dialogEnableDate_1}}~{{this.dialogEnableDate_2}}</p>
+                                                                            </v-col>
+                                                                        </v-row>
+                                                                        <v-row>
+                                                                            <v-data-table
+                                                                            v-model="dialogKoumokuTableSelected"
+                                                                            :headers ="dialogKoumokuTableHeader"
+                                                                            :items ="dialogKoumokuTableItem"
+                                                                            :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                                            fixed-header
+                                                                            singleSelect
+                                                                            item-key="CM_CODE"
+                                                                            dense
+                                                                            height="500px"
+                                                                            show-select
+                                                                            
+                                                                            ></v-data-table>
+                                                                        </v-row>
+                                                                        <br>
+                                                                        <v-divider></v-divider>
+                                                                        <v-row class= "mt-2 mb-1 mr-2">
+                                                                            <v-spacer></v-spacer>
+                                                                            <v-btn small @click="getABCKanriCodeKubunFromDialog()" >
+                                                                                <v-icon
+                                                                                    left
+                                                                                    dark
+                                                                                >
+                                                                                    mdi-check-outline
+                                                                                </v-icon>  
+                                                                                選択(S)
+                                                                            </v-btn>
+                                                                            <v-btn small class="ml-2" @click ="dialogABCKanriCodeKubun = false">
+                                                                                <v-icon
+                                                                                    left
+                                                                                    dark
+                                                                                >
+                                                                                    mdi-close-box-outline
+                                                                                </v-icon> 
+                                                                                閉じる(C)
+                                                                            </v-btn>
+                                                                        </v-row>
+                                                                    </v-container>
+                                                                </v-card>
+                                                            </v-dialog>
+                                                            </v-col>
+                                                            <v-col class="my-0 mr-2" col="2" sm="2">
+                                                                <v-text-field 
+                                                                v-model="shousaiZaikoKanriCode"
+                                                                dense outlined></v-text-field>
+                                                            </v-col>
+                                                            <v-col>
+                                                            </v-col>
+                                                        </v-row>
+                                                        
+                                                    </v-col>
+                                                    <v-col :cols="$vuetify.breakpoint.mobile?'12':'4'">
+                                                        <v-row no-gutters> 
+                                                            <v-col>
+                                                                <p class ="my-0">・在庫数</p>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <v-checkbox 
+                                                                class ="mt-n1 mb-n5"
+                                                                v-model="shousaiZaikoZeroCheckBox"
+                                                                label="在庫0ではない。"
+                                                                dense
+                                                                >
+                                                                </v-checkbox>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters>
+                                                            <v-col class="ml-8" col="3" sm="3">
+                                                                <v-text-field
+                                                                class ="mb-n3"
+                                                                v-model="shousaiZaikousuu1"
+                                                                dense outlined
+                                                                ></v-text-field>
+                                                            </v-col>
+                                                            <v-col class="ml-2" col="2" sm="2" >
+                                                                <p class="mt-2">≦数量≦</p>
+                                                            </v-col>
+                                                            <v-col col="3" sm="3">
+                                                                <v-text-field
+                                                                class ="mb-n3"
+                                                                v-model="shousaiZaikousuu2"
+                                                                dense outlined></v-text-field>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters> 
+                                                            <v-col>
+                                                                <p class ="mt-n1">・在庫金額</p>
                                                             </v-col>
                                                         </v-row>
                                                         <v-row class="mt-1" no-gutters>
-                                                            <v-col cols="6" sm="6">
-                                                                <v-col cols="9" sm="9">
+                                                            <v-col class="ml-8" col="3" sm="3">
+                                                                <v-text-field
+                                                                class ="mb-n4"
+                                                                v-model="shousaiZaikouKingaku1"
+                                                                dense outlined
+                                                                ></v-text-field>
+                                                            </v-col>
+                                                            <v-col class="ml-2" col="2" sm="2" >
+                                                                <p class="mt-2 mb-n4">≦金額≦</p>
+                                                            </v-col>
+                                                            <v-col col="3" sm="3">
+                                                                <v-text-field
+                                                                class ="mb-n4"
+                                                                v-model="shousaiZaikouKingaku2"
+                                                                dense outlined></v-text-field>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters> 
+                                                            <v-col>
+                                                                <p class ="ma-0">・標準単価（ゼロの抜き出しは0以上0以下）</p>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters>
+                                                            <v-col class="ml-8" col="3" sm="3">
+                                                                <v-text-field
+                                                                class ="mb-n4"
+                                                                v-model="shousaihyoujunTanka1"
+                                                                dense outlined
+                                                                ></v-text-field>
+                                                            </v-col>
+                                                            <v-col class="ml-2" col="2" sm="2" >
+                                                                <p class="mt-2 mb-n4">≦単価≦</p>
+                                                            </v-col>
+                                                            <v-col col="3" sm="3">
+                                                                <v-text-field
+                                                                class ="mb-n4"
+                                                                v-model="shousaihyoujunTanka2"
+                                                                dense outlined></v-text-field>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters> 
+                                                            <v-col>
+                                                                <p class ="my-0">・最終入庫日</p>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <v-checkbox 
+                                                                class ="mt-n2 mb-n5"
+                                                                v-model="shousaiNyuukoubiCheck"
+                                                                label="入庫履歴なし"
+                                                                dense
+                                                                >
+                                                                </v-checkbox>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row class="ma-0" no-gutters>
+                                                            <v-col col="5" sm="5">
+                                                                <v-menu
+                                                                ref="menu"
+                                                                v-model="shousaiNyuukoMenu1"
+                                                                :close-on-content-click="false"
+                                                                :nudge-right="40"
+                                                                transition="scale-transition"
+                                                                offset-y
+                                                                min-width="auto"
+                                                                >
+                                                                    <template v-slot:activator="{ on, attrs }">
                                                                     <v-text-field
-                                                                    v-model="shousaiSagyouCode"
-                                                                    class="mb-n6"
-                                                                    dense outlined>
-                                                                    </v-text-field>
-                                                                </v-col>
+                                                                        class="mb-n6 mt-1"
+                                                                        v-model="shousaiNyuukoDate1"
+                                                                        label="YYYY/MM/DD"
+                                                                        
+                                                                        dense
+                                                                        outlined
+                                                                        readonly
+                                                                        v-bind="attrs"
+                                                                        v-on="on"
+                                                                    ></v-text-field>
+                                                                    </template>
+                                                                    <v-date-picker
+                                                                    v-model="shousaiNyuukoDate1"
+                                                                    @input="shousaiNyuukoMenu1 = false"
+                                                                    >
+                                                                    </v-date-picker>
+                                                                </v-menu>
                                                             </v-col>
-                                                            <v-col cols="6" sm="6">
-                                                                <v-col cols="9" sm="9">
-                                                                    <v-text-field 
-                                                                    v-model="shousaiBui"
-                                                                    class="mb-n6"
-                                                                    dense outlined>
-                                                                    </v-text-field>
+                                                            <v-col col="1" sm ="1"><p class="ml-2 mt-2">～</p></v-col>
+                                                            <v-col col="5" sm="5">
+                                                                <v-menu
+                                                                ref="menu"
+                                                                v-model="shousaiNyuukoMenu2"
+                                                                :close-on-content-click="false"
+                                                                :nudge-right="40"
+                                                                transition="scale-transition"
+                                                                offset-y
+                                                                left
+                                                                min-width="auto"
+                                                                >
+                                                                    <template v-slot:activator="{ on, attrs }">
+                                                                    <v-text-field
+                                                                        class="mb-n6 mt-1"
+                                                                        v-model="shousaiNyuukoDate2"
+                                                                        label="YYYY/MM/DD"
+                                                                        
+                                                                        dense
+                                                                        outlined
+                                                                        readonly
+                                                                        v-bind="attrs"
+                                                                        v-on="on"
+                                                                    ></v-text-field>
+                                                                    </template>
+                                                                    <v-date-picker
+                                                                    v-model="shousaiNyuukoDate2"
+                                                                    @input="shousaiNyuukoMenu2 = false"
+                                                                    >
+                                                                    </v-date-picker>
+                                                                </v-menu>
                                                                 </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters> 
+                                                            <v-col>
+                                                                <p class ="my-0">・最終出庫日</p>
+                                                            </v-col>
+                                                            <v-col>
+                                                                <v-checkbox 
+                                                                class ="mt-n1 mb-n5"
+                                                                v-model="shousaiShukkobiCheck"
+                                                                label="出庫履歴なし"
+                                                                dense
+                                                                >
+                                                                </v-checkbox>
                                                             </v-col>
                                                         </v-row>
-                                                        <v-row class="mt-0 mb-n6">
-                                                            <v-col cols="6" sm="6">
-                                                                <p class = "my-n5">・価格設定</p>
+                                                        <v-row class="ma-0"  no-gutters>
+                                                            <v-col col="5" sm="5">
+                                                                <v-menu
+                                                                ref="menu"
+                                                                v-model="shousaiShukkokoMenu1"
+                                                                :close-on-content-click="false"
+                                                                :nudge-right="40"
+                                                                transition="scale-transition"
+                                                                offset-y
+                                                                min-width="auto"
+                                                                >
+                                                                    <template v-slot:activator="{ on, attrs }">
+                                                                    <v-text-field
+                                                                        class="mb-n6 mt-1"
+                                                                        v-model="shousaiShukkokoDate1"
+                                                                        label="YYYY/MM/DD"
+                                                                        
+                                                                        dense
+                                                                        outlined
+                                                                        readonly
+                                                                        v-bind="attrs"
+                                                                        v-on="on"
+                                                                    ></v-text-field>
+                                                                    </template>
+                                                                    <v-date-picker
+                                                                    v-model="shousaiShukkokoDate1"
+                                                                    @input="shousaiShukkokoMenu1 = false"
+                                                                    >
+                                                                    </v-date-picker>
+                                                                </v-menu>
                                                             </v-col>
-                                                            <v-col cols="6" sm="6">
-                                                                <p class= "my-n5">・保守判定</p>
+                                                            <v-col col="1" sm ="1"><p class="ml-2 mt-2">～</p></v-col>
+                                                            <v-col col="5" sm="5">
+                                                                <v-menu
+                                                                ref="menu"
+                                                                v-model="shousaiShukkokoMenu2"
+                                                                :close-on-content-click="false"
+                                                                :nudge-right="40"
+                                                                transition="scale-transition"
+                                                                offset-y
+                                                                left
+                                                                min-width="auto"
+                                                                >
+                                                                    <template v-slot:activator="{ on, attrs }">
+                                                                    <v-text-field
+                                                                        class="mb-n6 mt-1"
+                                                                        v-model="shousaiShukkokoDate2"
+                                                                        label="YYYY/MM/DD"
+                                                                        
+                                                                        dense
+                                                                        outlined
+                                                                        readonly
+                                                                        v-bind="attrs"
+                                                                        v-on="on"
+                                                                    ></v-text-field>
+                                                                    </template>
+                                                                    <v-date-picker
+                                                                    v-model="shousaiShukkokoDate2"
+                                                                    @input="shousaiShukkokoMenu2 = false"
+                                                                    >
+                                                                    </v-date-picker>
+                                                                </v-menu>
+                                                                </v-col>
+                                                        </v-row>
+                                                        <v-row no-gutters> 
+                                                            <v-col>
+                                                                <p class ="ma-0">・貯蔵開始日</p>
                                                             </v-col>
                                                         </v-row>
-                                                        <v-row class="ma-0" no-gutters >
-                                                            <v-col  cols="6" sm="6">
-                                                                <v-col cols="9" sm="9">
-                                                                    <v-combobox 
-                                                                    v-model="shousaiKakakuSetttei"
-                                                                    :items ="shousaiKakakuSettteiItems"
-                                                                    class="mb-n6"
-                                                                    dense outlined>
-                                                                    </v-combobox>
-                                                                </v-col>
+                                                        <v-row class="ma-0" no-gutters>
+                                                            <v-col col="5" sm="5">
+                                                                <v-menu
+                                                                ref="menu"
+                                                                v-model="shousaiChozouKaishiMenu1"
+                                                                :close-on-content-click="false"
+                                                                :nudge-right="40"
+                                                                transition="scale-transition"
+                                                                offset-y
+                                                                min-width="auto"
+                                                                >
+                                                                    <template v-slot:activator="{ on, attrs }">
+                                                                    <v-text-field
+                                                                        class="mb-n6 mt-1"
+                                                                        v-model="shousaiChozouKaishiDate1"
+                                                                        label="YYYY/MM/DD"
+                                                                        
+                                                                        dense
+                                                                        outlined
+                                                                        readonly
+                                                                        v-bind="attrs"
+                                                                        v-on="on"
+                                                                    ></v-text-field>
+                                                                    </template>
+                                                                    <v-date-picker
+                                                                    v-model="shousaiChozouKaishiDate1"
+                                                                    @input="shousaiChozouKaishiMenu1 = false"
+                                                                    >
+                                                                    </v-date-picker>
+                                                                </v-menu>
                                                             </v-col>
-                                                            <v-col cols="6" sm="6">
-                                                                <v-col cols="9" sm="9">
-                                                                    <v-combobox 
-                                                                    v-model="shousaiHoshuHantei"
-                                                                    :items ="shousaiHoshuHanteiItems"
-                                                                    class="mb-n6"
-                                                                    dense outlined>
-                                                                    </v-combobox>
+                                                            <v-col col="1" sm ="1"><p class="ml-2 mt-2">～</p></v-col>
+                                                            <v-col col="5" sm="5">
+                                                                <v-menu
+                                                                ref="menu"
+                                                                v-model="shousaiChozouKaishiMenu2"
+                                                                :close-on-content-click="false"
+                                                                :nudge-right="40"
+                                                                transition="scale-transition"
+                                                                offset-y
+                                                                left
+                                                                min-width="auto"
+                                                                >
+                                                                    <template v-slot:activator="{ on, attrs }">
+                                                                    <v-text-field
+                                                                        class="mb-n6 mt-1"
+                                                                        v-model="shousaiChozouKaishiDate2"
+                                                                        label="YYYY/MM/DD"
+                                                                        
+                                                                        dense
+                                                                        outlined
+                                                                        readonly
+                                                                        v-bind="attrs"
+                                                                        v-on="on"
+                                                                    ></v-text-field>
+                                                                    </template>
+                                                                    <v-date-picker
+                                                                    v-model="shousaiChozouKaishiDate2"
+                                                                    @input="shousaiChozouKaishiMenu2 = false"
+                                                                    >
+                                                                    </v-date-picker>
+                                                                </v-menu>
                                                                 </v-col>
-                                                            </v-col>
-                                                        </v-row>
+                                                            </v-row>
+                                                            <v-row no-gutters> 
+                                                                <v-col>
+                                                                    <p class ="ma-0 mt-2">・貯蔵中止予定</p>
+                                                                </v-col>
+                                                            </v-row>
+                                                            <v-row no-gutters>
+                                                                <v-col>
+                                                                    <v-radio-group class="ma-0 mb-n4" v-model="shousaiChoushiYoutei" row >
+                                                                        <v-radio
+                                                                        label="含む"
+                                                                        value=""
+                                                                        ></v-radio>
+                                                                        <v-radio
+                                                                        label="除く"
+                                                                        value="0"
+                                                                        ></v-radio>
+                                                                        <v-radio
+                                                                        label="中止予定のみ"
+                                                                        value="1"
+                                                                        ></v-radio>
+                                                                    </v-radio-group>
+                                                                </v-col>
+                                                            </v-row>
+                                                            <v-row no-gutters> 
+                                                                <v-col>
+                                                                    <p class ="ma-0">・貯蔵止め部品</p>
+                                                                </v-col>
+                                                            </v-row>
+                                                            <v-row no-gutters>
+                                                                <v-col>
+                                                                    <v-radio-group class="ma-0 mb-n4" v-model="shousaiChoushi" row >
+                                                                        <v-radio
+                                                                        label="含む"
+                                                                        value=""
+                                                                        ></v-radio>
+                                                                        <v-radio
+                                                                        label="除く"
+                                                                        value="0"
+                                                                        ></v-radio>
+                                                                        <v-radio
+                                                                        label="貯蔵中止のみ"
+                                                                        value="1"
+                                                                        ></v-radio>
+                                                                    </v-radio-group>
+                                                                </v-col>
+                                                            </v-row>
+                                                            <v-row class="mt-n3">
+                                                                <v-col>
+                                                                    <p class = "ma-0">・取引先コード</p>
+                                                                </v-col>
+                                                                <v-col>
+                                                                    <p class= "ma-0">・工程コード</p>
+                                                                </v-col>
+                                                            </v-row>
+                                                            <v-row class="mt-1" no-gutters>
+                                                                <v-col cols="6" sm="6">
+                                                                    <v-row>
+                                                                        <v-col class="ml-3" col="8" sm="8">
+                                                                            <v-combobox
+                                                                            v-model="shousaiTorisakiCode"
+                                                                            class="mb-n4"
+                                                                            dense outlined>
+                                                                            </v-combobox>
+                                                                        </v-col>
+                                                                    </v-row>
+                                                                </v-col>
+                                                                <v-col cols="6" sm="6">
+                                                                    <v-row no-gutters>
+                                                                        <v-col class="ml-3" col="7" sm="7" >
+                                                                            <v-text-field 
+                                                                            v-model="shousaiKoteiCode"
+                                                                            class="mb-n4"
+                                                                            dense outlined>
+                                                                            </v-text-field>
+                                                                        </v-col>
+                                                                        <v-col class="ml-2" col="1" sm="1">
+                                                                            <v-dialog
+                                                                                v-model="dialogKouteiCode"
+                                                                                width="700"
+                                                                                >
+                                                                                <template v-slot:activator = "{ on ,attrs}">
+                                                                                    <v-btn 
+                                                                                    v-bind="attrs"
+                                                                                    v-on="on"
+                                                                                    class = "ml-2 mt-2" 
+                                                                                    @click="getDialogKouteiCode_Init()"
+                                                                                    x-small>
+                                                                                    ...
+                                                                                    </v-btn>
+                                                                                </template>
+                                                                                <v-card>
+                                                                                    <v-system-bar window dark>
+                                                                                            <span>PMRA0191 参照画面（工程コードマスタ）</span>
+                                                                                            <v-spacer></v-spacer>
+                                                                                            <v-btn small @click="dialogKouteiCode = false">
+                                                                                                <v-icon>mdi-close</v-icon>
+                                                                                            </v-btn>
+                                                                                    </v-system-bar>
+                                                                                    <v-container>
+                                                                                        <v-row no-gutters>
+                                                                                            <v-col>
+                                                                                                <span>参照画面　-工程コードマスター</span>
+                                                                                            </v-col>
+                                                                                        </v-row>
+                                                                                        <v-row>
+                                                                                            <v-col cols ="3" sm="3"><p>工程コード</p></v-col>
+                                                                                            <v-col cols ="2" sm="2"><p>ワークセンター</p></v-col>
+                                                                                            <v-col cols ="2" sm="2"><p>コストセンター</p></v-col>
+                                                                                            <v-col cols ="2" sm="2"><p>作業コード</p></v-col>
+                                                                                        </v-row>
+                                                                                        <v-row>
+                                                                                            <v-col cols ="3" sm="3">
+                                                                                                <v-text-field
+                                                                                                class="mr-4"
+                                                                                                v-model="KT_CODE"
+                                                                                                dense
+                                                                                                outlined
+                                                                                                >    
+                                                                                                </v-text-field>
+                                                                                            </v-col>
+                                                                                            <v-col cols ="2" sm="2">
+                                                                                                <v-text-field
+                                                                                                class="mr-10"
+                                                                                                v-model="WC_CODE"
+                                                                                                dense
+                                                                                                outlined
+                                                                                                >
+                                                                                                </v-text-field>
+                                                                                            </v-col>
+                                                                                            <v-col cols ="2" sm="2">
+                                                                                                <v-text-field
+                                                                                                class="mr-10"
+                                                                                                v-model="CC_CODE"
+                                                                                                dense
+                                                                                                outlined
+                                                                                                >
+                                                                                                </v-text-field>
+                                                                                            </v-col>
+                                                                                            <v-col cols ="2" sm="2">
+                                                                                                <v-text-field
+                                                                                                class="mr-10"
+                                                                                                v-model="SG_CODE"
+                                                                                                dense
+                                                                                                outlined
+                                                                                                >
+                                                                                                </v-text-field>
+                                                                                            </v-col>
+                                                                                            <v-col>
+                                                                                                <v-btn small @click="getClearKouteiCodeText()"><v-icon left>mdi-close-circle</v-icon>クリア（C）</v-btn>
+                                                                                            </v-col>
+                                                                                        </v-row>
+                                                                                        <v-row>
+                                                                                            <v-data-table
+                                                                                            v-model="dialogKouteiCodeTableSelected"
+                                                                                            :headers ="dialogKouteiCodeTableHeader"
+                                                                                            :items ="dialogKouteiCodeTableItem"
+                                                                                            fixed-header
+                                                                                            singleSelect
+                                                                                            item-key="KT_CODE,SG_CODE,CC_CODE,WC_CODE"
+                                                                                            dense
+                                                                                            height="500px"
+                                                                                            show-select
+                                                                                            :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                                                            >
+                                                                                            </v-data-table>
+                                                                                        </v-row>
+                                                                                        <br>
+                                                                                        <v-divider></v-divider>
+                                                                                        <v-row class= "mt-2 mb-1 mr-2">
+                                                                                            <v-spacer></v-spacer>
+                                                                                            <v-btn small @click="getKouteicode()" >
+                                                                                                <v-icon
+                                                                                                    left
+                                                                                                    dark
+                                                                                                >
+                                                                                                    mdi-check-outline
+                                                                                                </v-icon>  
+                                                                                                選択(S)
+                                                                                            </v-btn>
+                                                                                            <v-btn small class="ml-2" @click ="dialogKouteiCode = false">
+                                                                                                <v-icon
+                                                                                                    left
+                                                                                                    dark
+                                                                                                >
+                                                                                                    mdi-close-box-outline
+                                                                                                </v-icon> 
+                                                                                                閉じる(C)
+                                                                                            </v-btn>
+                                                                                        </v-row>
+                                                                                    </v-container>
+                                                                                </v-card>
+                                                                            </v-dialog>
+                                                                        </v-col>
+                                                                    </v-row>
+                                                                </v-col>
+                                                            </v-row>
+                                                            <v-row class="mt-n3">
+                                                                <v-col>
+                                                                    <p class = "my-n2">・作業コード</p>
+                                                                </v-col>
+                                                                <v-col>
+                                                                    <p class= "my-n2">・部位（保守マスタ）</p>
+                                                                </v-col>
+                                                            </v-row>
+                                                            <v-row class="mt-1" no-gutters>
+                                                                <v-col cols="6" sm="6">
+                                                                    <v-col cols="9" sm="9">
+                                                                        <v-text-field
+                                                                        v-model="shousaiSagyouCode"
+                                                                        class="mb-n6"
+                                                                        dense outlined>
+                                                                        </v-text-field>
+                                                                    </v-col>
+                                                                </v-col>
+                                                                <v-col cols="6" sm="6">
+                                                                    <v-col cols="9" sm="9">
+                                                                        <v-text-field 
+                                                                        v-model="shousaiBui"
+                                                                        class="mb-n6"
+                                                                        dense outlined>
+                                                                        </v-text-field>
+                                                                    </v-col>
+                                                                </v-col>
+                                                            </v-row>
+                                                            <v-row class="mt-0 mb-n6">
+                                                                <v-col cols="6" sm="6">
+                                                                    <p class = "my-n5">・価格設定</p>
+                                                                </v-col>
+                                                                <v-col cols="6" sm="6">
+                                                                    <p class= "my-n5">・保守判定</p>
+                                                                </v-col>
+                                                            </v-row>
+                                                            <v-row class="ma-0" no-gutters >
+                                                                <v-col  cols="6" sm="6">
+                                                                    <v-col cols="9" sm="9">
+                                                                        <v-combobox 
+                                                                        v-model="shousaiKakakuSetttei"
+                                                                        :items ="shousaiKakakuSettteiItems"
+                                                                        class="mb-n6"
+                                                                        dense outlined>
+                                                                        </v-combobox>
+                                                                    </v-col>
+                                                                </v-col>
+                                                                <v-col cols="6" sm="6">
+                                                                    <v-col cols="9" sm="9">
+                                                                        <v-combobox 
+                                                                        v-model="shousaiHoshuHantei"
+                                                                        :items ="shousaiHoshuHanteiItems"
+                                                                        class="mb-n6"
+                                                                        dense outlined>
+                                                                        </v-combobox>
+                                                                    </v-col>
+                                                                </v-col>
+                                                            </v-row>
 
-                                                </v-col>
-                                            </v-row>
-                                            <v-row class="mt-n4"  justify="end" no-gutters>
-                                                <v-col col=4 sm=4>
-                                                    <v-checkbox
-                                                    class="ma-0"
-                                                    v-model="shousaiCheckBox1"
-                                                    label="図面発行後二次情報が変更されていない"
-                                                    ></v-checkbox>
-                                                </v-col>
-                                                <v-col col=4 sm=4>
-                                                    <v-checkbox
-                                                    class="ma-0"
-                                                    v-model="shousaiCheckBox2"
-                                                    label="製造原価登録済且つ販売価格未登録部品"
-                                                    ></v-checkbox>
-                                                </v-col>
-                                            </v-row>
-                                            <v-row class="mt-n4" justify="end" no-gutters>
-                                                <v-col col=3 sm=2>
-                                                    <v-checkbox
-                                                    class="ma-0"
-                                                    v-model="shousaiCheckBox3"
-                                                    label="修理提案書使用済"
-                                                    ></v-checkbox>
-                                                </v-col>
-                                                <v-col col=3 sm=3>
-                                                    <v-checkbox
-                                                    class="ma-0"
-                                                    v-model="shousaiCheckBox4"
-                                                    label="部品説明or取替理由が未登録"
-                                                    ></v-checkbox>
-                                                </v-col>
-                                                <v-col col=3 sm=3>
-                                                    <v-checkbox
-                                                    class="ma-0"
-                                                    v-model="shousaiCheckBox5"
-                                                    label="写真未登録"
-                                                    ></v-checkbox>
-                                                </v-col>
-                                            </v-row>
-                                            <v-row justify="end" no-gutters>
-                                                <v-col col=9 sm=9>
-                                                    <span class="blue--text">「部品説明or取替理由が未登録」、「写真未登録」を選択した場合は、「修理提案使用済」も自動でチェックして検索します。</span>
-                                                </v-col>
-                                            </v-row>
-                                            <v-divider></v-divider>
-                                            <v-row class="mt-2" no-gutters >
-                                                <v-spacer></v-spacer>
-                                                <v-col> 
+                                                    </v-col>
+                                                </v-row>
+                                                <!-- Check Box-->
+                                                <v-row class="mt-n4"  :justify="$vuetify.breakpoint.mobile?'start':'end'" no-gutters>
+                                                    <v-col :cols="$vuetify.breakpoint.mobile?'6':'4'">
+                                                        <v-checkbox
+                                                        class="ma-0"
+                                                        v-model="shousaiCheckBox1"
+                                                        label="図面発行後二次情報が変更されていない"
+                                                        ></v-checkbox>
+                                                    </v-col>
+                                                    <v-col :cols="$vuetify.breakpoint.mobile?'6':'4'">
+                                                        <v-checkbox
+                                                        class="ma-0"
+                                                        v-model="shousaiCheckBox2"
+                                                        label="製造原価登録済且つ販売価格未登録部品"
+                                                        ></v-checkbox>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row class="mt-n4" :justify="$vuetify.breakpoint.mobile?'start':'end'" no-gutters>
+                                                    <v-col :cols="$vuetify.breakpoint.mobile?'4':'3'">
+                                                        <v-checkbox
+                                                        class="ma-0"
+                                                        v-model="shousaiCheckBox3"
+                                                        label="修理提案書使用済"
+                                                        ></v-checkbox>
+                                                    </v-col>
+                                                    <v-col :cols="$vuetify.breakpoint.mobile?'4':'3'">
+                                                        <v-checkbox
+                                                        class="ma-0"
+                                                        v-model="shousaiCheckBox4"
+                                                        label="部品説明or取替理由が未登録"
+                                                        ></v-checkbox>
+                                                    </v-col>
+                                                    <v-col :cols="$vuetify.breakpoint.mobile?'4':'3'">
+                                                        <v-checkbox
+                                                        class="ma-0"
+                                                        v-model="shousaiCheckBox5"
+                                                        label="写真未登録"
+                                                        ></v-checkbox>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row justify="end" no-gutters>
+                                                    <v-col col=9 sm=9>
+                                                        <span class="blue--text">「部品説明or取替理由が未登録」、「写真未登録」を選択した場合は、「修理提案使用済」も自動でチェックして検索します。</span>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-divider></v-divider>
+                                                <v-row class="mt-2" no-gutters >
+                                                <v-col class="d-flex justify-end mb"> 
                                                     <v-btn @click="getShousaiKensaku()">
                                                         <v-icon>mdi-magnify</v-icon>
                                                         検索（F）
@@ -2245,6 +2279,7 @@
                                     </v-container>  
                                 </v-dialog>
                             </v-content>
+                            </div>                     
                         </v-form>
                     </v-list-item-group>
                 </v-list>
@@ -2255,37 +2290,62 @@
                 v-model="drawer"
                 :mini-variant.sync="mini2"
                 mini-variant-width = 3%
-                floating
+                :floating="$vuetify.breakpoint.mobile ?false:true"
+                :bottom ="$vuetify.breakpoint.mobile ?true:false"
+                :fixed = "$vuetify.breakpoint.mobile ?true:false"
                 :width = table_width
-                height ="100vh"
+                :height="$vuetify.breakpoint.mobile ?this.table_height:'100vh'"
             >
                 <v-list
                  nav
                  dense
                  >
-                 <v-row no-gutters justify="space-between">
-                    <v-col>
-                    <v-btn class = "sm-2"
-                        icon
-                        @click.stop="changeTableMiniWidth()"
-                    >
-                        <v-icon>mdi-step-backward</v-icon>
-                    </v-btn>検索結果
+                 <v-row class="d-flex" >
+                    <v-col >
+                        <div v-if="!$vuetify.breakpoint.mobile">
+                            <v-btn class = "mb-2"
+                            icon
+                            @click.stop="changeTableMiniWidth()"
+                            >
+                                <v-icon v-if ="!mini2">mdi-step-backward</v-icon>
+                                <v-icon v-if ="mini2">mdi-step-forward</v-icon>
+                            </v-btn>検索結果
+                        </div>
+                        <div v-if="$vuetify.breakpoint.mobile">
+                            <v-btn class = "mb-2"
+                            icon
+                            @click.stop="changeTableHeight()"
+                            >
+                                <v-icon v-if ="!mini2">mdi-menu-down</v-icon>
+                                <v-icon v-if ="mini2">mdi-menu-up</v-icon>
+                            </v-btn>検索結果
+                        </div>
                     </v-col>
-                    <v-spacer></v-spacer>
-                    <v-btn 
-                        class="ml-10" small icon
-                        @click.stop="changeTableWidth()"
-                    >
-                            <v-icon>mdi-fit-to-page-outline</v-icon>
-                        </v-btn>
-                 </v-row>
-                        <v-container fluid>
+                    <v-col class=" d-flex justify-end"  >
+                        <div v-if="!$vuetify.breakpoint.mobile && !mini2">
+                            <v-btn 
+                                class="ml-10" small icon
+                                @click.stop="changeTableWidth()"
+                            >
+                                <v-icon>mdi-fit-to-page-outline</v-icon>
+                            </v-btn>
+                        </div>
+                        <div v-if="$vuetify.breakpoint.mobile">
+                            検索条件
+                            <v-btn
+                             @click.stop ="changeNavBar(2)"
+                             class="mt-n2" icon>
+                            <v-icon>mdi-step-forward</v-icon>
+                            </v-btn>
+                        </div>
+                    </v-col>
+                </v-row>
+                    <v-container v-if="!mini2" fluid>
                         <v-row justify="center">
                             <v-col>
                                 <v-data-table
                                  height="70vh"
-                                 :headers="HeaderTable"
+                                 :headers="$vuetify.breakpoint.mobile?HeaderTableBP:HeaderTable"
                                  :items="APIJSON"
                                  :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                 >
@@ -2424,7 +2484,7 @@
                     </v-container >
                     <v-container fluid>
                         <v-row>
-                            <v-col cols="6" sm="6">
+                            <v-col cols="12" :sm="this.$vuetify.breakpoint.mobile?12:6" xs="12">
                                 <v-card>   
                                     <v-row no-gutters>
                                         <v-col class="ml-2 mt-2">
@@ -2511,7 +2571,7 @@
                                     </v-form>
                                 </v-card>
                             </v-col>
-                            <v-col cols ="6" sm ="6">
+                            <v-col cols="12" :sm="this.$vuetify.breakpoint.mobile?12:6" xs="12">
                                 <v-card>
                                     <v-row no-gutters>
                                         <v-col class = "ml-2 mt-2">
@@ -2871,6 +2931,7 @@ export default {
     limit_lenght : value => value.length <= 10 || "10文字以内で入力してください",
     clipped: false,
     drawer: false,
+    drawer1: false,
     fixed: false,
     items: [
       {
@@ -2893,7 +2954,6 @@ export default {
     right: true,
     rightDrawer: false,
     kensakuForm:true,
-    drawer: false,
     mini:false,
     mini2:false,
     group: null,
@@ -3087,6 +3147,11 @@ export default {
     { text: "改訂", value: "DWG_REV_NO", align: "center"},
     { text: "保守", value: "SEQ_NO", align: "center"},
     ],
+    HeaderTableBP:[
+    { text: "操作", value: "SOUSA", align: "center",width:"200px" , sortable: false },
+    { text: "部品コード", value: "PART_NO", align: "center",width:"100px" },
+    { text: "部品名", value: "PART_NAME_LOC1", align: "center",width:"200px" },
+    ],
     toggle_Table:"",
     table_width_state:false,
     //User Setting 
@@ -3115,6 +3180,8 @@ export default {
     tab_width : "100%",
     PM_height : "40vh",
     Teihai_height : "36.3vh",
+    search_height:"100vh",
+    table_height:"100vh",
     showHeader : false,
     Header_Data:[{
     PART_NO:"",
@@ -3155,6 +3222,9 @@ export default {
     {text:"説明",value:"FIELD_EXPLAIN"}
     ],
     EditInfo_Value:[],
+    NRPMA_POST:[],
+    NRPMB_POST:[],
+    NRPMHIS_POST:[],
     EditInfo2_Value:[],
     dialogEditInfo : false,
     EditdialogStatus :"",
@@ -3353,6 +3423,493 @@ export default {
             }
         }
         return false;
+    },
+    convertPMtoNA(name,value){
+        if(name=='PARTCHG_TYPE')
+        {
+        NRPMA_POST[REV_GOKAN]=value;
+        }
+        if(name=='PART_NAME_LOC2')
+        {
+        NRPMA_POST[PART_NAME]=value;
+        }
+
+        if(name=='PART_NAME_LOC1')
+        {
+        NRPMA_POST[PART_NAME_J]=value;
+        }
+
+        if(name=='MAKER_NAME_LOC')
+        {
+        NRPMA_POST[MAKER_NAME]=value;
+        }
+
+        if(name=='MAKER_PART_NO')
+        {
+        NRPMA_POST[MAKER_KATABAN]=value;
+        }
+
+        if(name=='PM_UNIT')
+        {
+        NRPMA_POST[TANI]=value;
+        }
+
+        if(name=='RAW_MATERIAL')
+        {
+        NRPMA_POST[RAW_MATL]=value;
+        }
+
+        if(name=='PO_WIDTH')
+        {
+        NRPMA_POST[STD_W]=value;
+        }
+
+        if(name=='PO_LENGTH')
+        {
+        NRPMA_POST[STD_L]=value;
+        }
+
+        if(name=='PS_CALC_CODE')
+        {
+        NRPMA_POST[PS_KANSAN]=value;
+        }
+
+        if(name=='PO_SPEC1')
+        {
+        NRPMA_POST[CH_SIYO1]=value;
+        }
+
+        if(name=='PO_SPEC2')
+        {
+        NRPMA_POST[CH_SIYO2]=value;
+        }
+
+        if(name=='PO_SPEC3')
+        {
+        NRPMA_POST[CH_SIYO3]=value;
+        }
+
+        if(name=='MACHINE_TYPE')
+        {
+        NRPMA_POST[KISHU_BUNRUI]=value;
+        }
+
+        if(name=='PDM_TYPE')
+        {
+        NRPMA_POST[PDM_FLAG]=value;
+        }
+
+        if(name=='REMARKS_LOC')
+        {
+        NRPMA_POST[TEKIYO]=value;
+        }
+
+        if(name=='INSPECT_SHEET')
+        {
+        NRPMA_POST[INSPECT_SH]=value;
+        }
+
+        if(name=='TEST_REPORT')
+        {
+        NRPMA_POST[TEST_REP]=value;
+        }
+
+        if(name=='MILL_SHEET')
+        {
+        NRPMA_POST[MILL_SH]=value;
+        }
+
+        if(name=='PRODUCT_SIGN')
+        {
+        NRPMA_POST[PRD_SIGN]=value;
+        }
+
+        if (name == 'PART_NO')
+        {
+        NRPMA_POST[PART_NO]=value;
+        }
+
+        if (name == 'PART_REV_NO')
+        {
+        NRPMA_POST[REV_PART_NO]=value;
+        }
+
+        if (name == 'DWG_NO')
+        {
+        NRPMA_POST[DWG_NO]=value;
+        }
+
+        if (name == 'PM_TYPE')
+        {
+        NRPMA_POST[PM_TYPE]=value;
+        }
+
+        if (name == 'PART_TYPE')
+        {
+        NRPMA_POST[PART_TYPE]=value;
+        }
+
+        if (name == 'PRODUCT_CODE')
+        {
+        NRPMA_POST[PRODUCT_CODE]=value;
+        }
+
+        if (name == 'THICKNESS')
+        {
+        NRPMA_POST[THICKNESS]=value;
+        }
+
+        if (name == 'DENSITY')
+        {
+        NRPMA_POST[DENSITY]=value;
+        }
+
+        if (name == 'WEIGHT')
+        {
+        NRPMA_POST[WEIGHT]=value;
+        }
+
+        if (name == 'SHP_LABEL_RULE')
+        {
+        NRPMA_POST[SHP_LABEL_RULE]=value;
+        }
+
+        if (name == 'SUPPLEMENT')
+        {
+        NRPMA_POST[SUPPLEMENT]=value;
+        }
+
+        if (name == 'START_DATE')
+        {
+        NRPMA_POST[START_DATE]=value;
+        }
+
+        if (name == 'REV_START_DATE')
+        {
+        NRPMA_POST[REV_START_DATE]=value;
+        }
+
+        if (name == 'ORDER_STOP_DATE')
+        {
+        NRPMA_POST[ORDER_STOP_DATE]=value;
+        }
+
+        if (name == 'STOP_DATE')
+        {
+        NRPMA_POST[STOP_DATE]=value;
+        }
+
+        if (name == 'UPD_WHO')
+        {
+        NRPMA_POST[UPD_WHO]=value;
+        }
+
+        if (name == 'UPD_WHEN')
+        {
+        NRPMA_POST[UPD_WHEN]=value;
+        }
+
+        if (name == 'CERT_CONFORM')
+        {
+        NRPMA_POST[CERT_CONFORM]=value;
+        }
+
+        if (name == 'TRACE_TYPE')
+        {
+        NRPMA_POST[TRACE_TYPE]=value;
+        }
+
+        if (name == 'CH_STOP_DATE')
+        {
+        NRPMA_POST[CH_STOP_DATE]=value;
+        }
+
+        if (name == 'MAINT_PART_NAME')
+        {
+        NRPMA_POST[MAINT_PART_NAME]=value;
+        }
+
+        if (name == 'EXP_CODE')
+        {
+        NRPMA_POST[EXP_CODE]=value;
+        }
+
+        if (name == 'MAINT_PARTS_TYPE')
+        {
+        NRPMA_POST[MAINT_PARTS_TYPE]=value;
+        }
+
+        if (name == 'RECYCLE_TYPE')
+        {
+        NRPMA_POST[RECYCLE_TYPE]=value;
+        }
+
+        if (name == 'EMG_TYPE')
+        {
+        NRPMA_POST[EMG_TYPE]=value;
+        }
+
+        if (name == 'MAINT_CONTRACT_TYPE')
+        {
+        NRPMA_POST[MAINT_CONTRACT_TYPE]=value;
+        }
+
+        if (name == 'STD_COST_UPD_TYPE')
+        {
+        NRPMA_POST[STD_COST_UPD_TYPE]=value;
+        }
+    },
+    convertPMtoNH(name,value){
+        if ( name == 'PART_NO')
+        {
+            NRPMHIS_POST[PART_NO]=value;
+        }
+        if ( name == 'PART_REV_NO')
+        {
+            NRPMHIS_POST[REV_PART_NO]=value;
+        }
+        if ( name == 'PARTCHG_TYPE')
+        {
+            NRPMHIS_POST[REV_GOKAN]=value;
+        }
+        if ( name == 'REV_START_DATE')
+        {
+            NRPMHIS_POST[REV_START_DATE]=value;
+        }
+        if ( name == 'UPD_WHO')
+        {
+            NRPMHIS_POST[UPD_WHO]=value;
+        }
+        if ( name == 'UPD_WHEN')
+        {
+            NRPMHIS_POST[UPD_WHEN]=value;
+        }
+        if ( name == 'REV_STOP_DATE')
+        {
+            NRPMHIS_POST[REV_STOP_DATE]=value;
+        }
+    },
+    convertPOtoNB(name,value){
+        if ( name == 'PART_NO')
+        {
+        NRPMB_POST[PART_NO]=value;
+        }
+        if ( name == 'PLANT_NO')
+        {
+        NRPMB_POST[PLANT_NO]=value;
+        }
+        if ( name == 'MFG_TYPE')
+        {
+        NRPMB_POST[MFG_TYPE]=value;
+        }
+        if ( name == 'STOCK_TYPE')
+        {
+        NRPMB_POST[STOCK]=value;
+        }
+        if ( name == 'AUTO_WAREHOUSE_CODE')
+        {
+        NRPMB_POST[AUTO_SOKO]=value;
+        }
+        if ( name == 'ORDER_TYPE')
+        {
+        NRPMB_POST[ORDER_TYPE]=value;
+        }
+        if ( name == 'TRANS_STOCK_TYPE')
+        {
+        NRPMB_POST[ORDER_AUTO]=value;
+        }
+        if ( name == 'ROUTING_CODE')
+        {
+        NRPMB_POST[KT_CODE]=value;
+        }
+        if ( name == 'ARR_BRANCH_CODE')
+        {
+        NRPMB_POST[TE_TENSHO]=value;
+        }
+        if ( name == 'ARR_WHO')
+        {
+        NRPMB_POST[TE_TANTO]=value;
+        }
+        if ( name == 'PO_BRANCH_CODE')
+        {
+        NRPMB_POST[CH_TENSHO]=value;
+        }
+        if ( name == 'PO_WHO')
+        {
+        NRPMB_POST[CH_TANTO]=value;
+        }
+        if ( name == 'PO_TYPE')
+        {
+        NRPMB_POST[CH_HANTEI]=value;
+        }
+        if ( name == 'FILING_REC_CODE1')
+        {
+        NRPMB_POST[TEISHUTU_CD_1]=value;
+        }
+        if ( name == 'FILING_REC_CODE2')
+        {
+        NRPMB_POST[TEISHUTU_CD_2]=value;
+        }
+        if ( name == 'QC_BRANCH_CODE')
+        {
+        NRPMB_POST[QC_TENSHO]=value;
+        }
+        if ( name == 'ABC_TYPE')
+        {
+        NRPMB_POST[ABC_TYPE]=value;
+        }
+        if ( name == 'SCRAP_PCNT')
+        {
+        NRPMB_POST[SCRAP_PCNT]=value;
+        }
+        if ( name == 'BUCKET')
+        {
+        NRPMB_POST[BUCKET]=value;
+        }
+        if ( name == 'MFG_LOT_SIZE')
+        {
+        NRPMB_POST[MFG_LOT_SIZE]=value;
+        }
+        if ( name == 'MFG_LEADTIME')
+        {
+        NRPMB_POST[MFG_LEADTIME]=value;
+        }
+        if ( name == 'STOP_DATE')
+        {
+        NRPMB_POST[STOP_DATE]=value;
+        }
+        if ( name == 'UPD_WHO')
+        {
+        NRPMB_POST[UPD_WHO]=value;
+        }
+        if ( name == 'UPD_WHEN')
+        {
+        NRPMB_POST[UPD_WHEN]=value;
+        }
+        if ( name == 'ENT_WHEN')
+        {
+        NRPMB_POST[ENT_DATE]=value;
+        }
+        if ( name == 'STOCK_CODE')
+        {
+        NRPMB_POST[STOCK_KANRI]=value;
+        }
+        if ( name == 'MATL_BRANCH_CODE1')
+        {
+        NRPMB_POST[HOZAI_KANRI1]=value;
+        }
+        if ( name == 'MATL_BRANCH_CODE2')
+        {
+        NRPMB_POST[HOZAI_KANRI2]=value;
+        }
+        if ( name == 'MATL_BRANCH_CODE3')
+        {
+        NRPMB_POST[HOZAI_KANRI3]=value;
+        }
+        if ( name == 'MATL_BRANCH_CODE4')
+        {
+        NRPMB_POST[HOZAI_KANRI4]=value;
+        }
+        if ( name == 'MATL_BRANCH_CODE5')
+        {
+        NRPMB_POST[HOZAI_KANRI5]=value;
+        }
+        if ( name == 'MATL_BRANCH_CODE6')
+        {
+        NRPMB_POST[HOZAI_KANRI6]=value;
+        }
+        if ( name == 'MATL_BRANCH_CODE7')
+        {
+        NRPMB_POST[HOZAI_KANRI7]=value;
+        }
+        if ( name == 'MATL_BRANCH_CODE8')
+        {
+        NRPMB_POST[HOZAI_KANRI8]=value;
+        }
+        if ( name == 'MATL_BRANCH_CODE9')
+        {
+        NRPMB_POST[HOZAI_KANRI9]=value;
+        }
+        if ( name == 'MATL_BRANCH_CODE10')
+        {
+        NRPMB_POST[HOZAI_KANRI10]=value;
+        }
+        if ( name == 'MATL_BRANCH_CODE11')
+        {
+        NRPMB_POST[HOZAI_KANRI11]=value;
+        }
+        if ( name == 'MATL_BRANCH_CODE12')
+        {
+        NRPMB_POST[HOZAI_KANRI12]=value;
+        }
+        if ( name == 'MFG_MIN_LOT_SIZE')
+        {
+        NRPMB_POST[MFG_MIN_LOT_SIZE]=value;
+        }
+        if ( name == 'SET_COLOR_TYPE')
+        {
+        NRPMB_POST[SET_COLOR_FLAG]=value;
+        }
+        if ( name == 'WCCC_FOLLOW_TYPE')
+        {
+        NRPMB_POST[WCCC_FOLLOW_FLAG]=value;
+        }
+        if ( name == 'AUTO_ARR_COMP_DATE')
+        {
+        NRPMB_POST[AUTO_TE_COMP_DATE]=value;
+        }
+        if ( name == 'TRACE_TYPE')
+        {
+        NRPMB_POST[TRACE_FLAG]=value;
+        }
+        if ( name == 'VENDOR_SUPPLY_TYPE')
+        {
+        NRPMB_POST[VENDOR_SIKYU_FLAG]=value;
+        }
+        if ( name == 'AUTO_CH_REQ_TYPE')
+        {
+        NRPMB_POST[AUTO_CH_REQ_FLAG]=value;
+        }
+        if ( name == 'YEAR_CH_QTY')
+        {
+        NRPMB_POST[YEAR_CH_QTY]=value;
+        }
+        if ( name == 'LOT_PRINT_TYPE')
+        {
+        NRPMB_POST[LOT_PRINT_TYPE]=value;
+        }
+        if ( name == 'MATL_AUTO_ORD_TYPE')
+        {
+        NRPMB_POST[HOZAI_AUTO_ORD_FLAG]=value;
+        }
+        if ( name == 'TRANSFER_REQ_PLANT')
+        {
+        NRPMB_POST[TRANSFER_REQ_PLANT]=value;
+        }
+        if ( name == 'FC_FLAG')
+        {
+        NRPMB_POST[FC_FLAG]=value;
+        }
+        if ( name == 'STOCK_PLAN_COUNT')
+        {
+        NRPMB_POST[STOCK_PLAN_COUNT]=value;
+        }
+        if ( name == 'STOCK_PLAN_TYPE')
+        {
+        NRPMB_POST[STOCK_PLAN_TYPE]=value;
+        }
+        if ( name == 'ISSUE_FC_METHOD')
+        {
+        NRPMB_POST[ISSUE_FC_METHOD]=value;
+        }
+        if ( name == 'FM_ISSUE_FC_RATE')
+        {
+        NRPMB_POST[FM_ISSUE_FC_RATE]=value;
+        }
+        if ( name == 'POG_ISSUE_FC_RATE')
+        {
+        NRPMB_POST[POG_ISSUE_FC_RATE]=value;
+        }
     },
     setListener(){
       this.$nuxt.$on('updateHeader',this.setHeader)
@@ -4587,24 +5144,40 @@ export default {
         this.PPPMORDER_UPDATE_CHECK(index);
     },
     OpenCloseNav(){
-        this.drawer = !this.drawer;
-        if(this.drawer)
+        
+        /*Xl～LGの間*/
+        if(!this.$vuetify.breakpoint.mobile)
         {
-            this.CheckWidth_state()
-            this.search_width = "22%";
-            this.table_width = "32%";
-            this.tab_width = "46%";
+            this.drawer = !this.drawer;
+            this.drawer1 = !this.drawer1;
+            if(this.drawer)
+            {
+                this.CheckWidth_state()
+                this.search_width = "22%";
+                this.table_width = "32%";
+                this.tab_width = "46%";
+            }
+            else
+            {
+                this.mini= false;
+                this.mini2=false;
+                this.table_width_state = false;
+                this.search_width = "0%";
+                this.table_width = "0%";
+                this.tab_width = "100%"; 
+                this.PM_height = "40vh";
+                this.Teihai_height = "36.3vh";
+            }
         }
         else
         {
-            this.mini= false;
-            this.mini2=false;
-            this.table_width_state = false;
-            this.search_width = "0%";
-            this.table_width = "0%";
-            this.tab_width = "100%"; 
-            this.PM_height = "40vh";
-            this.Teihai_height = "36.3vh";
+            this.drawer = false;
+            this.drawer1 = true;
+            this.table_height ="0%";
+            this.mini = false;
+            this.mini2 = false;
+            this.search_height ="100%"
+           
         }
     },
     getKensakuBtn1(){
@@ -4619,6 +5192,10 @@ export default {
         }).catch(err=>{
 
         })
+        if(this.$vuetify.breakpoint.mobile)
+        {
+            this.changeNavBar(1);
+        }
     },
     getKensakuBtn2(){
         const url = "http://localhost:59272/api/KensakuBtnGet";
@@ -5146,6 +5723,46 @@ export default {
         this.EditInfoDialog_Staus = Dialog;
         this.getdialogArrary(FIELD_NAME);
     },
+    changeSerachHeight(){
+        this.mini = !this.mini;
+        if(this.mini){
+            this.search_height ="8%";
+        }
+        else
+        {
+            this.search_height ="100%";
+        }
+    },
+    changeTableHeight(){
+        this.mini2 = !this.mini2;
+        if(this.mini2){
+            this.table_height ="8%";
+        }
+        else
+        {
+            this.table_height ="100%";
+        }
+    },
+    changeNavBar(value){
+        if(value == 1)
+        {
+            this.drawer1 = false;
+            this.drawer = true;
+            this.table_height = this.search_height;
+            this.search_height ="0%";
+            this.mini2 = this.mini;
+            this.mini = false;
+        }
+        else if(value == 2)
+        {
+            this.drawer = false;
+            this.drawer1 = true;
+            this.search_height = this.table_height;
+            this.table_height ="0%";
+            this.mini = this.mini2;
+            this.mini2 = false;
+        }
+    },
     changeSearchMiniWidth(){
         this.mini = !this.mini;
         this.CheckWidth_state();
@@ -5197,17 +5814,23 @@ export default {
     ,
     POST_PPPMMMS(){
         const url = "http://localhost:59272/api/KensakuBtnPost/PPPMMS";
+        this.NRPMA_POST=[];
+        this.NRPMHIS_POST=[]
         var req ={};
         this.EditInfo_Value.forEach(item =>{
-            if(item.UPDATE_ST)
+            if(item.UPDATE_ST || item.FIELD_NAME == "PART_NO" || item.FIELD_NAME == "PART_REV_NO")
             {
                 if(item.AUTH_TYPE == "2")
                 {
                     req[item.FIELD_NAME] = item.FIELD_VALUE;
+                    this.convertPMtoNA(item.FIELD_NAME,item.FIELD_VALUE);
+                    this.convertPMtoNH(item.FIELD_NAME,item.FIELD_VALUE);
                 }
                 if(item.FIELD_NAME == "PART_NO" || item.FIELD_NAME == "PART_REV_NO")
                 {
                     req[item.FIELD_NAME] = item.FIELD_VALUE;
+                    this.convertPMtoNA(item.FIELD_NAME,item.FIELD_VALUE);
+                    this.convertPMtoNH(item.FIELD_NAME,item.FIELD_VALUE);
                 }
             }   
         });
@@ -5227,31 +5850,69 @@ export default {
             ).catch(err=>{
                 
             })
+            this.POST_NRPMA();
+            this.POST_NRPHIS();
         }*/
         
     },
+    POST_NRPMA(){
+        const url = "http://localhost:59272/api/KensakuBtnPost/NRPMA";
+        const params = this.NRPMA_POST;
+        this.$axios.post(url,params).then(
+            
+        ).catch(err=>{
+            
+        })
+        this.NRPMA_POST=[];
+    },
+    POST_NRPMB(){
+        const url = "http://localhost:59272/api/KensakuBtnPost/NRPMB";
+        const params = this.NRPMB_POST;
+        this.$axios.post(url,params).then(
+            
+        ).catch(err=>{
+            
+        })
+        this.NRPMB_POST=[];
+    },
+    POST_NRPHIS(){
+        const url = "http://localhost:59272/api/KensakuBtnPost/NRPMHIS";
+        const params = this.NRPMHIS_POST;
+        this.$axios.post(url,params).then(
+            
+        ).catch(err=>{
+            
+        })
+        this.NRPMHIS_POST=[];
+
+    },
     POST_PPPMORDER(){
         const url = "http://localhost:59272/api/KensakuBtnPost/PPPMORDER";
+        this.NRPMB_POST=[];
         var req ={};
         this.EditInfo2_Value.forEach(item =>{
-            if(item.UPDATE_ST)
+            if(item.UPDATE_ST || item.FIELD_NAME == "PART_NO")
             {
                 if(item.AUTH_TYPE == "2")
                 {
                     req[item.FIELD_NAME] = item.FIELD_VALUE;
+                    this.convertPOtoNB(item.FIELD_NAME,item.FIELD_VALUE);
                 }
                 if(item.FIELD_NAME == "PART_NO")
                 {
                     req[item.FIELD_NAME] = item.FIELD_VALUE;
+                    this.convertPOtoNB(item.FIELD_NAME,item.FIELD_VALUE);
                 }
             }
         });
         req["PLANT_NO"] =[];
         req["PLANT_NO"].push(this.Edit_Combobox_1_select.substr(0,1));
+        this.NRPMB_POST["PLANT_NO"].push(this.Edit_Combobox_1_select.substr(0,1));
         if(this.Edit_checkbox && this.Edit_Combobox_2_select.substr(0,1) != "" &&
         this.Edit_Combobox_2_select.substr(0,1) != "-")
         {
             req["PLANT_NO"].push(this.Edit_Combobox_2_select.substr(0,1));
+            this.NRPMB_POST["PLANT_NO"].push(this.Edit_Combobox_2_select.substr(0,1));
         } 
         this.EditInfo2_Value=this.EditInfo2_Value.map(item =>{
             item.UPDATE_ST = false;
@@ -5268,6 +5929,7 @@ export default {
             ).catch(err=>{
                 
             })
+            this.POST_NRPMB();
         }*/
     },
     
