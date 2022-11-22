@@ -6,6 +6,7 @@
 <script>
 import { mapState } from 'vuex'
 export default {
+
 data:()=>({
     header:{
         showHeader : true,
@@ -51,5 +52,7 @@ p {
     .right-input input {
     text-align: right;
     }
+
+    
 </style>
 
