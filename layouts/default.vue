@@ -3,12 +3,6 @@
       <v-main>
         <Nuxt />
         <div>
-            <v-row>
-                <v-col>
-                    <v-btn @click ="check_pppmmsForm()">Test form</v-btn>
-                </v-col>
-            </v-row>
-            
             <!-- Nav-bar -->
             <v-app-bar
             color="light-blue lighten-1"
@@ -18,6 +12,7 @@
             clipped-left
             dark 
             >
+            <!--　OpenCloseNav()は基本検索条件と検索結果画面を表示する関数 -->
             <v-app-bar-nav-icon class = "mt-5" @click.stop="OpenCloseNav()"></v-app-bar-nav-icon>
             <v-toolbar-title ><br>Fujitec<br> Parts Master</v-toolbar-title>
             <v-spacer></v-spacer>
@@ -126,23 +121,23 @@
                 class="fill-height"
                 no-gutters
             >
-            
             <!-- 基本検索条件 -->
+            <!--　mini　検索条件画面の幅状態を制御すプロパティ -->
+            <!--  True  : 検索条件画面を縮小する -->
+            <!--  False : 検索条件画面を拡大する-->
+            <!--  search_width 検索条件画面の幅を設定するプロパティ-->
+            <!--  search_height 検索条件画面の高さを設定するプロパティ-->
             <v-navigation-drawer
                 v-model="drawer1"
                 :mini-variant="$vuetify.breakpoint.mobile ?mini : mini"
                 mini-variant-width = "3%"
-                :floating="$vuetify.breakpoint.mobile ?false:true"
+                :floating="$vuetify.breakpoint.mobile ?false:true"                               
                 :bottom ="$vuetify.breakpoint.mobile ?true:false"
                 :fixed = "$vuetify.breakpoint.mobile ?true:false"
-                
                 :width = "search_width"
                 :height="$vuetify.breakpoint.mobile ?this.search_height:'100vh'"
             >
-                <v-list
-                 nav
-                 dense
-                 >
+                <v-list nav dense>
                     <v-list-item-group
                       v-model="group"
                       active-class="deep-purple--text text--accent-4"
@@ -154,6 +149,10 @@
                         >
                             <v-row class="d-flex" >
                                 <v-col >
+                                    <!-- $vuetify.breakpoint.mobile　は端末の種類に応じて画面の表示を変更するプロパティ  -->
+                                    <!-- Ture  : スマートフォンやタブレットを使用する時-->
+                                    <!-- False : PCを使用する時-->
+                                    <!-- changeSearchMiniWidth() 検索条件画面の拡大縮小を変更する関数-->
                                     <div v-if="!$vuetify.breakpoint.mobile">
                                         <v-btn class = "mb-2"
                                         icon
@@ -163,6 +162,7 @@
                                             <v-icon v-if ="mini">mdi-step-forward</v-icon>
                                         </v-btn>検索条件
                                     </div>
+                                    <!-- changeSerachHeight() 検索条件画面の高さ変更する関数-->
                                     <div v-if="$vuetify.breakpoint.mobile">
                                         <v-btn class = "mb-2"
                                         icon
@@ -173,6 +173,9 @@
                                         </v-btn>検索条件
                                     </div>
                                 </v-col>
+                                <!-- changeNavBar(引数)検索条件画面と検索結果画面を入れ替える関数-->
+                                <!-- 引数　1 : 検索結果画面に移動 -->
+                                <!-- 引数　2 : 検索条件画面に移動 -->
                                 <v-col class=" d-flex justify-end mt-2"  v-if="$vuetify.breakpoint.mobile">
                                     検索結果
                                     <v-btn 
@@ -186,6 +189,7 @@
                                 <v-content class ="pl-10">
                                 <!--　基本検索条件1 -->
                                 <p class="ma-0">部品コード</p>
+                                <!-- buhincode 部品コードのプロパティ-->
                                 <v-text-field
                                     v-model="buhincode"
                                     outlined
@@ -196,6 +200,7 @@
                                 >
                                 </v-text-field>
                                 <p class="ma-0">部品名</p>
+                                <!-- buhinmei 部品名のプロパティ-->
                                 <v-row no-gutters>
                                     <v-col cols ="7" sm ="7" >
                                         <v-text-field
@@ -207,6 +212,7 @@
                                         required
                                         ></v-text-field>
                                     </v-col>
+                                    <!--　selectBuhin 部品名の検索条件を設定するプロパティ-->
                                     <v-col cols ="3" sm ="3">
                                         <v-combobox
                                         v-model = "selectBuhin"
@@ -217,12 +223,9 @@
                                     </v-col>
                                     <v-col cols ="1" sm="1" class = "ml-4">
                                         <template>
-                                            <v-dialog
-                                             v-model ="warning_dialog_btn1"
-                                             persistent
-                                             max-width="290"
-                                            >
+                                            <v-dialog  v-model ="warning_dialog_btn1" persistent max-width="290" >
                                                 <template v-slot:activator = "{on, attrs}">
+                                                    <!-- 部品コードと部品名が入力されてない場合でボタンをクリックすると検索が実行されない　-->
                                                     <v-btn v-if="buhincode === '' && buhinmei ==='' "
                                                      elevation="2"
                                                      icon
@@ -233,25 +236,26 @@
                                                     >
                                                         <v-icon>mdi-magnify</v-icon>
                                                     </v-btn>
-                                                    <v-btn v-else
-                                                    @click="getKensakuBtn1()"
-                                                    elevation="2"
-                                                    icon
-                                                    tile
-                                                    >
+                                                    <!-- 部品コードや部品名が入力された場合でボタンをクリックすると検索が実行される-->
+                                                    <!-- getKensakuBtn1() PPPMMSで検索を実行する関数 -->
+                                                    <!-- SQL内のパラメータ名-->
+                                                    <!-- 部品コード PART_NO -->
+                                                    <!-- 部品名　　 PART_NAME_LOC1 -->
+                                                    <v-btn v-else @click="getKensakuBtn1()" elevation="2" icon tile >
                                                         <v-icon> mdi-magnify</v-icon>
                                                     </v-btn>
                                                 </template>
                                                 <v-card>
+                                                    <!--　部品コードと部品名が入力されてない場合警告画面を表示　-->
+                                                    <!-- warning_dialog_btn1 警告画面を表示を制御するプロパティ　-->
+                                                    <!-- True  : 警告画面表示する-->
+                                                    <!-- False : 警告画面未表示する-->
                                                     <v-card-title >Warning</v-card-title>
                                                     <v-card-text >検索条件を入力してください。</v-card-text>
                                                     <v-card-actions>
-                                                         <v-spacer></v-spacer>
-                                                        <v-btn
-                                                            color="primary"
-                                                            text
-                                                            @click="warning_dialog_btn1 = false"
-                                                        >
+                                                        <v-spacer></v-spacer>
+                                                        <!-- Okボタンをクリックすと 警告画面が未表示する-->
+                                                        <v-btn color="primary" text @click="warning_dialog_btn1 = false">
                                                             OK
                                                         </v-btn>
                                                     </v-card-actions>
@@ -266,6 +270,8 @@
                                 <!--　基本検索条件1 -->
                                 <!--　基本検索条件２ -->
                                 <p class="ma-0">製品種別</p>
+                                <!-- itemsSeihin 製品種別のプロパティ-->
+                                <!-- -:All--><!-- 1:EV--><!-- 2:ESC--><!-- 3:CP-->
                                 <v-row >
                                     <v-col class="ma-0" col= "1" sm = "4">
                                         <v-combobox
@@ -281,6 +287,9 @@
                                 <p class="mb-2">標準図発行日</p>
                                 <v-row no-gutters class="py-0">
                                     <v-col cols="5" sm="5">
+                                        <!-- hakkouMenu1 標準図発行日のカレンダー入力画面を表示する -->
+                                        <!-- True  : 表示　-->
+                                        <!-- False : 未表示　-->
                                         <v-menu
                                         ref="menu"
                                         v-model="hakkouMenu1"
@@ -291,6 +300,7 @@
                                         min-width="auto"
                                         >
                                             <template v-slot:activator="{ on, attrs }">
+                                            <!-- hakkouDate1 標準図発行日(左側)プロパティ-->
                                             <v-text-field
                                                 class ="mb-0"
                                                 v-model="hakkouDate1"
@@ -302,6 +312,8 @@
                                                 v-on="on"
                                             ></v-text-field>
                                             </template>
+                                            <!-- カレンダー内で選択した日はhakkouDate1に渡される-->
+                                            <!-- @input 選択した後に標準図発行日カレンダーを未表示にする-->
                                             <v-date-picker
                                             v-model="hakkouDate1"
                                             @input="hakkouMenu1 = false"
@@ -311,6 +323,9 @@
                                     </v-col>
                                     <v-col class = "ml-2" sm="1"><p>~</p></v-col>
                                     <v-col cols="5" sm="5">
+                                        <!-- hakkouMenu2 標準図発行日のカレンダー入力画面を表示する -->
+                                        <!-- True  : 表示　-->
+                                        <!-- False : 未表示　-->
                                         <v-menu
                                         ref="menu"
                                         v-model="hakkouMenu2"
@@ -321,6 +336,7 @@
                                         min-width="auto"
                                         >
                                             <template v-slot:activator="{ on, attrs }">
+                                            <!-- hakkouDate2 標準図発行日(右側)プロパティ-->
                                             <v-text-field
                                                 class ="mb-0"
                                                 v-model="hakkouDate2"
@@ -332,6 +348,8 @@
                                                 v-on="on"
                                             ></v-text-field>
                                             </template>
+                                            <!-- カレンダー内で選択した日はhakkouDate2に渡される-->
+                                            <!-- @input 選択した後に標準図発行日カレンダーを未表示にする-->
                                             <v-date-picker
                                             v-model="hakkouDate2"
                                             @input="hakkouMenu2 = false"
@@ -583,7 +601,7 @@
                                         <!-- 詳細検索条件　-->
                                         <v-card tile> 
                                             <v-system-bar height="30">
-                                                <v-toolbar-title>詳細検索画面</v-toolbar-title>
+                                                <v-toolbar-title>詳細検索画面  </v-toolbar-title>
                                                 <v-spacer></v-spacer>
                                                 <v-btn small elevation="0" right  text @click="shousaiDialog = false"> 
                                                     <v-icon>mdi-close</v-icon>
@@ -605,7 +623,9 @@
                                             >
                                                 <v-row no-gutters>
                                                     <v-col :cols="$vuetify.breakpoint.mobile?'12':'4'">
-                                                        <p class="ma-0">・部品コード</p>
+                                                        <v-row>
+                                                            <v-col :cols="$vuetify.breakpoint.name == 'md'?'7':'12'" >
+                                                                <p class="ma-0">・部品コード</p>
                                                         <v-row no-gutters justify="end">
                                                             <v-col cols="9" sm="9" >
                                                                 <v-text-field 
@@ -797,52 +817,56 @@
                                                             </v-col>
 
                                                         </v-row>
-                                                        <v-row justify="center">
-                                                            <v-col col=10 sm=10>
-                                                                <v-data-table
-                                                                v-model="shousaiZaikoSelected"
-                                                                :headers="shousaiZaikoHeaders"
-                                                                :items="shousaiZaikoItems"
-                                                                item-key="CM_CODE"
-                                                                dense
-                                                                show-select
-                                                                fixed-header
-                                                                :footer-props="{'items-per-page-options':[-1]}"
-                                                                hide-default-footer
-                                                                height ="24vh"
-                                                                class="elevation-5"
-                                                            >
-                                                                <template v-slot:top>
-                                                                    <v-row no-gutters>
-                                                                        <v-checkbox
-                                                                        class="ml-2 mb-n5"
-                                                                        v-model="shousaiSokoCodeCheckbox"
-                                                                        @change="getSokoType(true)"
-                                                                        label="倉庫コードを指定する。"
-                                                                        ></v-checkbox>
-                                                                    </v-row>
-                                                                    <v-row no-gutters>
-                                                                        <v-col class="mt-2 ml-2" col=4 sm=4>
-                                                                            <span>・倉庫選択</span>
-                                                                        </v-col>
-                                                                        <v-col class="mt-2" col=4 sm=4>
-                                                                            <span>・工場区分</span>
-                                                                        </v-col>
-                                                                        <v-col class="ml-5 mb-n4" col=2 sm=2>
-                                                                            <v-combobox
-                                                                            class="ma-0"
-                                                                            v-model="shousaiSelectSouko"
-                                                                            dense
-                                                                            outlined
-                                                                            :items="shousaiItemsSouko"
-                                                                            @change="getSoko()"
-                                                                            ></v-combobox>
-                                                                        </v-col>
-                                                                    </v-row>
-                                                                    <v-divider></v-divider>
-                                                                </template>
-                                                            </v-data-table>
-                                                            <br>
+                                                            </v-col>
+                                                            <v-col :cols="$vuetify.breakpoint.name == 'md'?'5':'12'" >
+                                                                <v-row justify="center" class="d-flex justify-center">
+                                                                    <v-col cols=10 sm=10>
+                                                                        <v-data-table
+                                                                        v-model="shousaiZaikoSelected"
+                                                                        :headers="shousaiZaikoHeaders"
+                                                                        :items="shousaiZaikoItems"
+                                                                        item-key="CM_CODE"
+                                                                        dense
+                                                                        show-select
+                                                                        fixed-header
+                                                                        :footer-props="{'items-per-page-options':[-1]}"
+                                                                        hide-default-footer
+                                                                        height ="24vh"
+                                                                        class="elevation-5"
+                                                                    >
+                                                                        <template v-slot:top>
+                                                                            <v-row no-gutters>
+                                                                                <v-checkbox
+                                                                                class="ml-2 mb-n5"
+                                                                                v-model="shousaiSokoCodeCheckbox"
+                                                                                @change="getSokoType(true)"
+                                                                                label="倉庫コードを指定する。"
+                                                                                ></v-checkbox>
+                                                                            </v-row>
+                                                                            <v-row no-gutters>
+                                                                                <v-col class="mt-2 ml-2" col=4 sm=4>
+                                                                                    <span>・倉庫選択</span>
+                                                                                </v-col>
+                                                                                <v-col class="mt-2" col=4 sm=4>
+                                                                                    <span>・工場区分</span>
+                                                                                </v-col>
+                                                                                <v-col class="ml-5 mb-n4" col=2 sm=2>
+                                                                                    <v-combobox
+                                                                                    class="ma-0"
+                                                                                    v-model="shousaiSelectSouko"
+                                                                                    dense
+                                                                                    outlined
+                                                                                    :items="shousaiItemsSouko"
+                                                                                    @change="getSoko()"
+                                                                                    ></v-combobox>
+                                                                                </v-col>
+                                                                            </v-row>
+                                                                            <v-divider></v-divider>
+                                                                        </template>
+                                                                    </v-data-table>
+                                                                    <br>
+                                                                    </v-col>
+                                                                </v-row>
                                                             </v-col>
                                                         </v-row>
                                                     </v-col>
@@ -970,6 +994,7 @@
                                                                             </v-row>
                                                                             <v-row>
                                                                                 <v-data-table
+                                                                                mobile-breakpoint="400"
                                                                                 v-model="dialogKoumokuTableSelected"
                                                                                 :headers ="dialogKoumokuTableHeader"
                                                                                 :items ="dialogKoumokuTableItem"
@@ -1051,6 +1076,7 @@
                                                                             </v-row>
                                                                             <v-row>
                                                                                 <v-data-table
+                                                                                mobile-breakpoint="400"
                                                                                 v-model="dialogKoumokuTableSelected"
                                                                                 :headers ="dialogKoumokuTableHeader"
                                                                                 :items ="dialogKoumokuTableItem"
@@ -1145,6 +1171,7 @@
                                                                                     </v-row>
                                                                                     <v-row>
                                                                                         <v-data-table
+                                                                                        mobile-breakpoint="400"
                                                                                         v-model="dialogKoumokuTableSelected"
                                                                                         :headers ="dialogKoumokuTableHeader"
                                                                                         :items ="dialogKoumokuTableItem"
@@ -1230,6 +1257,7 @@
                                                                                     </v-row>
                                                                                     <v-row>
                                                                                         <v-data-table
+                                                                                        mobile-breakpoint="400"
                                                                                         v-model="dialogKoumokuTableSelected"
                                                                                         :headers ="dialogKoumokuTableHeader"
                                                                                         :items ="dialogKoumokuTableItem"
@@ -1333,6 +1361,7 @@
                                                                             </v-row>
                                                                             <v-row>
                                                                                 <v-data-table
+                                                                                mobile-breakpoint="400"
                                                                                 v-model="dialogKoumokuTableSelected"
                                                                                 :headers ="dialogKoumokuTableHeader"
                                                                                 :items ="dialogKoumokuTableItem"
@@ -1505,6 +1534,7 @@
                                                                                 </v-row>
                                                                                 <v-row>
                                                                                     <v-data-table
+                                                                                    mobile-breakpoint="400"
                                                                                     v-model="dialogKoumokuTableSelected"
                                                                                     :headers ="dialogKoumokuTableHeader"
                                                                                     :items ="dialogKoumokuTableItem"
@@ -1599,6 +1629,7 @@
                                                                         </v-row>
                                                                         <v-row>
                                                                             <v-data-table
+                                                                            mobile-breakpoint="400"
                                                                             v-model="dialogKoumokuTableSelected"
                                                                             :headers ="dialogKoumokuTableHeader"
                                                                             :items ="dialogKoumokuTableItem"
@@ -2344,6 +2375,7 @@
                         <v-row justify="center">
                             <v-col>
                                 <v-data-table
+                                 mobile-breakpoint="500px"
                                  height="70vh"
                                  :headers="$vuetify.breakpoint.mobile?HeaderTableBP:HeaderTable"
                                  :items="APIJSON"
@@ -2415,9 +2447,7 @@
                     label="Enter USER_ID"
                     >
                 </v-text-field>
-                
-                <div v-if="tab_select == 0">
-                    <v-container fluid>
+                <v-container fluid>
                     <v-card outlined shaped tile>
                         <v-row no-gutters>
                             <v-col cols="10" sm="10">
@@ -2468,9 +2498,12 @@
                         <v-card-text v-if ="!this.showHeader"></v-card-text>
                     </v-card>
                     </v-container>
+                <div v-if="tab_select == 0">
+                    
                     <v-container fluid>
                         <v-card>
                             <v-data-table
+                            mobile-breakpoint="400"
                             :headers="kaiteiTableHeader"
                             :items="Header_Data"
                             item-key="PART_REV_NO"
@@ -2504,7 +2537,9 @@
                                         </v-col>
                                     </v-row>
                                     <v-form ref ="PPPMMS_FORM">
-                                        <v-data-table
+                                        <v-data-table 
+                                        mobile-breakpoint="400"
+                                        fixed-header
                                         :headers="this.Editinfo_Header"
                                         :items="this.EditInfo_Value"
                                         :footer-props="{'items-per-page-options':[100,200,300,-1]}"
@@ -2548,6 +2583,7 @@
                                         </template>
                                         <template v-slot:item.FIELD_VALUE="{item}">
                                             <v-text-field
+                                                :background-color = "item.Setsumei_Error?'red':''"
                                                 :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
                                                 :disabled = "item.AUTH_TYPE == '2' && EditRevDate_Eable ?false:true"
                                                 :filled= "item.AUTH_TYPE == '2'?false:true"
@@ -2556,7 +2592,6 @@
                                                 v-model = EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_VALUE
                                                 @keyup="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
                                                 @change="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
-                                                
                                                 dense
                                                 outlined>
                                             </v-text-field>
@@ -2628,6 +2663,8 @@
                                     
                                     <v-form ref="PPPMORDER_form">
                                         <v-data-table
+                                        mobile-breakpoint="400"
+                                        fixed-header
                                         :headers="this.Editinfo2_Header"
                                         :items="this.EditInfo2_Value"
                                         :footer-props="{'items-per-page-options':[100,200,300,-1]}"
@@ -2813,6 +2850,7 @@
                         </v-row>
                         <v-row>
                             <v-data-table
+                            mobile-breakpoint="400"
                             v-if="this.EditdialogStatus == '1'"
                             v-model="dialogKoumokuTableSelected"
                             :headers ="dialogKoumokuTableHeader"
@@ -3084,14 +3122,14 @@ export default {
     dialogEnableDate_2:"",
     dialogKoumokuTableSelected:[],
     dialogKoumokuTableHeader:[
-        {text:"コード",value:"CM_CODE",},
+        {text:"コード",value:"CM_CODE",width:"100px"},
         {text:"コード説明",value:"CM_CODE_SETUMEI",width:"300px"},
         {text:"使用開始日",value:"START_DATE"},
         {text:"使用止め日",value:"STOP_DATE"},
     ],
     dialogKoumokuTableItem:[],
     dialogChoumonHeader:[
-        {text : "コード",value:"CH_CODE",},
+        {text : "コード",value:"CH_CODE",width:"100px"},
         {text :"コード説明",value:"CH_CODE_SETUMEI_1",width:"300px"},
         {text :"使用開始日",value:"START_DATE"},
         {text :"使用止め日",value:"STOP_DATE" },
@@ -3210,16 +3248,16 @@ export default {
     {text:"承",value:"APP_CUR_TYPE"},
     ],
     Editinfo_Header:[
-    {text:"項目名",value:"FIELD_NAME_LOC1",width:"200px" },
-    {text:"値",value:"FIELD_VALUE",width:"200px"},
-    {text:"",value:"CELL_TYPE"},
-    {text:"説明",value:"FIELD_EXPLAIN"}
+    {text:"項目名",value:"FIELD_NAME_LOC1",width:"170px" },
+    {text:"値",value:"FIELD_VALUE",width:"170px"},
+    {text:"",value:"CELL_TYPE",width:"10px"},
+    {text:"説明",value:"FIELD_EXPLAIN",width:"200px"}
     ],
     Editinfo2_Header:[
-    {text:"項目名",value:"FIELD_NAME_LOC1",width:"200px" },
-    {text:"値",value:"FIELD_VALUE",width:"200px"},
-    {text:"",value:"CELL_TYPE"},
-    {text:"説明",value:"FIELD_EXPLAIN"}
+    {text:"項目名",value:"FIELD_NAME_LOC1",width:"170px" },
+    {text:"値",value:"FIELD_VALUE",width:"170px"},
+    {text:"",value:"CELL_TYPE",width:"10px"},
+    {text:"説明",value:"FIELD_EXPLAIN",width:"150px"}
     ],
     EditInfo_Value:[],
     NRPMA_POST:{},
@@ -3400,16 +3438,6 @@ export default {
     
   },
   methods:{
-    check_pppmmsForm()
-    {
-        if(this.$refs.PPPMMS_FORM.validate()){
-            console.log("The form is corrent");
-        }
-        else
-        {
-            console.log("The form is not corrent");
-        }
-    },
     check_date(value)
     {
         if(typeof value == "string"){
@@ -3969,199 +3997,202 @@ export default {
         }).catch(err=>{
 
         })
-    },
+    }, 
     getRule(index,item){
-        if(item=="TRACE_TYPE")
+        if(this.EditInfo_Value[index].AUTH_TYPE == "2")
         {
-            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOneTwo );
-        }
-        if(item=="REMARKS_ENG")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan200 );
-        }
-        if(item=="REMARKS_LOC")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan200 );
-        }
-        if(item=="PO_SPEC1")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan50 );
-        }
-        if(item=="PO_SPEC2")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan50 );
-        }
-        if(item=="PO_SPEC3")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan50 );
-        }
-        if(item=="MAINT_PART_NAME")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan200 );
-        }
-        if(item=="MAINT_PARTS_TYPE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOneTwo );
-        }
-        if(item=="RECYCLE_TYPE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
-        }
-        if(item=="EMG_TYPE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
-        }
-        if(item=="MAINT_CONTRACT_TYPE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOneTwo );
-        }
-        if(item=="PART_DESCRIPTION")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan400 );
-        }
-        if(item=="REPLACE_REASON")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan400 );
-        }
-        if(item=="REPLACE_TIME")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan7 );
-            this.EditInfo_Value[index].RULES.push(this.formRules.FewThan2 );
-        }
-        if(item=="INSPECT_SHEET")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.VoidOne);
-        }
-        if(item=="CERT_CONFORM")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.VoidOne );
-        }
-        if(item=="TEST_REPORT")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.VoidOne );
-        }
-        if(item=="MILL_SHEET")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.VoidOne );
-        }
-        if(item=="SELLING_PRICE_TYPE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
-        }
-        if(item=="START_DATE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
-        }
-        if(item=="ORDER_STOP_DATE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
-        }
-        if(item=="STOP_DATE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
-        }
-        if(item=="M_START_DATE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
-        }
-        if(item=="M_ORDER_STOP_DATE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
-        }
-        if(item=="M_STOP_DATE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
-        }
-        if(item=="CH_STOP_DATE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
-        }
-        if(item=="STD_COST_UPD_TYPE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.voidZeroOne );
-        }
-        if(item=="PHOTO_TYPE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.voidZeroOne );
-        }
-        if(item=="RECORD_TYPE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.RecordCheck );
-        }
-        
-        if(item=="MODULE_TYPE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.ModuleCheck );
-        }
-        if(item=="PART_NAME_ENG")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
-            this.EditInfo_Value[index].RULES.push(this.formRules.IsZenkaku );
-        }
-        if(item=="PART_NAME_LOC1")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
-        }
-        if(item=="PART_NAME_LOC2")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan80 );
-            this.EditInfo_Value[index].RULES.push(this.formRules.IsZenkaku );
-        }
-        if(item=="MAKER_CODE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan10 );
-        }
-        if(item=="MAKER_NAME_ENG")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
-        }
-        if(item=="MAKER_NAME_LOC")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
-        }
-        if(item=="MAKER_PART_NO")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan60 );
-        }
-        if(item=="MAKER_REM_ENG")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
-        }
-        if(item=="MAKER_REM_LOC")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
-        }
-        if(item=="WEIGHT")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan7 );
-            this.EditInfo_Value[index].RULES.push(this.formRules.FewThan2 );
-        }
-        if(item=="PO_WIDTH")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan7 );
-            this.EditInfo_Value[index].RULES.push(this.formRules.FewThan2 );
-        }
-        if(item=="PO_LENGTH")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan7 );
-            this.EditInfo_Value[index].RULES.push(this.formRules.FewThan2 );
-        }
-        if(item=="THICKNESS")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.required );
-        }
-        if(item=="DENSITY")
-        {   
-            this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan6 );
-            this.EditInfo_Value[index].RULES.push(this.formRules.FewThan3 );
-        }
-        if(item=="SUPPLEMENT")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
-        }
-        if(item=="SUB_PART_TYPE")
-        {
-            this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
+            if(item=="TRACE_TYPE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOneTwo );
+            }
+            if(item=="REMARKS_ENG")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan200 );
+            }
+            if(item=="REMARKS_LOC")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan200 );
+            }
+            if(item=="PO_SPEC1")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan50 );
+            }
+            if(item=="PO_SPEC2")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan50 );
+            }
+            if(item=="PO_SPEC3")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan50 );
+            }
+            if(item=="MAINT_PART_NAME")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan200 );
+            }
+            if(item=="MAINT_PARTS_TYPE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOneTwo );
+            }
+            if(item=="RECYCLE_TYPE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
+            }
+            if(item=="EMG_TYPE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
+            }
+            if(item=="MAINT_CONTRACT_TYPE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOneTwo );
+            }
+            if(item=="PART_DESCRIPTION")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan400 );
+            }
+            if(item=="REPLACE_REASON")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan400 );
+            }
+            if(item=="REPLACE_TIME")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan7 );
+                this.EditInfo_Value[index].RULES.push(this.formRules.FewThan2 );
+            }
+            if(item=="INSPECT_SHEET")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.VoidOne);
+            }
+            if(item=="CERT_CONFORM")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.VoidOne );
+            }
+            if(item=="TEST_REPORT")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.VoidOne );
+            }
+            if(item=="MILL_SHEET")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.VoidOne );
+            }
+            if(item=="SELLING_PRICE_TYPE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
+            }
+            if(item=="START_DATE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+            }
+            if(item=="ORDER_STOP_DATE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+            }
+            if(item=="STOP_DATE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+            }
+            if(item=="M_START_DATE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+            }
+            if(item=="M_ORDER_STOP_DATE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+            }
+            if(item=="M_STOP_DATE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+            }
+            if(item=="CH_STOP_DATE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.Datefomat );
+            }
+            if(item=="STD_COST_UPD_TYPE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.voidZeroOne );
+            }
+            if(item=="PHOTO_TYPE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.voidZeroOne );
+            }
+            if(item=="RECORD_TYPE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.RecordCheck );
+            }
+            
+            if(item=="MODULE_TYPE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.ModuleCheck );
+            }
+            if(item=="PART_NAME_ENG")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
+                this.EditInfo_Value[index].RULES.push(this.formRules.IsZenkaku );
+            }
+            if(item=="PART_NAME_LOC1")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
+            }
+            if(item=="PART_NAME_LOC2")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan80 );
+                this.EditInfo_Value[index].RULES.push(this.formRules.IsZenkaku );
+            }
+            if(item=="MAKER_CODE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan10 );
+            }
+            if(item=="MAKER_NAME_ENG")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
+            }
+            if(item=="MAKER_NAME_LOC")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
+            }
+            if(item=="MAKER_PART_NO")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan60 );
+            }
+            if(item=="MAKER_REM_ENG")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
+            }
+            if(item=="MAKER_REM_LOC")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.lengthThan100 );
+            }
+            if(item=="WEIGHT")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan7 );
+                this.EditInfo_Value[index].RULES.push(this.formRules.FewThan2 );
+            }
+            if(item=="PO_WIDTH")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan7 );
+                this.EditInfo_Value[index].RULES.push(this.formRules.FewThan2 );
+            }
+            if(item=="PO_LENGTH")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan7 );
+                this.EditInfo_Value[index].RULES.push(this.formRules.FewThan2 );
+            }
+            if(item=="THICKNESS")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.required );
+            }
+            if(item=="DENSITY")
+            {   
+                this.EditInfo_Value[index].RULES.push(this.formRules.IntegetThan6 );
+                this.EditInfo_Value[index].RULES.push(this.formRules.FewThan3 );
+            }
+            if(item=="SUPPLEMENT")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
+            }
+            if(item=="SUB_PART_TYPE")
+            {
+                this.EditInfo_Value[index].RULES.push(this.formRules.ZeroOne );
+            }
         }
     },
     /*ボタンがあるText Fieldに入力確認*/ 
@@ -4728,7 +4759,7 @@ export default {
                         "少数部分2桁以内で入力して下さい" :"") : "" ;
                 Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE =="" || 
                                 Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7 ?true: 
-                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):true?
+                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):false?
                                 true:false
                 check_change = true;
             }
@@ -4742,7 +4773,7 @@ export default {
                         "少数部分2桁以内で入力して下さい" :"") : "" ;
                 Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length =="" || 
                                 Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7 ?true :
-                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):true?
+                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):false?
                                 true:false;
                 check_change = true;
             }
@@ -4756,7 +4787,7 @@ export default {
                         "少数部分2桁以内で入力して下さい" :"") : "" ;
                 Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length =="" || 
                                 Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7 ? true :
-                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):true?
+                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):false?
                                 true:false;
                 check_change = true;
             }
@@ -4770,7 +4801,7 @@ export default {
                         "少数部分2桁以内で入力して下さい" :"") : "" ;
                 Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length =="" || 
                                 Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7 ?true:
-                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):true?
+                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):false?
                                 true:false;
                 check_change = true;
             }
@@ -4784,7 +4815,7 @@ export default {
                         "少数部分2桁以内で入力して下さい" :"") : "" ;
                 Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE.length =="" || 
                                 Math.trunc(this.EditInfo_Value[index].FIELD_VALUE).toString().length > 7 ?true:
-                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):true?
+                                Dotcheck?(this.EditInfo_Value[index].FIELD_VALUE.split(".")[1].length >2 ):false?
                                 true:false;
                 check_change = true;
             }
@@ -4932,6 +4963,7 @@ export default {
         var check_change=false;
         var Setsumei ="";
         var Setsumei_Error = false;
+        this.PPPMORDER_buttonIndex = index;
         if(this.EditInfo2_Value[index].FIELD_VALUE === null)
         {
             if ( item == "SCRAP_PCNT")             
@@ -5816,11 +5848,25 @@ export default {
         this.kirikaeDate2 = cur_date.toISOString().substr(0, 10);
     },
     teihaiPostReq(){
-        this.POST_PPPMMMS();
-        if(this.Edit_Combobox_1_select.substr(0,1) != '-')
-        {
-            this.POST_PPPMORDER();
+        var check =false; 
+        this.EditInfo_Value.forEach(value =>{
+            check = value.Setsumei_Error || check;
+        })
+        console.log(check);
+        console.log("Form  check" +this.$refs.PPPMMS_FORM.validate())
+        if(this.$refs.PPPMMS_FORM.validate() && !check ){
+            this.POST_PPPMMMS();
+            if(this.Edit_Combobox_1_select.substr(0,1) != '-')
+            {
+                this.POST_PPPMORDER();
+            }
         }
+        else
+        {
+            alert("入力が間違います。")
+        }
+        
+        
     }
     ,
     POST_PPPMMMS(){
