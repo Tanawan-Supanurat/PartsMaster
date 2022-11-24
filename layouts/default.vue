@@ -994,7 +994,7 @@
                                                                             </v-row>
                                                                             <v-row>
                                                                                 <v-data-table
-                                                                                mobile-breakpoint="400"
+                                                                                mobile-breakpoint="400px"
                                                                                 v-model="dialogKoumokuTableSelected"
                                                                                 :headers ="dialogKoumokuTableHeader"
                                                                                 :items ="dialogKoumokuTableItem"
@@ -1076,7 +1076,7 @@
                                                                             </v-row>
                                                                             <v-row>
                                                                                 <v-data-table
-                                                                                mobile-breakpoint="400"
+                                                                                mobile-breakpoint="400px"
                                                                                 v-model="dialogKoumokuTableSelected"
                                                                                 :headers ="dialogKoumokuTableHeader"
                                                                                 :items ="dialogKoumokuTableItem"
@@ -1171,7 +1171,7 @@
                                                                                     </v-row>
                                                                                     <v-row>
                                                                                         <v-data-table
-                                                                                        mobile-breakpoint="400"
+                                                                                        mobile-breakpoint="400px"
                                                                                         v-model="dialogKoumokuTableSelected"
                                                                                         :headers ="dialogKoumokuTableHeader"
                                                                                         :items ="dialogKoumokuTableItem"
@@ -1257,7 +1257,7 @@
                                                                                     </v-row>
                                                                                     <v-row>
                                                                                         <v-data-table
-                                                                                        mobile-breakpoint="400"
+                                                                                        mobile-breakpoint="400px"
                                                                                         v-model="dialogKoumokuTableSelected"
                                                                                         :headers ="dialogKoumokuTableHeader"
                                                                                         :items ="dialogKoumokuTableItem"
@@ -1361,7 +1361,7 @@
                                                                             </v-row>
                                                                             <v-row>
                                                                                 <v-data-table
-                                                                                mobile-breakpoint="400"
+                                                                                mobile-breakpoint="400px"
                                                                                 v-model="dialogKoumokuTableSelected"
                                                                                 :headers ="dialogKoumokuTableHeader"
                                                                                 :items ="dialogKoumokuTableItem"
@@ -1534,7 +1534,7 @@
                                                                                 </v-row>
                                                                                 <v-row>
                                                                                     <v-data-table
-                                                                                    mobile-breakpoint="400"
+                                                                                    mobile-breakpoint="400px"
                                                                                     v-model="dialogKoumokuTableSelected"
                                                                                     :headers ="dialogKoumokuTableHeader"
                                                                                     :items ="dialogKoumokuTableItem"
@@ -1629,7 +1629,7 @@
                                                                         </v-row>
                                                                         <v-row>
                                                                             <v-data-table
-                                                                            mobile-breakpoint="400"
+                                                                            mobile-breakpoint="400px"
                                                                             v-model="dialogKoumokuTableSelected"
                                                                             :headers ="dialogKoumokuTableHeader"
                                                                             :items ="dialogKoumokuTableItem"
@@ -2434,12 +2434,15 @@
                  dark
                 >
                     <v-tabs-slider color="yellow"></v-tabs-slider>
-                    <v-tab
-                     v-for ="tab_name in tab_menu" 
-                     :key="tab_name"
-                    >
-                        {{tab_name}}
-                    </v-tab>
+                    <v-tab @click="LoadTeihaiTable()">手配</v-tab>
+                    <v-tab @click="LoadSeisakuTable()">製作</v-tab>
+                    <v-tab>購買</v-tab>
+                    <v-tab>入出庫</v-tab>
+                    <v-tab>在庫</v-tab>
+                    <v-tab>保守</v-tab>
+                    <v-tab>PC/SP</v-tab>
+                    <v-tab>P/S</v-tab>
+                    <v-tab>代替</v-tab>
                 </v-tabs>
                 <!--  手配画面表示 -->
                 <v-text-field
@@ -2491,7 +2494,6 @@
                                     </template>
                                     <span>未登録写真を追加</span>
                                 </v-tooltip>
-                                
                             </v-col>
                         </v-row>
     
@@ -2503,7 +2505,7 @@
                     <v-container fluid>
                         <v-card>
                             <v-data-table
-                            mobile-breakpoint="400"
+                            mobile-breakpoint="400px"
                             :headers="kaiteiTableHeader"
                             :items="Header_Data"
                             item-key="PART_REV_NO"
@@ -2538,7 +2540,7 @@
                                     </v-row>
                                     <v-form ref ="PPPMMS_FORM">
                                         <v-data-table 
-                                        mobile-breakpoint="400"
+                                        mobile-breakpoint="400px"
                                         fixed-header
                                         :headers="this.Editinfo_Header"
                                         :items="this.EditInfo_Value"
@@ -2663,7 +2665,7 @@
                                     
                                     <v-form ref="PPPMORDER_form">
                                         <v-data-table
-                                        mobile-breakpoint="400"
+                                        mobile-breakpoint="400px"
                                         fixed-header
                                         :headers="this.Editinfo2_Header"
                                         :items="this.EditInfo2_Value"
@@ -2766,9 +2768,282 @@
                 </div>
                 <!-- 製作画面表示 -->
                 <div v-if="tab_select == 1">
-                    <v-container>
-                        <h1>製作画面</h1>
-                    </v-container>
+                    <v-container fluid>
+                    <v-row >
+                        <!-- 手配情報表示画面-->
+                        <v-col cols="12" :sm="this.$vuetify.breakpoint.mobile?12:6" xs="12">
+                            <v-card>
+                                <v-row no-gutters>
+                                        <v-col class = "ml-2 mt-2">
+                                            <h3>手配情報</h3>
+                                        </v-col>
+                                        <v-col class ="mt-2">
+                                            <h4>工場区分</h4>
+                                        </v-col>
+                                        <v-col>
+                                            <v-combobox 
+                                            v-model="Edit_Combobox_1_select"
+                                            :items = "Edit_Combobox_1_item"
+                                            @change="getEditTable2(Header_Data[Header_Data.length-1].PART_NO,Edit_Combobox_1_select.substring(0,1))"
+                                            class ="mt-2" 
+                                            dense 
+                                            outlined>
+                                        </v-combobox>
+                                        </v-col >
+                                        <v-tooltip bottom>
+                                          <template v-slot:activator ="{on}">
+                                            <v-simple-checkbox
+                                            v-model="Edit_checkbox"
+                                            v-on="on"
+                                            hide-details
+                                            class="ml-2 mb-4">
+                                            </v-simple-checkbox>
+                                          </template>
+                                          <span>保存時に右の工場へデータをコピーする</span>
+                                        </v-tooltip>
+                                        <v-col class ="mr-2">
+                                            <v-combobox 
+                                            v-model="Edit_Combobox_2_select"
+                                            :items = "Edit_Combobox_2_item"
+                                            :disabled= Edit_checkbox?false:true
+                                            class ="mt-2" 
+                                            dense 
+                                            outlined>
+                                            </v-combobox>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row no-gutters>
+                                        <v-spacer></v-spacer>
+                                        <v-col sm="4">
+                                            <v-text-field
+                                            class = "mt-n4 mr-2"
+                                            v-model = "EditTableSearch2"
+                                            label = "フィルター"
+                                            hide-details
+                                            dense
+                                            outlined
+                                            ></v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                    <v-form ref="PPPMORDER_form">
+                                        <v-data-table
+                                        mobile-breakpoint="400px"
+                                        fixed-header
+                                        :headers="this.Editinfo2_Header"
+                                        :items="this.EditInfo2_Value"
+                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                        hide-default-footer
+                                        :search="EditTableSearch2"
+                                        height="50vh"
+                                        dense
+                                        >
+                                        <template v-slot:item.CELL_TYPE="{item}">
+                                            <!--  共用マスター -->
+                                            <v-btn 
+                                            v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                            x-small 
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                            @click="getEditDialogBtn1(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                            >...</v-btn>
+                                            <!-- 注文コードマスター -->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                            x-small
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                            @click = "getEditDialogBtn2(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                            >...</v-btn>
+                                            <!-- 担当コードマスター -->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                            x-small
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                            @click = "getEditDialogBtn3(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
+                                            >...</v-btn>
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                            @click = "getEditDialogBtn4(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,2)"
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                            x-small
+                                            >...</v-btn>
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                            @click ="getEditDialogBtn6(EditInfo2_Value.indexOf(item),item.FIELD_NAME,2)"
+                                            x-small
+                                            >...</v-btn>
+                                        </template>
+                                        <template v-slot:item.FIELD_VALUE="{item}">
+                                            <v-text-field
+                                                :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                :disabled = "item.AUTH_TYPE == '2'?false:true"
+                                                :filled= "item.AUTH_TYPE == '2' ?false:true"
+                                                :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                :rules="item.RULES"
+                                                v-model = EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_VALUE
+                                                @keyup="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
+                                                @change="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
+                                                outlined
+                                                dense>
+                                            </v-text-field>
+                                        </template>
+                                        <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                            <p
+                                            :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                            {{EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_EXPLAIN}}
+                                            </p>
+                                    </template>
+                                        </v-data-table>
+                                    </v-form>
+                            </v-card>
+                        </v-col>
+                        <v-col cols="12" :sm="this.$vuetify.breakpoint.mobile?12:6" xs="12">
+                            <!-- 工程順序選択-->
+                            <v-row no-gutters>
+                                <v-col>
+                                    <v-card>
+                                        <v-row class="d-flex ml-2 mr-2 mb-n8" no-gutters>
+                                            <v-col sm="3" class=" mt-2 "><h3 >工程順序選択</h3></v-col>
+                                            <v-col sm="5" class=" mt-2 ">
+                                                <v-row no-gutters>
+                                                    <v-col sm="5"><p class="mt-1">工程コード選択 </p></v-col>
+                                                    <v-col sm="7">
+                                                        <v-combobox
+                                                        v-model="KT_CODE_SELECT"
+                                                        :items ="KT_CODE_ITEM"
+                                                        outlined
+                                                        dense
+                                                        @change="getKouteiJunjo_table(Header_Data[Header_Data.length-1].PART_NO,KT_CODE_SELECT,'1')"
+                                                        >
+                                                        </v-combobox>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-col>
+                                            <v-spacer></v-spacer>
+                                            <v-col sm="1" class=" mt-1">
+                                                <v-btn class =" mr-auto" icon><v-icon right>mdi-microsoft-excel</v-icon></v-btn>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col>
+                                                <v-data-table
+                                                mobile-breakpoint="400px"
+                                                :headers ="this.KouteiJunjoTable_Header"
+                                                :items = "this.KouteiJunjoTable_Item"
+                                                :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                hide-default-footer
+                                                item-key ="SEQ_NO"
+                                                height="18vh"
+                                                dense
+                                                @click:row="GetHyouJunMaster" 
+                                                ></v-data-table>
+                                            </v-col>
+                                        </v-row>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+                            <!-- 標準時間マスター-->
+                            <v-row class="mt-5">
+                                <v-col>
+                                    <v-card>
+                                        <!--　標準時間マスターヘッダ　-->
+                                        <v-row class="mr-2 ml-2">
+                                            <v-col :cols="this.$vuetify.breakpoint.mobile?'6':'5'">
+                                                <h3>標準時間マスタ</h3>
+                                            </v-col>
+                                            <v-spacer></v-spacer>
+                                            <v-col :cols="this.$vuetify.breakpoint.mobile?'6':'4'">
+                                                <v-text-field
+                                                v-model=STD_Time_Filter
+                                                label="フィルター"
+                                                hide-details
+                                                dense
+                                                outlined
+                                                >
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                        <!--　標準時間マスターデータ一覧　-->
+                                        <v-form ref="KTSTDTIME_FORM">
+                                            <v-data-table
+                                            mobile-breakpoint="400px"
+                                            fixed-header
+                                            :headers="this.STD_EditInfo_Header"
+                                            :items="this.STD_EditInfo_Item"
+                                            :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                            hide-default-footer
+                                            :search="STD_Time_Filter"
+                                            height="27.5vh"
+                                            dense
+                                            >
+                                                <!--　ボタン表示がある場合、その行に対応するボタンを取得 -->
+                                                <template v-slot:item.CELL_TYPE="{item}">
+                                                    <!--  共用マスター -->
+                                                    <v-btn 
+                                                    v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                                    x-small 
+                                                    :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                    @click="getEditDialogBtn1(STD_EditInfo_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                    >...</v-btn>
+                                                    <!-- 注文コードマスター -->
+                                                    <v-btn
+                                                    v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                    x-small
+                                                    :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                    @click = "getEditDialogBtn2(STD_EditInfo_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                    >...</v-btn>
+                                                    <!-- 単位読替マスタ -->
+                                                    <v-btn
+                                                    v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                    x-small
+                                                    :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                    @click = "getEditDialogBtn3(STD_EditInfo_Item.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
+                                                    >...</v-btn>
+                                                    <!-- 工程コードマスタ -->
+                                                    <v-btn
+                                                    v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                    @click = "getEditDialogBtn4(STD_EditInfo_Item.indexOf(item),item.MS_ITEM_NO,2)"
+                                                    :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                    x-small
+                                                    >...</v-btn>
+                                                    <!-- 配列 -->
+                                                    <v-btn
+                                                    v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                    :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                    @click ="getEditDialogBtn6(STD_EditInfo_Item.indexOf(item),item.FIELD_NAME,2)"
+                                                    x-small
+                                                    >...</v-btn>
+                                                </template>
+                                                <!--
+                                                    @keyup="getEditTableSetsumei2(STD_EditInfo_Item.indexOf(item),item.FIELD_NAME)"
+                                                    @change="getEditTableSetsumei2(STD_EditInfo_Item.indexOf(item),item.FIELD_NAME)"
+                                                -->
+                                                <template v-slot:item.FIELD_VALUE="{item}">
+                                                    <v-text-field
+                                                        :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                        :disabled = "item.AUTH_TYPE == '2' ?false:true"
+                                                        :filled= "item.AUTH_TYPE == '2' ?false:true"
+                                                        :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                        :rules="item.RULES"
+                                                        v-model = STD_EditInfo_Item[STD_EditInfo_Item.indexOf(item)].FIELD_VALUE
+                                                        outlined
+                                                        dense>
+                                                    </v-text-field>
+                                                </template>
+                                                <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                    <p
+                                                    :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                    {{STD_EditInfo_Item[STD_EditInfo_Item.indexOf(item)].FIELD_EXPLAIN}}
+                                                    </p>
+                                                </template>
+                                            </v-data-table>
+                                        </v-form>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-row>
+                    <br>
+                </v-container>    
                 </div>
                 <!-- 購買画面表示 -->
                 <div v-if="tab_select == 2">
@@ -2850,7 +3125,7 @@
                         </v-row>
                         <v-row>
                             <v-data-table
-                            mobile-breakpoint="400"
+                            mobile-breakpoint="400px"
                             v-if="this.EditdialogStatus == '1'"
                             v-model="dialogKoumokuTableSelected"
                             :headers ="dialogKoumokuTableHeader"
@@ -3274,7 +3549,7 @@ export default {
     Edit_Combobox_2_select:"",
     Edit_Combobox_2_item:[],
     Edit_checkbox : false,
-    Test_userID : "2085",
+    Test_userID : "X520",//"2085",
     EditRevDate_Eable : false,
     TODAY:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
     Pic_Loc:"",
@@ -3285,6 +3560,9 @@ export default {
     EditTableSearch2:"",
     TableHeight:"500px",
     TabledialogWidth:"700px",
+    KT_CODE_SELECT:"",
+    KT_CODE_ITEM:[],
+
     /*　フォームのルール */
     formRules:{
         required: value => !!value || "",//"数値を入力して下さい",
@@ -3330,6 +3608,40 @@ export default {
         RecordCheck : value => value.match(/[01234]/)?true:"",//"マスタに未登録の値が入力されています",
         ModuleCheck : value =>value.match(/[012]/)?true : "",//"マスタに未登録の値が入力されています",
     },  
+    /* 製作画面 */
+    KouteiJunjoTable_Header: [
+    {text:"順序",value:"SEQ_NO",width:"100px"},
+    {text:"WC",value:"WC_CODE",width:"100px"},
+    {text:"CC",value:"CC_CODE",width:"100px"},
+    {text:"SG",value:"SG_CODE",width:"100px"},
+    {text:"社員区分",value:"SHAIN_KUBUN",width:"100px"},
+    {text:"業者コード",value:"VENDOR_CODE",width:"150px"},
+    {text:"作業区分",value:"SG_KUBUN",width:"150px"},
+    {text:"機械判定",value:"MACHINE_TYPE",width:"200px"},
+    {text:"標準段取り時間（分）",value:"SETUP_STDTIME",width:"200px"},
+    {text:"標準作業時間（分）",value:"WORK_STDTIME",width:"200px"},
+    {text:"標準作業正社員比率",value:"SEI_STDPCNT",width:"200px"},
+    {text:"作業リードタイム",value:"SG_LEADTIME",width:"200px"},
+    {text:"使用開始日",value:"START_DATE",width:"200px"},
+    {text:"使用止め日",value:"STOP_DATE",width:"200px"},
+    {text:"更新者",value:"UPD_WHO",width:"150px"},
+    {text:"更新日時",value:"UPD_WHEN",width:"250px"},
+    {text:"登録日",value:"ENT_DATE",width:"250px"},
+    {text:"記事(工程内外注のみ)",value:"KIJI",width:"400px"},
+    {text:"作業ランク",value:"RANK",width:"100px"},
+    {text:"管理板工程間ＬＴ",value:"KANRIBAN_LT",width:"200px"},
+    {text:"段取時間(分)",value:"SETUP_DUE_TIME",width:"200px"},
+    {text:"作業時間(分)",value:"WORK_DUE_TIME",width:"200px"},
+    ],
+    KouteiJunjoTable_Item:[],
+    STD_Time_Filter:"",
+    STD_EditInfo_Header : [
+    {text:"項目名",value:"FIELD_NAME_LOC1",width:"170px" },
+    {text:"値",value:"FIELD_VALUE",width:"170px"},
+    {text:"",value:"CELL_TYPE",width:"10px"},
+    {text:"説明",value:"FIELD_EXPLAIN",width:"150px"}
+    ],
+    STD_EditInfo_Item :[],
   }),
   created(){
     this.setListener()
@@ -3438,6 +3750,54 @@ export default {
     
   },
   methods:{
+    GetHyouJunMaster(item){
+        if(item != null)
+        {
+            const url = "http://localhost:59272/api/KensakuBtnGet/Seisaku";
+            const params = {
+                PART_NO : this.Header_Data[this.Header_Data.length-1].PART_NO,
+                KT_CODE : this.KT_CODE_SELECT,
+                PLANT_NO :1,//仮
+                SEQ_NO : item.SEQ_NO,
+                USER_ID : this.Test_userID,
+                TABLE_NAME :"KTSTDTIME",
+            }
+            this.$axios.get(url,{params}).then(res =>{
+                this.STD_EditInfo_Item = res.data.map(item => {
+                    item.RULES = [];
+                    item.Setsumei_Error = false;
+                    item.CHECK_LIST = [];
+                    item.UPDATE_ST = false;
+                    item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
+                    return item;
+                });
+                /*
+                this.EditInfo_Value.forEach(Row =>{
+                    var index = this.EditInfo_Value.indexOf(Row);
+                    //this.getEditTableSetsumei(index,Row.FIELD_NAME);
+                    //this.getRule(index,Row.FIELD_NAME);
+                })
+                */
+            }).catch(err=>{
+
+            })
+        }
+    },
+    LoadTeihaiTable(){
+        if(this.Header_Data[this.Header_Data.length-1].PART_NO != "")
+        {
+            this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
+            this.getSokoType(false);
+        }
+    },
+    LoadSeisakuTable(){
+        if(this.Header_Data[this.Header_Data.length-1].PART_NO != "")
+        {
+            this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
+            this.getSokoType(false);
+            this.getKouteiJunjo(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
+        }
+    },
     check_date(value)
     {
         if(typeof value == "string"){
@@ -3949,6 +4309,8 @@ export default {
         this.Header_Data =this.headerItem;
         this.showHeader = true;
         this.getHeaderPic(this.Header_Data[this.Header_Data.length-1].PART_NO);
+        this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
+        this.getSokoType(false);
       }
     },
     open_new_tab(url){
@@ -3970,8 +4332,44 @@ export default {
         }
         this.Edit_Combobox_PART_NO = item.PART_NO;
         this.getEditTable(item.PART_NO,item.PART_REV_NO);
-        this.getEditTable2(item.PART_NO,1);
-        this.getSokoType(false);
+    },
+    getKouteiJunjo(Part_no,Plant_no){
+        var List_KT =[];
+        const url = "http://localhost:59272/api/KensakuBtnGet/Seisaku";
+        const params = {
+            PART_NO : Part_no,
+            PLANT_NO : Plant_no,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            //Comboboxに入れる
+            res.data.forEach(item=>{
+                console.log("item is :" + item.KT_CODE )
+                List_KT.push(item.KT_CODE)
+            })
+            this.KT_CODE_ITEM = List_KT;
+            this.KT_CODE_SELECT = this.KT_CODE_ITEM[0];
+            console.log("NO. :" + Part_no +" KT: " +  this.KT_CODE_ITEM[0]+" , " + Plant_no);
+            this.getKouteiJunjo_table(Part_no,this.KT_CODE_ITEM[0],Plant_no);
+        }).catch(err=>{
+
+        })
+    },
+    getKouteiJunjo_table(Part_no,Kt_code,Plant_no)
+    {
+        console.log(Part_no + " , " + Kt_code  +" , "+ Plant_no);
+        const url = "http://localhost:59272/api/KensakuBtnGet/Seisaku";
+        const params = {
+            KT_CODE : Kt_code,
+            PART_NO : Part_no,
+            PLANT_NO :Plant_no,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            //Data_tableに入れる
+            this.KouteiJunjoTable_Item = res.data;
+            console.log(this.KouteiJunjoTable_Item);
+        }).catch(err=>{
+
+        })
     },
     getEditTable(Part_NO,REV_NO){
         const url = "http://localhost:59272/api/KensakuBtnGet";
@@ -5176,6 +5574,9 @@ export default {
         }
         this.PPPMORDER_UPDATE_CHECK(index);
     },
+    GetSTDTableSetsumeu(index,item){
+        
+    },
     OpenCloseNav(){
         
         /*Xl～LGの間*/
@@ -5613,9 +6014,13 @@ export default {
       this.$axios.get(url,{params}).then(res =>{
           this.Header_Data = res.data;
           this.showHeader = true;
+          console.log(this.Header_Data[this.Header_Data.length-1].PART_NO);
+          this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
+          this.getSokoType(false);
       }).catch(err=>{
           
       })
+      
     },
     getSeihinbunruiCodeFromDialog(){
         this.shousaiSeihinbunruiCode = this.dialogKoumokuTableSelected[0].CM_CODE;
