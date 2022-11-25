@@ -2569,7 +2569,7 @@
                                             @click = "getEditDialogBtn3(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),1)"
                                             x-small
                                             >...</v-btn>
-                                            <!--　単位読替マスター　　　-->
+                                            <!--　単位読替マスター　-->
                                             <v-btn
                                             v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
                                             x-small
@@ -2697,6 +2697,7 @@
                                             :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
                                             @click = "getEditDialogBtn3(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
                                             >...</v-btn>
+                                            <!-- 単位読替マスタ -->
                                             <v-btn
                                             v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
                                             @click = "getEditDialogBtn4(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,2)"
@@ -2859,6 +2860,7 @@
                                             :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
                                             @click = "getEditDialogBtn3(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
                                             >...</v-btn>
+                                            <!-- 単位読替マスタ -->
                                             <v-btn
                                             v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
                                             @click = "getEditDialogBtn4(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,2)"
@@ -2875,8 +2877,8 @@
                                         <template v-slot:item.FIELD_VALUE="{item}">
                                             <v-text-field
                                                 :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
-                                                :disabled = "item.AUTH_TYPE == '2'?false:true"
-                                                :filled= "item.AUTH_TYPE == '2' ?false:true"
+                                                :disabled = "Edit_Combobox_1_select.substr(0,1) != '-' &&item.AUTH_TYPE == '2'?false:true"
+                                                :filled= "Edit_Combobox_1_select.substr(0,1) != '-' &&item.AUTH_TYPE == '2' ?false:true"
                                                 :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
                                                 :rules="item.RULES"
                                                 v-model = EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_VALUE
@@ -2991,14 +2993,14 @@
                                                     :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
                                                     @click = "getEditDialogBtn2(STD_EditInfo_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
                                                     >...</v-btn>
-                                                    <!-- 単位読替マスタ -->
+                                                    <!-- 担当コード -->
                                                     <v-btn
                                                     v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
                                                     x-small
                                                     :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
                                                     @click = "getEditDialogBtn3(STD_EditInfo_Item.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
                                                     >...</v-btn>
-                                                    <!-- 工程コードマスタ -->
+                                                    <!-- 単位読替マスタ -->
                                                     <v-btn
                                                     v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
                                                     @click = "getEditDialogBtn4(STD_EditInfo_Item.indexOf(item),item.MS_ITEM_NO,2)"
@@ -3761,6 +3763,9 @@ export default {
                 SEQ_NO : item.SEQ_NO,
                 USER_ID : this.Test_userID,
                 TABLE_NAME :"KTSTDTIME",
+                CC_CODE : item.CC_CODE,
+                WC_CODE : item.WC_CODE,
+                SG_CODE :item.SG_CODE,
             }
             this.$axios.get(url,{params}).then(res =>{
                 this.STD_EditInfo_Item = res.data.map(item => {
@@ -3793,9 +3798,10 @@ export default {
     LoadSeisakuTable(){
         if(this.Header_Data[this.Header_Data.length-1].PART_NO != "")
         {
-            this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
+            this.EditInfo2_Value=[];
+            //this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
             this.getSokoType(false);
-            this.getKouteiJunjo(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
+            //this.getKouteiJunjo(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
         }
     },
     check_date(value)
@@ -4309,8 +4315,6 @@ export default {
         this.Header_Data =this.headerItem;
         this.showHeader = true;
         this.getHeaderPic(this.Header_Data[this.Header_Data.length-1].PART_NO);
-        this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
-        this.getSokoType(false);
       }
     },
     open_new_tab(url){
@@ -4332,6 +4336,8 @@ export default {
         }
         this.Edit_Combobox_PART_NO = item.PART_NO;
         this.getEditTable(item.PART_NO,item.PART_REV_NO);
+        this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
+        this.getSokoType(false);
     },
     getKouteiJunjo(Part_no,Plant_no){
         var List_KT =[];
@@ -4340,6 +4346,7 @@ export default {
             PART_NO : Part_no,
             PLANT_NO : Plant_no,
         }
+        console.log(Part_no + " : " + Plant_no);
         this.$axios.get(url,{params}).then(res =>{
             //Comboboxに入れる
             res.data.forEach(item=>{
@@ -5270,6 +5277,16 @@ export default {
                 this.getEditTableSetsumei2(index,Row.FIELD_NAME);
                 this.getRule2(index,Row.FIELD_NAME);
             })
+            if(this.tab_select == 1 && this.Edit_Combobox_1_select.substr(0,1) != '-')
+            {
+                this.getKouteiJunjo(this.Header_Data[this.Header_Data.length-1].PART_NO,this.Edit_Combobox_1_select.substr(0,1));
+                console.log("End")
+            }
+            else
+            {
+                this.KouteiJunjoTable_Item =[];
+                this.STD_EditInfo_Item = [];
+            }
         }).catch(err=>{
 
         })
@@ -6015,8 +6032,6 @@ export default {
           this.Header_Data = res.data;
           this.showHeader = true;
           console.log(this.Header_Data[this.Header_Data.length-1].PART_NO);
-          this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
-          this.getSokoType(false);
       }).catch(err=>{
           
       })
