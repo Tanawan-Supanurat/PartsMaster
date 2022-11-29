@@ -994,7 +994,7 @@
                                                                             </v-row>
                                                                             <v-row>
                                                                                 <v-data-table
-                                                                                mobile-breakpoint="400px"
+                                                                                mobile-breakpoint='400'
                                                                                 v-model="dialogKoumokuTableSelected"
                                                                                 :headers ="dialogKoumokuTableHeader"
                                                                                 :items ="dialogKoumokuTableItem"
@@ -1076,7 +1076,7 @@
                                                                             </v-row>
                                                                             <v-row>
                                                                                 <v-data-table
-                                                                                mobile-breakpoint="400px"
+                                                                                mobile-breakpoint='400'
                                                                                 v-model="dialogKoumokuTableSelected"
                                                                                 :headers ="dialogKoumokuTableHeader"
                                                                                 :items ="dialogKoumokuTableItem"
@@ -1171,7 +1171,7 @@
                                                                                     </v-row>
                                                                                     <v-row>
                                                                                         <v-data-table
-                                                                                        mobile-breakpoint="400px"
+                                                                                        mobile-breakpoint='400'
                                                                                         v-model="dialogKoumokuTableSelected"
                                                                                         :headers ="dialogKoumokuTableHeader"
                                                                                         :items ="dialogKoumokuTableItem"
@@ -1257,7 +1257,7 @@
                                                                                     </v-row>
                                                                                     <v-row>
                                                                                         <v-data-table
-                                                                                        mobile-breakpoint="400px"
+                                                                                        mobile-breakpoint='400'
                                                                                         v-model="dialogKoumokuTableSelected"
                                                                                         :headers ="dialogKoumokuTableHeader"
                                                                                         :items ="dialogKoumokuTableItem"
@@ -1361,7 +1361,7 @@
                                                                             </v-row>
                                                                             <v-row>
                                                                                 <v-data-table
-                                                                                mobile-breakpoint="400px"
+                                                                                mobile-breakpoint='400'
                                                                                 v-model="dialogKoumokuTableSelected"
                                                                                 :headers ="dialogKoumokuTableHeader"
                                                                                 :items ="dialogKoumokuTableItem"
@@ -1534,7 +1534,7 @@
                                                                                 </v-row>
                                                                                 <v-row>
                                                                                     <v-data-table
-                                                                                    mobile-breakpoint="400px"
+                                                                                    mobile-breakpoint='400'
                                                                                     v-model="dialogKoumokuTableSelected"
                                                                                     :headers ="dialogKoumokuTableHeader"
                                                                                     :items ="dialogKoumokuTableItem"
@@ -1629,7 +1629,7 @@
                                                                         </v-row>
                                                                         <v-row>
                                                                             <v-data-table
-                                                                            mobile-breakpoint="400px"
+                                                                            mobile-breakpoint='400'
                                                                             v-model="dialogKoumokuTableSelected"
                                                                             :headers ="dialogKoumokuTableHeader"
                                                                             :items ="dialogKoumokuTableItem"
@@ -2375,7 +2375,7 @@
                         <v-row justify="center">
                             <v-col>
                                 <v-data-table
-                                 mobile-breakpoint="500px"
+                                mobile-breakpoint='400'
                                  height="70vh"
                                  :headers="$vuetify.breakpoint.mobile?HeaderTableBP:HeaderTable"
                                  :items="APIJSON"
@@ -2505,7 +2505,7 @@
                     <v-container fluid>
                         <v-card>
                             <v-data-table
-                            mobile-breakpoint="400px"
+                            mobile-breakpoint='400'
                             :headers="kaiteiTableHeader"
                             :items="Header_Data"
                             item-key="PART_REV_NO"
@@ -2540,7 +2540,7 @@
                                     </v-row>
                                     <v-form ref ="PPPMMS_FORM">
                                         <v-data-table 
-                                        mobile-breakpoint="400px"
+                                        mobile-breakpoint='400'
                                         fixed-header
                                         :headers="this.Editinfo_Header"
                                         :items="this.EditInfo_Value"
@@ -2665,7 +2665,7 @@
                                     
                                     <v-form ref="PPPMORDER_form">
                                         <v-data-table
-                                        mobile-breakpoint="400px"
+                                        mobile-breakpoint='400'
                                         fixed-header
                                         :headers="this.Editinfo2_Header"
                                         :items="this.EditInfo2_Value"
@@ -2713,6 +2713,7 @@
                                         </template>
                                         <template v-slot:item.FIELD_VALUE="{item}">
                                             <v-text-field
+                                                :background-color = "item.Setsumei_Error?'red':''"
                                                 :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
                                                 :disabled = "Edit_Combobox_1_select.substr(0,1) != '-' && item.AUTH_TYPE == '2' && EditRevDate_Eable?false:true"
                                                 :filled= "Edit_Combobox_1_select.substr(0,1) != '-'&& item.AUTH_TYPE == '2' && EditRevDate_Eable?false:true"
@@ -2828,7 +2829,7 @@
                                     </v-row>
                                     <v-form ref="PPPMORDER_form">
                                         <v-data-table
-                                        mobile-breakpoint="400px"
+                                        mobile-breakpoint='400'
                                         fixed-header
                                         :headers="this.Editinfo2_Header"
                                         :items="this.EditInfo2_Value"
@@ -2876,6 +2877,7 @@
                                         </template>
                                         <template v-slot:item.FIELD_VALUE="{item}">
                                             <v-text-field
+                                                :background-color = "item.Setsumei_Error?'red':''"
                                                 :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
                                                 :disabled = "Edit_Combobox_1_select.substr(0,1) != '-' &&item.AUTH_TYPE == '2'?false:true"
                                                 :filled= "Edit_Combobox_1_select.substr(0,1) != '-' &&item.AUTH_TYPE == '2' ?false:true"
@@ -2922,13 +2924,118 @@
                                             </v-col>
                                             <v-spacer></v-spacer>
                                             <v-col sm="1" class=" mt-1">
-                                                <v-btn class =" mr-auto" icon><v-icon right>mdi-microsoft-excel</v-icon></v-btn>
+                                                <!-- Excel ボタンをクリックした後にエクセルファイル取り込み画面が表示される -->
+                                                <!-- Excel_dialog はエクセル取り込み画面表示を制御するプロパティ -->
+                                                <!-- Ture  : 画面を表示する-->
+                                                <!-- False : 画面を未表示する-->
+                                                <v-dialog v-model="Excel_dialog">
+                                                    <template v-slot:activator = "{on,attrs}">
+                                                        <v-btn class =" mr-auto" icon
+                                                            v-bind="attrs"
+                                                            v-on = "on"
+                                                        >
+                                                            <v-icon right>mdi-microsoft-excel</v-icon>
+                                                        </v-btn>
+                                                    </template>
+                                                    <v-card>
+                                                        <v-toolbar
+                                                        dark
+                                                        color="primary"
+                                                        >
+                                                            <!--  v-toolbar-title : 画面のタイトル-->
+                                                            <v-toolbar-title>
+                                                                エクセルファイルを取り込み
+                                                            </v-toolbar-title>
+                                                            <v-spacer></v-spacer>
+                                                            <!-- タブの閉じるボタン-->
+                                                            <!-- ＠click="Excel_dialog=!Excel_dialog -->
+                                                            <!-- ＠click　クリックのイベント（クリック時制御するコマンド）-->
+                                                            <!-- Excel_dialog=!Excel_dialog もし、取り込み画面が表示したら未表示する-->
+                                                            <v-toolbar-items>
+                                                                <v-btn icon @click="Excel_dialog=!Excel_dialog"><v-icon>mdi-close</v-icon></v-btn>
+                                                            </v-toolbar-items>
+                                                        </v-toolbar>
+                                                        <v-row>
+                                                            <v-col cols="8">
+                                                                <!-- v-file-input ファイルを取り込みを入力する所 -->
+                                                                <!-- アイコンやエリアをクリックするとファイルを特定する画面が表示されます-->
+                                                                <!-- @change="upload" ファイルを取り込んだ後の処理-->
+                                                                <!-- upload() メソッドはエクセルファイルのデータをJSONデータ変更するメソッド-->
+                                                                <v-file-input v-model="file" @change="upload"></v-file-input>
+                                                            </v-col>
+                                                            <v-col cols ="2">
+                                                                <!-- 登録ボタンをクリック時最終確認の警告画面が表示される -->
+                                                                <!-- Excel_Ensure は警告画面の表示を制御するプロパティ-->
+                                                                <!-- True　: 画面を表示する-->
+                                                                <!-- False : 画面を未表示する　-->
+                                                                 <v-dialog
+                                                                        v-model="Excel_Ensure"
+                                                                        width="250"
+                                                                    >
+                                                                        <template v-slot:activator = "{on,attrs}">
+                                                                             <!--　登録ボタン-->
+                                                                             <!--  :disabled="!file"　ファイルがまだ取り込んでない場合、ボタンを使用不能にする-->
+                                                                            <v-btn
+                                                                            class = "mt-2"
+                                                                            height="32"
+                                                                            :disabled="!file"
+                                                                            v-bind="attrs"
+                                                                            v-on="on"
+                                                                            >
+                                                                            登録
+                                                                            </v-btn>
+                                                                        </template>
+                                                                        <v-card>
+                                                                            <!--  警告画面のタイトル-->
+                                                                            <v-toolbar
+                                                                            color="primary"
+                                                                            dark
+                                                                            dense
+                                                                            >警告
+                                                                            </v-toolbar>
+                                                                            <!--  警告画面の内容-->
+                                                                            <v-card-text>
+                                                                                <div class="text-h6 pa-5">保存しますか?</div>
+                                                                            </v-card-text>
+                                                                            <v-card-actions>
+                                                                            <v-spacer></v-spacer>
+                                                                            <!-- Excel_Upload() テーブルの中のデータをデータベースに保存するメソッド-->
+                                                                                <v-btn
+                                                                                    color="primary"
+                                                                                    text
+                                                                                    @click="Excel_Upload()"
+                                                                                >
+                                                                                    確定
+                                                                                </v-btn>
+                                                                                <!-- 警告画面を未表示する-->
+                                                                                <v-btn
+                                                                                    color="primary"
+                                                                                    text
+                                                                                    @click="Excel_Ensure = false"
+                                                                                >
+                                                                                    取消
+                                                                                </v-btn>
+                                                                            </v-card-actions>
+                                                                        </v-card>
+                                                                    </v-dialog>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <!--  取り込んだデータを表示する-->
+                                                        <!--　ExcelTable_Header 表示するデータの項目プロパティ　-->
+                                                        <!--  ExcelTable_Item　取り込んだデータを格納プロパティ　-->
+                                                        <v-data-table
+                                                        :headers="ExcelTable_Header"
+                                                        :items="ExcelTable_Item"
+                                                        >
+                                                        </v-data-table>
+                                                    </v-card>
+                                                </v-dialog>
                                             </v-col>
                                         </v-row>
                                         <v-row>
                                             <v-col>
                                                 <v-data-table
-                                                mobile-breakpoint="400px"
+                                                mobile-breakpoint='400'
                                                 :headers ="this.KouteiJunjoTable_Header"
                                                 :items = "this.KouteiJunjoTable_Item"
                                                 :footer-props="{'items-per-page-options':[100,200,300,-1]}"
@@ -2967,7 +3074,7 @@
                                         <!--　標準時間マスターデータ一覧　-->
                                         <v-form ref="KTSTDTIME_FORM">
                                             <v-data-table
-                                            mobile-breakpoint="400px"
+                                            mobile-breakpoint='400'
                                             fixed-header
                                             :headers="this.STD_EditInfo_Header"
                                             :items="this.STD_EditInfo_Item"
@@ -3016,11 +3123,12 @@
                                                     >...</v-btn>
                                                 </template>
                                                 <!--
-                                                    @keyup="getEditTableSetsumei2(STD_EditInfo_Item.indexOf(item),item.FIELD_NAME)"
-                                                    @change="getEditTableSetsumei2(STD_EditInfo_Item.indexOf(item),item.FIELD_NAME)"
+                                                    @keyup="getSTD_Setsumei(STD_EditInfo_Item.indexOf(item),item.FIELD_NAME)"
+                                                    @change="getSTD_Setsumei(STD_EditInfo_Item.indexOf(item),item.FIELD_NAME)"
                                                 -->
                                                 <template v-slot:item.FIELD_VALUE="{item}">
                                                     <v-text-field
+                                                        :background-color = "item.Setsumei_Error?'red':''"
                                                         :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
                                                         :disabled = "item.AUTH_TYPE == '2' ?false:true"
                                                         :filled= "item.AUTH_TYPE == '2' ?false:true"
@@ -3028,6 +3136,8 @@
                                                         :rules="item.RULES"
                                                         v-model = STD_EditInfo_Item[STD_EditInfo_Item.indexOf(item)].FIELD_VALUE
                                                         outlined
+                                                        @change="getSTD_Setsumei(STD_EditInfo_Item.indexOf(item),item.FIELD_NAME)"
+                                                        @keyup="getSTD_Setsumei(STD_EditInfo_Item.indexOf(item),item.FIELD_NAME)"
                                                         dense>
                                                     </v-text-field>
                                                 </template>
@@ -3044,8 +3154,35 @@
                             </v-row>
                         </v-col>
                     </v-row>
-                    <br>
                 </v-container>    
+                <v-container fluid>
+                        <v-row no-gutters justify="end">
+                            <v-col class="d-flex flex-row-reverse" >
+                                <v-btn class="mr-2" large>
+                                    <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                        mdi-close-box-outline
+                                    </v-icon> 
+                                    <h3>閉じる</h3>
+                                </v-btn>
+                                <v-btn class="mr-2" large
+                                @click="seisakuPostReq()"
+                                >
+                                    <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                    mdi-content-save
+                                    </v-icon>
+                                    <h3>保存</h3>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-container>
                 </div>
                 <!-- 購買画面表示 -->
                 <div v-if="tab_select == 2">
@@ -3127,7 +3264,7 @@
                         </v-row>
                         <v-row>
                             <v-data-table
-                            mobile-breakpoint="400px"
+                            mobile-breakpoint='400'
                             v-if="this.EditdialogStatus == '1'"
                             v-model="dialogKoumokuTableSelected"
                             :headers ="dialogKoumokuTableHeader"
@@ -3237,13 +3374,15 @@
 </template>
 
 <script>
+import { MAX_VALUE_16BITS } from 'vue-js-xlsx';
 import { mapState } from 'vuex'
 
 export default {
   name: 'DefaultLayout',
   data : () => ({
-    required :value => !!value || "Need Value",
-    limit_lenght : value => value.length <= 10 || "10文字以内で入力してください",
+    //修正時置き換える
+    //mobile-breakpoint='400'
+    mobileBreakStatus:false,
     clipped: false,
     drawer: false,
     drawer1: false,
@@ -3568,12 +3707,16 @@ export default {
     /*　フォームのルール */
     formRules:{
         required: value => !!value || "",//"数値を入力して下さい",
-        VoidOne: value => value == "" || value == "1" || "",//"空白か1を入力下さい" ,
-        voidZeroOne : value => value == "0" || value == "1" || value == "" ||"",//"空白か0か1を入力下さい",
+        IsNumber: value => value === null ?true : value.match(/[^a-z]/) ||value.match(/[^A-Z]/) ?true :"",// "数値を入力して下さい。",
+        VoidOne: value => value === null ? true : value == "" || value == "1" || "",//"空白か1を入力下さい" ,
+        voidZeroOne : value => value === null ? true : value == "0" || value == "1" || value == "" ||"",//"空白か0か1を入力下さい",
         ZeroOne: value => value === null ? true : value == "0" || value == "1" ||"",// "0,1を入力下さい。",
         ZeroOneTwo: value => value === null ? true : value == "0" || value == "1" || value == "2" ||"",//"0,1,2を入力下さい。",
         OneTwo: value => value === null ? true : value == "1" || value == "2" ||"",//"0,1,2を入力下さい。",
-        lengthThan2: value => value === null ? true : value.length <= 2 ||"2文字以内で入力下さい。",
+        MoreThanZero : value =>value === null ? true :value >0 ?true:"",//"0以上で入力して下さい。",
+        MoreThanZeroFive : value => value === null ? true : !value.match(/\./) ?true : (value >0.5) ?true :"",// "０．５以上で入力して下さい。",
+        ModZeroFive : value=> value === null ? true : !value.match(/\./)?true : value % 0.5 == 0 ?true :"",//"小数部は０．５単位で指定してください。",
+        lengthThan2: value => value === null ? true : value.length <= 2 ||"",//"2文字以内で入力下さい。",
         lengthThan10: value => value === null ? true : value.length <= 10 ||"",// "10文字以内で入力下さい。",
         lengthThan50: value => value === null ? true : value.length <= 50 || "",//"50文字以内で入力下さい。",
         lengthThan60: value => value === null ? true : value.length <= 60 || "",//"60文字以内で入力下さい。",
@@ -3581,10 +3724,13 @@ export default {
         lengthThan100: value => value === null ? true :  value.length <= 100 || "",//"100文字以内で入力下さい。",
         lengthThan200: value => value === null ? true : value.length <= 200 || "",//"200文字以内で入力下さい。",
         lengthThan400: value => value === null ? true : value.length <= 400 ||"",// "400文字以内で入力下さい。",
-        InterOnlyThan2: value => value == null ? true : value.match(/^\d{1,2}$/) ?true : "2桁以下の数字のみ入力可能です",
-        InterOnlyThan3: value => value == null ? true : value.match(/^\d{1,3}$/) ?true : "3桁以下の数字のみ入力可能です",
-        InterOnlyThan6: value => value == null ? true : value.match(/^\d{1,6}$/) ?true : "7桁以下の数字のみ入力可能です",
-        InterOnlyThan7: value => value == null ? true : value.match(/^\d{1,7}$/) ?true : "7桁以下の数字のみ入力可能です",
+        InterOnlyThan2: value => value === null ? true : !value.match(/^\d{3,}/) ?true :"",// "2桁以下の数字のみ入力可能です",
+        InterOnlyThan3: value => value === null ? true : !value.match(/^\d{4,}/) ?true :"",// "3桁以下の数字のみ入力可能です",
+        InterOnlyThan5: value => value === null ? true : !value.match(/^\d{6,}/) ?true :"",// "5桁以下の数字のみ入力可能です",
+        InterOnlyThan6: value => value === null ? true : !value.match(/^\d{7,}/) ?true :"",// "6桁以下の数字のみ入力可能です",
+        InterOnlyThan7: value => value === null ? true : !value.match(/^\d{8,}/) ?true :"",// "7桁以下の数字のみ入力可能です",
+        Range100: value => value == null ? true :value <= 100 && value >=0 ||"",//"０～１００で入力して下さい",
+        FloatLess2 : value => value == null ? true : !value.match(/\.\d{3,}/)? true :"",//"少数部分2桁以内で入力して下さい",
         IntegetThan6 : value => value === null ? true :  value.indexOf(".") == -1 ? 
                         value.length <= 6 ||""// "整数部分は6桁以内で入力して下さい"
                         :value.split(".")[0].length <=6 || "",//"整数部分は6桁以内で入力して下さい",
@@ -3595,6 +3741,9 @@ export default {
         FewThan3 : value => value === null ? true : value.indexOf(".") == -1 || value.split(".")[1].length <=3 || "",//"少数部分3桁以内で入力して下さい",
         IsZenkaku :  value => value === null ? true : value.match(/^[^\x01-\x7E\uFF61-\uFF9F]+$/) || "",//"全角文字が含まれています。当フィールドは半角文字です。",
         Datefomat : value => {
+            if(value === null ){
+                return true;
+            }
             if(typeof value == "string"){
             var a = value.match(/^\d{8}$/);
             if (a) { 
@@ -3644,6 +3793,32 @@ export default {
     {text:"説明",value:"FIELD_EXPLAIN",width:"150px"}
     ],
     STD_EditInfo_Item :[],
+    Excel_dialog: false,
+    file: null,
+    fileData : null,
+    ExcelTable_Header :[
+    {text:"工場区分",value:"工場区分"},
+    {text:"部品コード",value:"部品コード"},
+    {text:"工程コード",value:"工程コード"},
+    {text:"工程序列",value:"工程序列"},
+    {text:"ワークセンター",value:"ワークセンター"},
+    {text:"コストセンター",value:"コストセンター"},
+    {text:"作業コード",value:"作業コード"},
+    {text:"社員区分",value:"社員区分"},
+    {text:"業者コード",value:"業者コード"},
+    {text:"作業区分",value:"作業区分"},
+    {text:"機械判定",value:"機械判定"},
+    {text:"準段取り時間（分）",value:"準段取り時間（分）"},
+    {text:"標準作業時間（分）",value:"標準作業時間（分）"},
+    {text:"標準作業正社員比率",value:"標準作業正社員比率"},
+    {text:"リードタイム",value:"リードタイム"},
+    {text:"更新者",value:"更新者"},
+    {text:"更新日時",value:"更新日時"},
+    {text:"登録日",value:"登録日"},
+    {text:"記事",value:"記事"},
+    ],
+    ExcelTable_Item:[],
+    Excel_Ensure : false,
   }),
   created(){
     this.setListener()
@@ -3752,6 +3927,83 @@ export default {
     
   },
   methods:{
+    //upload() メソッドはエクセルファイルの最初のページのデータをJSONのフォーマットに収納する
+    upload() {
+        const reader = new FileReader()
+        const load = () => {
+            //  $xlsx はSheetJSのAPIを使用するための値
+            //  下記のURLで参照できます
+            //　URL : https://docs.sheetjs.com/docs/api/parse-options/
+            //  使用する前に　Plugins/vue-js-xlsx.jsで$xlsxを定義必要
+            //  This.$xlsx.toJson(データ,オプション)
+            const jsonData = this.$xlsx.toJson(reader.result, {
+            parsingOpts: {
+            //　格納するタイプ設定
+                type: 'array'
+            },
+            //  格納するSheetのページ設定
+            //  sheetIndex: 0　は最初ページの設定
+            sheetIndex: 0
+            })
+            //  JSONフォーマットで格納させたデータはExcelTable_Itemに収納する
+            this.ExcelTable_Item = jsonData
+            // jsonデータを必要な形に整形する
+        }
+        reader.onload = load
+        reader.readAsArrayBuffer(this.file)
+    },
+    //  エクセル取り込み画面内に表示しているデータをKTSTDTIMEデータペースに登録
+    Excel_Upload(){
+        const url = "http://localhost:59272/api/KensakuBtnPost/KTSTDTIME_Excel";
+        //　テーブルのデータを一列ずつに更新する
+        this.ExcelTable_Item.forEach(item =>{
+            //　req 更新するデータを格納値
+            var req={};
+            //  テーブルの項目名をデータペースに使用する名称に変更
+            req["PLANT_NO"]=item["工場区分"];
+            req["PART_NO"]=item["部品コード"];
+            req["KT_CODE"]=item["工程コード"];
+            req["SEQ_NO"]=item["工程序列"];
+            req["WC_CODE"]=item["ワークセンター"];
+            req["CC_CODE"]=item["コストセンター"];
+            req["SG_CODE"]=item["作業コード"];
+            req["SHAIN_KUBUN"]=item["社員区分"];
+            req["VENDOR_CODE"]=item["業者コード"];
+            req["SG_KUBUN"]=item["作業区分"];
+            req["MACHINE_TYPE"]=item["機械判定"];
+            req["SETUP_STDTIME"]=item["準段取り時間（分）"];
+            req["WORK_STDTIME"]=item["標準作業時間（分）"];
+            req["SEI_STDPCNT"]=item["標準作業正社員比率"];
+            req["SG_LEADTIME"]=item["リードタイム"];
+            req["UPD_WHO"]=item["更新者"];
+            req["UPD_WHEN"]=item["更新日時"];
+            req["ENT_DATE"]=item["登録日"];
+            req["KIJI"]=item["記事"];
+            const params = req;
+            //  データベースに更新を開始
+            this.$axios.post(url,params).then(
+            
+            ).catch(err=>{
+                
+            })
+        })
+        //処理が終了したら警告画面を非表示にする
+        this.Excel_Ensure = false;
+    },
+    arrangeData() {
+      const reader = new FileReader()
+      const load = () => {
+        const jsonData = this.$xlsx.toJson(reader.result, {
+          parsingOpts: {
+            type: 'array'
+          },
+          sheetIndex: 1
+        })
+        // jsonデータを必要な形に整形する
+      }
+      reader.onload = load
+      reader.readAsArrayBuffer(this.dropFile)
+    },
     GetHyouJunMaster(item){
         if(item != null)
         {
@@ -3759,7 +4011,7 @@ export default {
             const params = {
                 PART_NO : this.Header_Data[this.Header_Data.length-1].PART_NO,
                 KT_CODE : this.KT_CODE_SELECT,
-                PLANT_NO :1,//仮
+                PLANT_NO :this.Edit_Combobox_1_select.substr(0,1),//仮
                 SEQ_NO : item.SEQ_NO,
                 USER_ID : this.Test_userID,
                 TABLE_NAME :"KTSTDTIME",
@@ -3776,13 +4028,11 @@ export default {
                     item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
                     return item;
                 });
-                /*
-                this.EditInfo_Value.forEach(Row =>{
-                    var index = this.EditInfo_Value.indexOf(Row);
-                    //this.getEditTableSetsumei(index,Row.FIELD_NAME);
-                    //this.getRule(index,Row.FIELD_NAME);
+                this.STD_EditInfo_Item.forEach(Row =>{
+                    var index = this.STD_EditInfo_Item.indexOf(Row);
+                    this.getSTD_Setsumei(index,Row.FIELD_NAME);
+                    this.getSTD_RULE(index,Row.FIELD_NAME);
                 })
-                */
             }).catch(err=>{
 
             })
@@ -3819,7 +4069,6 @@ export default {
         return false;
     },
     convertPMtoNA(name,value){
-        console.log("Name : "+ name)
         if(name =='PARTCHG_TYPE')
         {
             this.NRPMA_POST["REV_GOKAN"]=value;
@@ -4346,16 +4595,13 @@ export default {
             PART_NO : Part_no,
             PLANT_NO : Plant_no,
         }
-        console.log(Part_no + " : " + Plant_no);
         this.$axios.get(url,{params}).then(res =>{
             //Comboboxに入れる
             res.data.forEach(item=>{
-                console.log("item is :" + item.KT_CODE )
                 List_KT.push(item.KT_CODE)
             })
             this.KT_CODE_ITEM = List_KT;
             this.KT_CODE_SELECT = this.KT_CODE_ITEM[0];
-            console.log("NO. :" + Part_no +" KT: " +  this.KT_CODE_ITEM[0]+" , " + Plant_no);
             this.getKouteiJunjo_table(Part_no,this.KT_CODE_ITEM[0],Plant_no);
         }).catch(err=>{
 
@@ -4363,7 +4609,6 @@ export default {
     },
     getKouteiJunjo_table(Part_no,Kt_code,Plant_no)
     {
-        console.log(Part_no + " , " + Kt_code  +" , "+ Plant_no);
         const url = "http://localhost:59272/api/KensakuBtnGet/Seisaku";
         const params = {
             KT_CODE : Kt_code,
@@ -4373,7 +4618,6 @@ export default {
         this.$axios.get(url,{params}).then(res =>{
             //Data_tableに入れる
             this.KouteiJunjoTable_Item = res.data;
-            console.log(this.KouteiJunjoTable_Item);
         }).catch(err=>{
 
         })
@@ -4706,6 +4950,11 @@ export default {
         this.EditInfo2_Value[index].UPDATE_ST = this.EditInfo2_Value[index].FIELD_VALUE != this.EditInfo2_Value[index].BEFORE_UPDATE_VALUE 
             && !((this.EditInfo2_Value[index].FIELD_VALUE == "") && (this.EditInfo2_Value[index].BEFORE_UPDATE_VALUE === null) )? true: this.EditInfo2_Value[index].UPDATE_ST ;
         this.EditInfo2_Value[index].BEFORE_UPDATE_VALUE =this.EditInfo2_Value[index].FIELD_VALUE
+    },
+    KTSTDTIME_UPDATE_CHECH(index){
+        this.STD_EditInfo_Item[index].UPDATE_ST = this.STD_EditInfo_Item[index].FIELD_VALUE != this.STD_EditInfo_Item[index].BEFORE_UPDATE_VALUE 
+            && !((this.STD_EditInfo_Item[index].FIELD_VALUE == "") && (this.STD_EditInfo_Item[index].BEFORE_UPDATE_VALUE === null) )? true: this.STD_EditInfo_Item[index].UPDATE_ST ;
+        this.STD_EditInfo_Item[index].BEFORE_UPDATE_VALUE =this.STD_EditInfo_Item[index].FIELD_VALUE
     },
     getEditTableSetsumei(index,item){
         var Setsumei ="";
@@ -5255,7 +5504,132 @@ export default {
         }
         this.PPPMMS_UPDATE_CHECK(index);
     },
-    
+    getSTD_Setsumei(index,item){
+        var Setsumei ="";
+        var Setsumei_Error = false;
+        var check_change=false;
+        if(this.STD_EditInfo_Item[index].FIELD_VALUE !== null)
+        {
+            if(item =="SETUP_STDTIME"){
+            Setsumei = this.STD_EditInfo_Item[index].FIELD_VALUE == "" ?
+                        "データを入力して下さい。":isNaN(this.STD_EditInfo_Item[index].FIELD_VALUE)?
+                        "数値を入力して下さい。":parseFloat(this.STD_EditInfo_Item[index].FIELD_VALUE)< 0?
+                        "0以上で入力して下さい。":Math.trunc(this.STD_EditInfo_Item[index].FIELD_VALUE).toString().length > 5?
+                        "整数部分は5桁以内で入力して下さい": this.STD_EditInfo_Item[index].FIELD_VALUE.split(".").length >1?
+                        (this.STD_EditInfo_Item[index].FIELD_VALUE.split(".")[1].length >2 ?"少数部分2桁以内で入力して下さい" :""):"";
+            Setsumei_Error = this.STD_EditInfo_Item[index].FIELD_VALUE == ""||
+                            isNaN(this.STD_EditInfo_Item[index].FIELD_VALUE) ||
+                            parseFloat(this.STD_EditInfo_Item[index].FIELD_VALUE)< 0 ||
+                            Math.trunc(this.STD_EditInfo_Item[index].FIELD_VALUE).toString().length > 5 ||
+                            (this.STD_EditInfo_Item[index].FIELD_VALUE.split(".").length >1?
+                            (this.STD_EditInfo_Item[index].FIELD_VALUE.split(".")[1].length >2):false)
+                            ?true:false;
+            check_change = true;
+            }
+            if(item == "WORK_STDTIME"){
+                Setsumei = this.STD_EditInfo_Item[index].FIELD_VALUE == "" ?
+                            "データを入力して下さい。":isNaN(this.STD_EditInfo_Item[index].FIELD_VALUE)?
+                            "数値を入力して下さい。":parseFloat(this.STD_EditInfo_Item[index].FIELD_VALUE)< 0?
+                            "0以上で入力して下さい。":Math.trunc(this.STD_EditInfo_Item[index].FIELD_VALUE).toString().length > 5?
+                            "整数部分は5桁以内で入力して下さい": this.STD_EditInfo_Item[index].FIELD_VALUE.split(".").length >1?
+                            (this.STD_EditInfo_Item[index].FIELD_VALUE.split(".")[1].length >2 ?"少数部分2桁以内で入力して下さい" :""):"";
+                Setsumei_Error = this.STD_EditInfo_Item[index].FIELD_VALUE  == ""||
+                                isNaN(this.STD_EditInfo_Item[index].FIELD_VALUE) ||
+                                parseFloat(this.STD_EditInfo_Item[index].FIELD_VALUE)< 0 ||
+                                Math.trunc(this.STD_EditInfo_Item[index].FIELD_VALUE).toString().length > 5 ||
+                                (this.STD_EditInfo_Item[index].FIELD_VALUE.split(".").length >1?
+                                (this.STD_EditInfo_Item[index].FIELD_VALUE.split(".")[1].length >2):false)
+                                ?true:false;
+                check_change = true;
+            }
+            if(item == "SEI_STDPCNT"){
+                Setsumei = this.STD_EditInfo_Item[index].FIELD_VALUE == "" ?
+                            "データを入力して下さい。":isNaN(this.STD_EditInfo_Item[index].FIELD_VALUE)?
+                            "数値を入力して下さい。":this.STD_EditInfo_Item[index].FIELD_VALUE>= 0 && this.STD_EditInfo_Item[index].FIELD_VALUE<= 100?
+                            "":"標準正社員比率は０～１００で入力して下さい。";
+                Setsumei_Error = this.STD_EditInfo_Item[index].FIELD_VALUE == ""||
+                                isNaN(this.STD_EditInfo_Item[index].FIELD_VALUE) ||
+                                !(this.STD_EditInfo_Item[index].FIELD_VALUE>= 0 && this.STD_EditInfo_Item[index].FIELD_VALUE<= 100)
+                                ?true:false;
+                check_change = true;
+            }
+            if(item == "SG_LEADTIME")
+            {
+                Setsumei = this.STD_EditInfo_Item[index].FIELD_VALUE == "" ?
+                            "データを入力して下さい。":isNaN(this.STD_EditInfo_Item[index].FIELD_VALUE)?
+                            "'数値を入力して下さい。":Math.trunc(this.STD_EditInfo_Item[index].FIELD_VALUE).toString().length > 5?
+                            "整数部分は5桁以内で入力して下さい" :this.STD_EditInfo_Item[index].FIELD_VALUE.split(".").length >1?
+                            (this.STD_EditInfo_Item[index].FIELD_VALUE.split(".")[1].length >2 ?"少数部分2桁以内で入力して下さい":
+                             parseFloat(this.STD_EditInfo_Item[index].FIELD_VALUE) %0.5 != 0 ? 
+                            "リードタイムは０．５日以上で入力して下さい": parseFloat(this.STD_EditInfo_Item[index].FIELD_VALUE) <0.5?
+                            "リードタイムは０．５日以上で入力して下さい。":""):"";
+            
+                Setsumei_Error = this.STD_EditInfo_Item[index].FIELD_VALUE == "" ||
+                            isNaN(this.STD_EditInfo_Item[index].FIELD_VALUE) ||
+                            Math.trunc(this.STD_EditInfo_Item[index].FIELD_VALUE).toString().length > 5 ?true:false;
+                
+                if(!Setsumei_Error && this.STD_EditInfo_Item[index].FIELD_VALUE.split(".").length >1)
+                {
+                    Setsumei_Error =this.STD_EditInfo_Item[index].FIELD_VALUE.split(".")[1].length >2 ? 
+                            (parseFloat(this.STD_EditInfo_Item[index].FIELD_VALUE) %0.5 != 0  ||
+                            parseFloat(this.STD_EditInfo_Item[index].FIELD_VALUE) <0.5 ):true
+                }
+                            
+               check_change = true;
+            }
+            if(item =="KIJI"){
+                Setsumei = this.STD_EditInfo_Item[index].FIELD_VALUE.length > 50 ?
+                        "50文字以内で入力下さい。":"";
+                Setsumei_Error = this.STD_EditInfo_Item[index].FIELD_VALUE.length > 50 ?true: false;
+                check_change = true;
+            }
+        }
+        if(check_change)
+        {
+            this.STD_EditInfo_Item[index].FIELD_EXPLAIN = Setsumei; 
+            this.STD_EditInfo_Item[index].Setsumei_Error =Setsumei_Error;
+        }
+        this.KTSTDTIME_UPDATE_CHECH(index)
+    },
+    getSTD_RULE(index,item){
+        if(item=="SETUP_STDTIME")
+        {
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.required);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.IsNumber);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.MoreThanZero);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.FloatLess2);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.InterOnlyThan5);
+        }
+        if(item=="WORK_STDTIME")
+        {
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.required);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.IsNumber);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.MoreThanZero);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.InterOnlyThan5);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.FloatLess2);
+        }
+        if(item=="SEI_STDPCNT")
+        {
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.required);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.IsNumber);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.Range100);
+        }
+        if(item=="SG_LEADTIME")
+        {
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.required);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.IsNumber); 
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.MoreThanZeroFive);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.ModZeroFive);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.InterOnlyThan5);
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.FloatLess2);
+        }
+        if(item=="KIJI")
+        {
+            this.STD_EditInfo_Item[index].RULES.push(this.formRules.lengthThan50);
+        }
+
+        
+    },  
     getEditTable2(Part_NO,PLANT_NO){
         const url = "http://localhost:59272/api/KensakuBtnGet";
         const params = {
@@ -5280,7 +5654,6 @@ export default {
             if(this.tab_select == 1 && this.Edit_Combobox_1_select.substr(0,1) != '-')
             {
                 this.getKouteiJunjo(this.Header_Data[this.Header_Data.length-1].PART_NO,this.Edit_Combobox_1_select.substr(0,1));
-                console.log("End")
             }
             else
             {
@@ -5357,12 +5730,10 @@ export default {
         }
         if(item=="FM_ISSUE_FC_RATE")
         {
-            this.EditInfo2_Value[index].RULES.push(this.formRules.required);
             this.EditInfo2_Value[index].RULES.push(this.formRules.InterOnlyThan3);
         }
         if(item=="POG_ISSUE_FC_RATE")
         {
-            this.EditInfo2_Value[index].RULES.push(this.formRules.required);
             this.EditInfo2_Value[index].RULES.push(this.formRules.InterOnlyThan3);
         }
         if(item=="SUB_CHG_TYPE")
@@ -5583,7 +5954,6 @@ export default {
         if(check_change){
             this.EditInfo2_Value[index].FIELD_EXPLAIN = Setsumei; 
             this.EditInfo2_Value[index].Setsumei_Error =Setsumei_Error;
-            this.EditInfo2_Value[index].UPDATE_ST = true;
         }
         if(this.EditInfo2_Value[index].CELL_TYPE == 'B' && this.EditInfo2_Value[index].AUTH_TYPE == 2)
         {
@@ -6031,7 +6401,6 @@ export default {
       this.$axios.get(url,{params}).then(res =>{
           this.Header_Data = res.data;
           this.showHeader = true;
-          console.log(this.Header_Data[this.Header_Data.length-1].PART_NO);
       }).catch(err=>{
           
       })
@@ -6272,8 +6641,6 @@ export default {
         this.EditInfo_Value.forEach(value =>{
             check = value.Setsumei_Error || check;
         })
-        console.log(check);
-        console.log("Form  check" +this.$refs.PPPMMS_FORM.validate())
         if(this.$refs.PPPMMS_FORM.validate() && !check ){
             this.POST_PPPMMMS();
             if(this.Edit_Combobox_1_select.substr(0,1) != '-')
@@ -6285,8 +6652,29 @@ export default {
         {
             alert("入力が間違います。")
         }
-        
-        
+    },
+    //　seisakuPostReq()　製作画面内のデータをデータペースに更新するメソッドメソッド
+    seisakuPostReq()
+    {
+        var check =false; 
+        this.EditInfo2_Value.forEach(value =>{
+            check = value.Setsumei_Error || check;
+        })
+        //  入力の確認、もし入力が正しくない場合警告画面を表示する
+        if(this.$refs.PPPMORDER_form.validate() && this.$refs.KTSTDTIME_FORM.validate() && !check)
+        {
+            if(this.Edit_Combobox_1_select.substr(0,1) != '-')
+            {
+                // POST_PPPMORDER() PPPMORDERデータベースに更新するメソッド
+                this.POST_PPPMORDER();  
+                // POST_KTSTDTIME() KTSTDTIMEデータベースに更新するメソッド
+                this.POST_KTSTDTIME();
+            }
+        }
+        else
+        {
+            alert("入力が間違います。")
+        }
     }
     ,
     POST_PPPMMMS(){
@@ -6294,12 +6682,22 @@ export default {
         this.NRPMA_POST={};
         this.NRPMHIS_POST={};
         var req ={};
+        //  入力フォームで変更したデータの確認
         this.EditInfo_Value.forEach(item =>{
+            // item.UPDATE_ST　こちらのデータが変更状態を表示するプロパティ
+            // True  :　変更
+            // False :  未変更 
             if(item.UPDATE_ST)
             {
+                // item.AUTH_TYPE == "2"　変更可能の項目だけを確認
+                // AUTH_Type 0 : 未表示
+                //           1 : 表示
+                //           2 : 表示と変更可能
                 if(item.AUTH_TYPE == "2")
                 {
+                    //  変更確認出来たデータを　req　に格納する
                     req[item.FIELD_NAME] = item.FIELD_VALUE;
+                    //  更新する先が旧データペースと連携しているため、旧データベースと一緒に変更必要あります
                     this.convertPMtoNA(item.FIELD_NAME,item.FIELD_VALUE);
                     this.convertPMtoNH(item.FIELD_NAME,item.FIELD_VALUE);
                 }
@@ -6312,13 +6710,10 @@ export default {
                     this.convertPMtoNH(item.FIELD_NAME,item.FIELD_VALUE);
                 }   
         });
-        console.log("PN HERE!!");
         this.EditInfo_Value=this.EditInfo_Value.map(item =>{
             item.UPDATE_ST = false;
             return item;
         })
-        console.log("PPPMMS REQ: ");
-        console.log(req);
         const params =req;
         if(req != {})
         {
@@ -6345,8 +6740,6 @@ export default {
     POST_NRPMB(){
         const url = "http://localhost:59272/api/KensakuBtnPost/NRPMB";
         const params = this.NRPMB_POST;
-        console.log("NRPMB_POST");
-        console.log( params);
         this.$axios.post(url,params).then(
             
         ).catch(err=>{
@@ -6368,40 +6761,42 @@ export default {
     POST_PPPMORDER(){
         const url = "http://localhost:59272/api/KensakuBtnPost/PPPMORDER";
         this.NRPMB_POST={};
-        var req ={};
+        var PART_NO ="";
+        var req_PPPMOREDR ={};
         this.EditInfo2_Value.forEach(item =>{
             if(item.UPDATE_ST)
             {
                 if(item.AUTH_TYPE == "2")
                 {
-                    req[item.FIELD_NAME] = item.FIELD_VALUE;
+                    req_PPPMOREDR[item.FIELD_NAME] = item.FIELD_VALUE;
                     this.convertPOtoNB(item.FIELD_NAME,item.FIELD_VALUE);
                 }
             }
             if(item.FIELD_NAME == "PART_NO")
             {
-                req[item.FIELD_NAME] = item.FIELD_VALUE;
+                PART_NO = item.FIELD_VALUE;
                 this.convertPOtoNB(item.FIELD_NAME,item.FIELD_VALUE);
             }
         });
-        req["PLANT_NO"] =[];
-        req["PLANT_NO"].push(this.Edit_Combobox_1_select.substr(0,1));
-        this.NRPMB_POST["PLANT_NO"]=req["PLANT_NO"];
-        if(this.Edit_checkbox && this.Edit_Combobox_2_select.substr(0,1) != "" &&
-        this.Edit_Combobox_2_select.substr(0,1) != "-")
+        
+        if(req_PPPMOREDR != {})
         {
-            req["PLANT_NO"].push(this.Edit_Combobox_2_select.substr(0,1));
-        } 
-        this.NRPMB_POST["PLANT_NO"]=req["PLANT_NO"];
-        this.EditInfo2_Value=this.EditInfo2_Value.map(item =>{
-            item.UPDATE_ST = false;
-            return item;
-        })
-        const params =req;
-        console.log("PPPMORDER REQ: ");
-        console.log(req);
-        if(req !== {})
-        {
+            req_PPPMOREDR["PART_NO"] =[];
+            req_PPPMOREDR["PLANT_NO"] = [];
+            req_PPPMOREDR["PART_NO"] = PART_NO;
+            req_PPPMOREDR["PLANT_NO"].push(this.Edit_Combobox_1_select.substr(0,1));
+            this.NRPMB_POST["PLANT_NO"]=req_PPPMOREDR["PLANT_NO"];
+            if(this.Edit_checkbox && this.Edit_Combobox_2_select.substr(0,1) != "" &&
+            this.Edit_Combobox_2_select.substr(0,1) != "-")
+            {
+                req_PPPMOREDR["PLANT_NO"].push(this.Edit_Combobox_2_select.substr(0,1));
+            } 
+            this.NRPMB_POST["PLANT_NO"]=req_PPPMOREDR["PLANT_NO"];
+            this.EditInfo2_Value=this.EditInfo2_Value.map(item =>{
+                item.UPDATE_ST = false;
+                return item;
+            })
+            const params =req_PPPMOREDR;
             this.$axios.post(url,params).then(
             
             ).catch(err=>{
@@ -6409,8 +6804,45 @@ export default {
             })
             this.POST_NRPMB();
         }
+        req_PPPMOREDR ={};
     },
-    
+    POST_KTSTDTIME(){
+        const url = "http://localhost:59272/api/KensakuBtnPost/KTSTDTIME";
+        var req ={};
+        var SEQ_NO ="";
+        this.STD_EditInfo_Item.forEach(item => {
+            if(item.UPDATE_ST)
+            {
+                if(item.AUTH_TYPE == "2")
+                {
+                    req[item.FIELD_NAME] = item.FIELD_VALUE;
+                }
+            }
+            if(item.FIELD_NAME == "SEQ_NO")
+            {
+                
+                SEQ_NO = item.FIELD_VALUE;
+            }
+        })
+
+        if(req !== {})
+        {
+            req["PART_NO"] = this.Header_Data[this.Header_Data.length-1].PART_NO;
+            req["KT_CODE"] = this.KT_CODE_SELECT;
+            req["PLANT_NO"] = this.Edit_Combobox_1_select.substr(0,1);
+            req["SEQ_NO"] =SEQ_NO ;
+            this.STD_EditInfo_Item=this.STD_EditInfo_Item.map(item =>{
+                item.UPDATE_ST = false;
+                return item;
+            })
+            const params =req;
+            this.$axios.post(url,params).then(
+            
+            ).catch(err=>{
+                
+            })
+        }
+    },
     //詳細検索クリアパラメータ
     shousaiClear(){
         this.shousaiBuhincode="";
