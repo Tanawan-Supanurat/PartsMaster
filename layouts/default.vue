@@ -14,7 +14,7 @@
             >
             <!--　OpenCloseNav()は基本検索条件と検索結果画面を表示する関数 -->
             <v-app-bar-nav-icon class = "mt-5" @click.stop="OpenCloseNav()"></v-app-bar-nav-icon>
-            <v-toolbar-title ><br>Fujitec<br> Parts Master</v-toolbar-title>
+            <v-toolbar-title draggable @dragstart="dragList($event)" ><br>Fujitec<br> Parts Master</v-toolbar-title>
             <v-spacer></v-spacer>
             
             <!--　ユーザー設定画面　-->
@@ -31,85 +31,320 @@
                         <v-icon color="blue-grey darken-3" class = "mr-6 mt-7" size = 70>mdi-cog</v-icon>
                     </v-btn>
                 </template>
-                <v-card height="90vh">
-                    <v-card-title class="text-h5 font-weight-bold">
-                        
-                        ユーザー設定画面
-                    </v-card-title>
-                    <v-row no-gutters>
-                        <v-col class="ml-8">
-                            <br>
-                            <v-card-text class="py-0 text-subtitle-1">
-                                ログインユーザー： {{userName}} 
-                            </v-card-text>
-                            <v-card-text class="py-0 my-2 text-subtitle-1">
-                                所属部課： {{departmentName}}
-                            </v-card-text>
+                <v-card>
+                    <v-row class="mt-2 d-flex" no-gutters >
+                        <v-card-title class="ml-7 text-h5 font-weight-bold">
+                            ユーザー設定画面
+                        </v-card-title>
+                        <v-spacer></v-spacer>
+                        <v-col class="d-flex" cols ="1">
+                            <v-btn
+                            @click = "setttingDialog = false"
+                            class="mt-2 ml-auto mr-2" icon>
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
                         </v-col>
-
-                        <v-col >
-                            <v-card-text class="py-0 font-weight-bold text-subtitle-1 text-decoration-underline">
-                                権限
-                            </v-card-text>
-                            <v-card-text class="py-0 text-subtitle-1">
-                                手配部門　権限
-                            </v-card-text>
-                            <v-row>
-                                <v-col class="ml-2 pr-0 py-0" cols="4">
-                                    <v-card-text class="mt-2 py-0">
-                                        ・P/S情報
-                                    </v-card-text>
-                                    <v-card-text class="py-0">
-                                        ・代替部品情報
-                                    </v-card-text>
-                                    <v-card-text class="py-0">
-                                        ・販売価格情報
-                                    </v-card-text>
+                        </v-row>
+                        
+                        <v-card class ="mx-10" outlined flat>
+                            <v-row class="my-2 mx-2">
+                                <v-col :class="$vuetify.breakpoint.mobile?'d-flex mr-2':'d-flex ml-8 mr-2'" :cols = "$vuetify.breakpoint.mobile?'12':'5'">
+                                    <div class="align-self-center">
+                                        <v-row>
+                                            <v-col class="d-flex">
+                                                <h5 class="mr-2">ログインユーザー：</h5>
+                                                <p>[{{userId}}]     {{userName}} </p>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col class="d-flex">
+                                                <h5 class="mr-2">所属部課：</h5>
+                                                <p>[{{departmentId}}]   {{departmentName}} </p>
+                                            </v-col>
+                                        </v-row>
+                                    </div>
                                 </v-col>
-                                <v-col class="py-0" cols="2">
-                                    <v-card-text class="mt-2 py-0">
-                                        :
-                                    </v-card-text>
-                                    <v-card-text class="py-0">
-                                        :
-                                    </v-card-text>
-                                    <v-card-text class="py-0">
-                                        :
-                                    </v-card-text>
+
+                                <v-col :class="$vuetify.breakpoint.mobile?' mr-2':'ml-8'" :cols = "$vuetify.breakpoint.mobile?'12':'5'" >
+                                    <v-row no-gutters>
+                                        <v-col>
+                                            <h4 class=" py-0 font-weight-bold text-subtitle-1 text-decoration-underline">
+                                                権限
+                                            </h4>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row no-gutters>
+                                        <v-col>
+                                            <h5>手配部門権限</h5>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row no-gutters>
+                                        <v-col >
+                                            <h5>・P/S情報</h5>
+                                        </v-col>
+                                        <v-col>
+                                            <h5>:</h5>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row no-gutters>
+                                        <v-col>
+                                            <h5>・代替部品情報</h5>
+                                        </v-col>
+                                        <v-col>
+                                            <h5>:</h5>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row no-gutters>
+                                        <v-col>
+                                            <h5>・販売価格情報</h5>
+                                        </v-col>
+                                        <v-col>
+                                            <h5>:</h5>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                        </v-row>
+                        </v-card>
+                    <v-row no-gutters>
+                        <v-col class="ml-10 mt-4 mr-2">
+                            <v-card-text class="py-0 font-weight-bold text-subtitle-1 text-decoration-underline">
+                                項目の表示順設定
+                            </v-card-text>
+                            <div class="ml-10">
+                                <p class = "font-weight-bold">【手順】</p>
+                                <ol style="color: blue">
+                                    <li class="font-size =0.8em" type ="1">対象情報を選択。</li>
+                                    <li type ="1">「全項目」から表示したい項目を「表示項目」へ追加。</li>
+                                    <li type ="1">表示したい順番をD&Dで設定。</li>
+                                    <li type ="1">「保存」ボタンを押して設定内容を保存する。</li>
+                                </ol>
+                            </div>
+                        </v-col>
+                    </v-row>
+                    <v-row  no-gutters class = "ml-10">
+                        <v-col :cols= "this.$vuetify.breakpoint.mobile?'12': '6'">
+                            <p class ="ml-5 mt-2" style="color: #26b72b">※ 他ユーザーの設定をコピーしたい場合は、「他ユーザーの設定を表示」から設定したいユーザーの設定を表示項目に表示させてから「保存ボタン」を押す。</p>
+                        </v-col>
+                    </v-row>
+                    <v-row class ="ml-10 mt-2" no-gutters>
+                        <v-col :cols="$vuetify.breakpoint.mobile? '12':'8'">
+                            <div :class="$vuetify.breakpoint.mobile?'ml-0 mb-4':'ml-12'">
+                                <v-row class="mt-2 d-flex" justify="start" no-gutters>
+                                    <P class="font-weight-bold">対象情報 </P>
+                                    <v-col class ="ml-2" :cols="$vuetify.breakpoint.mobile? '5':'3'">
+                                        <v-combobox
+                                            v-model="userKoumokuSelect"
+                                            :items="userKoumokuItems"
+                                            outlined
+                                            dense
+                                        ></v-combobox>
+                                    </v-col>
+                                </v-row>
+                                <v-row class ="d-flex" justify="start" no-gutters>
+                                    <P class="font-weight-bold">他ユーザーの設定を表示</P>
+                                    <v-col 
+                                    class ="ml-2"
+                                    :cols="$vuetify.breakpoint.mobile? '4':'3'">
+                                        <v-text-field 
+                                        dense
+                                        outlined
+                                        label ="(個人コード)"
+                                        >
+                                        </v-text-field>
+                                    </v-col>
+                                    <v-btn 
+                                    class ="mx-1"
+                                    outlined icon tile small><v-icon small>mdi-account-search-outline</v-icon></v-btn>
+                                    <v-btn 
+                                    outlined icon tile small><v-icon small>mdi-magnify</v-icon></v-btn>
+                                </v-row>
+                                <v-row class="mb-5" no-gutters>
+                                    <v-col :cols ="this.$vuetify.breakpoint.mobile?'9':''">
+                                        <v-row>
+                                            <h4>表示可能な全項目</h4>
+                                        </v-row>
+                                        <v-row >
+                                            <v-card :width="this.$vuetify.breakpoint.mobile?'90%':'30vh'" class ="mt-5 " outlined flat >
+                                                <v-list height="60vh" style="overflow-y: auto" nav dense >
+                                                    <v-subheader>項目</v-subheader>
+                                                    <v-list-item-group
+                                                        v-model="User_All_List_Select"
+                                                        color="primary"
+                                                    >
+                                                    <v-list-item
+                                                        v-for="(item, i) in User_All_List"
+                                                        :key="i"
+                                                        draggable
+                                                    >
+                                                        <v-list-item-content>
+                                                            <v-list-item-title v-text="item.text"></v-list-item-title>
+                                                        </v-list-item-content>
+                                                        </v-list-item>
+                                                    </v-list-item-group>
+                                                </v-list>
+                                            </v-card>
+                                        </v-row>
+                                        <v-row class="mr-4" v-if="this.$vuetify.breakpoint.mobile">
+                                            <v-btn class="mt-2" color="primary"  outlined large block><v-icon>mdi-arrow-right-bold-hexagon-outline</v-icon>全て追加</v-btn>
+                                        </v-row>
+                                    </v-col>
+                                    <v-col cols="2" :class="this.$vuetify.breakpoint.mobile?'d-flex ml-3 mr-2':'d-flex ml-5'">
+                                        <div class ="align-self-center">
+                                            <v-row class="mb-2">
+                                                <v-btn large>
+                                                    <v-icon>mdi-arrow-right-bold</v-icon>
+                                                    追加
+                                                </v-btn>
+                                            </v-row>
+                                            <v-row>
+                                                <v-btn large>
+                                                    <v-icon>mdi-arrow-left-bold</v-icon>
+                                                    削除
+                                                </v-btn>
+                                            </v-row>
+                                        </div>
+                                    </v-col>
+                                    <v-col :cols ="this.$vuetify.breakpoint.mobile?'9':''">
+                                        <v-row :class="this.$vuetify.breakpoint.mobile?'mt-5':''">
+                                            <h4>表示項目</h4>
+                                        </v-row>
+                                        <v-row>
+                                            <v-card :width="this.$vuetify.breakpoint.mobile?'90%':'30vh'"  class ="mt-5 " outlined flat >
+                                                <v-list height="60vh" style="overflow-y: auto" class="item-list" nav dense>
+                                                    <v-subheader>項目</v-subheader>
+                                                    <v-list-item-group
+                                                        v-model="User_Visionable_List_Select"
+                                                        color="primary"
+                                                    >
+                                                    <v-list-item
+                                                        v-for="(item, i) in User_Visionable_List"
+                                                        :key="i"
+                                                        draggable
+                                                    >
+                                                        <v-list-item-content>
+                                                            <v-list-item-title v-text="item.text"></v-list-item-title>
+                                                        </v-list-item-content>
+                                                        </v-list-item>
+                                                    </v-list-item-group>
+                                                </v-list>
+                                            </v-card>
+                                        </v-row>
+                                        <v-row class="mr-4" v-if="this.$vuetify.breakpoint.mobile">
+                                            <v-btn class="mt-2" color ="error" outlined large block><v-icon>mdi-arrow-left-bold-hexagon-outline</v-icon>全て削除</v-btn>
+                                        </v-row>
+                                    </v-col>
+                                </v-row>
+                            </div>
+                        </v-col>
+                        <v-col :cols="$vuetify.breakpoint.mobile? '12':'3'">
+                            <v-row>
+                                <v-col :cols="$vuetify.breakpoint.mobile? '6':'12'">
+                                    <h4 class="text-decoration-underline">初期画面表示</h4>
+                                    <v-row class="mt-1">
+                                        <v-col class="ml-4" :cols="$vuetify.breakpoint.mobile? '10':'10'" >
+                                            <v-combobox
+                                                v-model="userShougiSelect"
+                                                :items="userShougiItems"
+                                                outlined
+                                                dense
+                                            ></v-combobox>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                                <v-col :cols="$vuetify.breakpoint.mobile? '6':'12'">
+                                    <h4 :class="$vuetify.breakpoint.mobile?'text-decoration-underline':'text-decoration-underline mt-n5'">一括編集件数</h4>
+                                    <v-row class="mt-1">
+                                        <v-col cols="6" class="ml-4">
+                                            <v-text-field class = "right-input" outlined dense></v-text-field>
+                                        </v-col>
+                                        <v-col class ="ml-1 mt-1">
+                                            <p>件</p>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <h4 :class="$vuetify.breakpoint.mobile?'text-decoration-underline mt-n8 ':'text-decoration-underline mt-n5'">一括編集対象データ</h4>
+                                    <v-card :width="this.$vuetify.breakpoint.mobile?'90%':'30vh'" class ="mt-5 " outlined flat >
+                                        <v-list nav dense>
+                                            <v-subheader>項目</v-subheader>
+                                            <v-list-item-group
+                                                v-model="User_Edit_List_Select"
+                                                color="primary"
+                                            >
+                                            <v-list-item
+                                                v-for="(item, i) in User_Edit_List"
+                                                :key="i"
+                                                draggable
+                                            >
+                                                <v-list-item-content>
+                                                    <v-list-item-title v-text="item.text"></v-list-item-title>
+                                                </v-list-item-content>
+                                                </v-list-item>
+                                            </v-list-item-group>
+                                        </v-list>
+                                    </v-card>
                                 </v-col>
                             </v-row>
                         </v-col>
                     </v-row>
-                    <v-row>
-                        <v-col class="ml-10">
-                            <v-card-text class="py-0 font-weight-bold text-subtitle-1 text-decoration-underline">
-                                項目の表示順設定
-                            </v-card-text>
-                            <v-row class="mt-2" justify="center">
-                                <v-col sm="6" >
-                                    <v-combobox
-                                        v-model="userKoumokuSelect"
-                                        :items="userKoumokuItems"
-                                        outlined
-                                        dense
-                                    ></v-combobox>
-                                </v-col>
-                            </v-row>
+                    <v-row class="mr-4" v-if="this.$vuetify.breakpoint.mobile">
+                        <v-col>
+                            <v-btn class ="mx-2" outlined large block >
+                                <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                    mdi-content-save
+                                    </v-icon>
+                                    <h3 class >保存</h3>
+                            </v-btn>
                         </v-col>
                         <v-col>
-                            <v-card-text class="py-0 font-weight-bold text-subtitle-1 text-decoration-underline">
-                                初期画面表示
-                            </v-card-text>
-                            <v-row class="mt-2" justify="center">
-                                <v-col sm="6" >
-                                    <v-combobox
-                                        v-model="userShougiSelect"
-                                        :items="userShougiItems"
-                                        outlined
-                                        dense
-                                    ></v-combobox>
-                                </v-col>
+                            <v-btn outlined large block >
+                                <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                        mdi-close-box-outline
+                                    </v-icon> 
+                                    <h3 >閉じる</h3>
+                            </v-btn>
+                        </v-col>
+                    </v-row>
+                    <v-row v-if="!this.$vuetify.breakpoint.mobile" class ="ml-10 mt-2" no-gutters>
+                        <v-col cols='8'>
+                            <v-row no-gutters>
+                                <v-col ><v-btn color="primary"  outlined large block><v-icon>mdi-arrow-right-bold-hexagon-outline</v-icon>全て追加</v-btn></v-col>
+                                <v-col cols="2"></v-col>
+                                <v-col><v-btn color ="error" outlined large block><v-icon>mdi-arrow-left-bold-hexagon-outline</v-icon>全て削除</v-btn></v-col>
                             </v-row>
+                        </v-col>
+                        <v-col class="d-flex justify-end" cols='3'>
+
+                            <v-btn class ="mx-2" outlined large >
+                                <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                    mdi-content-save
+                                    </v-icon>
+                                    <h3 class ="mr-3">保存</h3>
+                            </v-btn>
+                            <v-btn outlined large >
+                                <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                        mdi-close-box-outline
+                                    </v-icon> 
+                                    <h3 >閉じる</h3>
+                            </v-btn>
                         </v-col>
                     </v-row>
                 </v-card>
@@ -2783,6 +3018,11 @@
                                             <h4>工場区分</h4>
                                         </v-col>
                                         <v-col>
+                                            <!-- Edit_Combobox_1_item　倉庫コード格納されているプロパティ -->
+                                            <!-- Edit_Combobox_1_select 現在選択している倉庫コード-->
+                                            <!-- @change="getEditTable2 もし、倉庫コードが選択された場合データベースから現在検査している部品の手配情報と工程順序選択情報をテーブルに格納する -->
+                                            <!-- EditInfo2_Value 手配情報のテーブル -->
+                                            <!-- KT_CODE_ITEM 工程順序選択情報のテーブル-->
                                             <v-combobox 
                                             v-model="Edit_Combobox_1_select"
                                             :items = "Edit_Combobox_1_item"
@@ -2793,7 +3033,10 @@
                                         </v-combobox>
                                         </v-col >
                                         <v-tooltip bottom>
-                                          <template v-slot:activator ="{on}">
+                                            <!-- Edit_checkbox こちらのチェックボックスを選択した場合、手配情報を更新する時に両方の倉庫が更新される-->
+                                            <!-- Edit_Combobox_1_select 左側倉庫コード -->
+                                            <!-- Edit_Combobox_2_select 右側倉庫コード -->
+                                            <template v-slot:activator ="{on}">
                                             <v-simple-checkbox
                                             v-model="Edit_checkbox"
                                             v-on="on"
@@ -2804,6 +3047,8 @@
                                           <span>保存時に右の工場へデータをコピーする</span>
                                         </v-tooltip>
                                         <v-col class ="mr-2">
+                                            <!-- Edit_Combobox_2_item　倉庫コード格納されているプロパティ -->
+                                            <!-- Edit_Combobox_2_select 現在選択している倉庫コード-->
                                             <v-combobox 
                                             v-model="Edit_Combobox_2_select"
                                             :items = "Edit_Combobox_2_item"
@@ -2817,6 +3062,7 @@
                                     <v-row no-gutters>
                                         <v-spacer></v-spacer>
                                         <v-col sm="4">
+                                            <!-- EditTableSearch2　手配情報内に検査したいデータ -->
                                             <v-text-field
                                             class = "mt-n4 mr-2"
                                             v-model = "EditTableSearch2"
@@ -2827,6 +3073,7 @@
                                             ></v-text-field>
                                         </v-col>
                                     </v-row>
+                                    <!-- PPPMORDER_form 手配情報のテーブル  -->
                                     <v-form ref="PPPMORDER_form">
                                         <v-data-table
                                         mobile-breakpoint='400'
@@ -3380,6 +3627,58 @@ import { mapState } from 'vuex'
 export default {
   name: 'DefaultLayout',
   data : () => ({
+    //ユーザー設定画面
+    User_All_List_Select: 0,
+    User_All_List:[
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+    ],
+    User_Visionable_List_Select: 0,
+    User_Visionable_List:[
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+    ],
+    User_Edit_List_Select:0,
+    User_Edit_List:[
+        { text: 'Real-Time', icon: 'mdi-clock' },
+        { text: 'Audience', icon: 'mdi-account' },
+        { text: 'Conversions', icon: 'mdi-flag' },
+    ],
     //修正時置き換える
     //mobile-breakpoint='400'
     mobileBreakStatus:false,
@@ -3842,7 +4141,7 @@ export default {
     },
     ...mapState(['authority', 'isSso']),
     /** シングルサインオンの情報(storeから) */
-    ...mapState('fujitecSso', ['userId', 'userName', 'departmentName']),
+    ...mapState('fujitecSso', ['userId', 'userName', 'departmentId','departmentName']),
     /** ダークモード(middleware で localStorage からロード済み) */
     ...mapState('headerSql',['headerItem']),
     dark: {
@@ -3927,6 +4226,10 @@ export default {
     
   },
   methods:{
+    dragList(event){
+        event.dataTransfer.effectAllowed = 'move'
+        event.dataTransfer.dropEffect = 'move'
+    },
     //upload() メソッドはエクセルファイルの最初のページのデータをJSONのフォーマットに収納する
     upload() {
         const reader = new FileReader()

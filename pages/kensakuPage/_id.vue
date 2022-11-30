@@ -34,25 +34,38 @@ methods:{
     font-size:0.8em;
     height: 25px;
 }
+
 p {
     margin-bottom: -4pt !important ;
     font-size:0.8em;
 }
+
 .v-radio label {
     font-size:0.8em;
 }
+
 .left-input input {
     text-align: left;
-    }
+}
 
-    .center-input input {
+.center-input input {
     text-align: center;
-    }
+}
 
-    .right-input input {
+.right-input input {
     text-align: right;
-    }
+}
 
-    
+li{
+    margin-bottom: -4pt !important ;
+    font-size:0.8em;
+}
+.v-input .v-label {
+  font-size: 0.8em !important;  
+}
+.item-list {
+  height: 60vh;
+  overflow-y: auto;
+}    
 </style>
 
