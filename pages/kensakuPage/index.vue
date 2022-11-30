@@ -33,6 +33,13 @@ p {
 
     .right-input input {
     text-align: right;
-    }
+}
+li{
+    margin-bottom: -4pt !important ;
+    font-size:0.8em;
+}
+.v-input .v-label {
+  font-size: 0.8em !important;  
+}
 </style>
 
