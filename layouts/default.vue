@@ -133,6 +133,7 @@
                                             <v-combobox
                                                 v-model="userKoumokuSelect"
                                                 :items="userKoumokuItems"
+                                                @change="getSettingChange()"
                                                 outlined
                                                 dense
                                             ></v-combobox>
@@ -150,11 +151,67 @@
                                             >
                                             </v-text-field>
                                         </v-col>
+                                        <v-dialog
+                                         v-model="dialog_DepartmentName"
+                                         width = "600"
+                                        >
+                                            <template v-slot:activator = "{ on , attrs}">
+                                                <v-btn 
+                                                v-bind = "attrs"
+                                                v-on ="on"
+                                                @click="getDepartmentUser()" 
+                                                class ="mx-1"
+                                                outlined icon tile small>
+                                                    <v-icon small>mdi-account-search-outline</v-icon>
+                                                </v-btn>
+                                            </template>
+                                        
+                                            <v-card >
+                                                <v-row class="mr-2">
+                                                    <v-card-title class ="mt-5 ml-5 text-h5 ">
+                                                    ユーザー検索
+                                                    </v-card-title>
+                                                    <v-spacer></v-spacer>
+                                                    <v-col class = "d-flex mr-2" cols = "1">
+                                                        <v-btn
+                                                        @click = "dialog_DepartmentName = false"
+                                                        class="mt-5 mr-5" icon outlined>
+                                                            <v-icon>mdi-close</v-icon>
+                                                        </v-btn>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row>
+                                                    <v-col class = "ml-5" cols="5">
+                                                        <v-text-field
+                                                        v-model="DEPARTMENT_CODE"
+                                                        label="(所属部課コード)" 
+                                                        dense outlined></v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="5">
+                                                        <v-text-field 
+                                                        label="(個人コード)"
+                                                        v-model="USER_CODE"                             
+                                                        dense outlined></v-text-field>
+                                                    </v-col>
+                                                    <v-spacer></v-spacer>
+                                                    <v-col class="mr-6">
+                                                        <v-btn outlined icon tile small>
+                                                            <v-icon small>mdi-magnify</v-icon>
+                                                        </v-btn>
+                                                    </v-col> 
+                                                </v-row>
+                                                <v-data-table
+                                                    :headers="User_Setting_Header"
+                                                    :items="User_Setting_Item"
+                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                    hide-default-footer
+                                                ></v-data-table>
+                                            </v-card>
+                                        </v-dialog>
                                         <v-btn 
-                                        class ="mx-1"
-                                        outlined icon tile small><v-icon small>mdi-account-search-outline</v-icon></v-btn>
-                                        <v-btn 
-                                        outlined icon tile small><v-icon small>mdi-magnify</v-icon></v-btn>
+                                        outlined icon tile small>
+                                        <v-icon small>mdi-magnify</v-icon>
+                                        </v-btn>
                                     </v-row>
                                     <v-row class="mb-5" no-gutters>
                                         <v-col :cols ="this.$vuetify.breakpoint.mobile?'9':''">
@@ -341,7 +398,7 @@
                                         <h4 :class="$vuetify.breakpoint.mobile?'text-decoration-underline mt-n8 ':'text-decoration-underline mt-n5'">一括編集対象データ</h4>
                                         <v-card :width="this.$vuetify.breakpoint.mobile?'90%':'30vh'" class ="mt-5 " outlined flat >
                                             <v-list nav dense>
-                                                <v-subheader>項目</v-subheader>
+                                                <v-subheader>マスター名</v-subheader>
                                                 <v-list-item-group
                                                     v-model="User_Edit_List_Select"
                                                     color="primary"
@@ -391,9 +448,9 @@
                         <v-row v-if="!this.$vuetify.breakpoint.mobile" class ="ml-10 my-2 " no-gutters>
                             <v-col cols='8'>
                                 <v-row no-gutters>
-                                    <v-col ><v-btn color="primary"  outlined large block><v-icon>mdi-arrow-right-bold-hexagon-outline</v-icon>全て追加</v-btn></v-col>
+                                    <v-col ><v-btn @click="getAllUserList()" color="primary" outlined large block><v-icon>mdi-arrow-right-bold-hexagon-outline</v-icon>全て追加</v-btn></v-col>
                                     <v-col cols="2"></v-col>
-                                    <v-col><v-btn color ="error" outlined large block><v-icon>mdi-arrow-left-bold-hexagon-outline</v-icon>全て削除</v-btn></v-col>
+                                    <v-col><v-btn @click="getAllList()" color ="error" outlined large block><v-icon>mdi-arrow-left-bold-hexagon-outline</v-icon>全て削除</v-btn></v-col>
                                 </v-row>
                             </v-col>
                             <v-col class="d-flex justify-end" cols='3'>
@@ -3706,17 +3763,29 @@ export default {
   },
   data : () => ({
     //ユーザー設定画面
+    DEPARTMENT_CODE:"",
+    USER_CODE:"",
     User_All_List_Select: "",
     User_All_List:[],
     User_Visionable_List_Select: "",
     User_Edit_List_Select:0,
     User_Edit_List:[
-        { text: 'Real-Time', icon: 'mdi-clock' },
-        { text: 'Audience', icon: 'mdi-account' },
-        { text: 'Conversions', icon: 'mdi-flag' },
+        { text: 'P/M基本情報'},
+        { text: '手配情報' },
+        { text: '購買情報'},
+        { text:'在庫情報'},
+        { text:'保守情報'},
     ],
     Draggable_list_1:[],
     Draggable_list_2:[],
+    dialog_DepartmentName: false,
+    /*
+    User_Setting_Header:[
+        {text : '所属部課コード',value:'DEPARTMENT_CODE'},
+        {text : '個人コード',value:'USER_CODE'},
+    ],
+    */
+    User_Setting_Item:[],
     //修正時置き換える
     //mobile-breakpoint='400'
     mobileBreakStatus:false,
@@ -4199,6 +4268,32 @@ export default {
         !location.origin.match(/https:\/\/mobileapi.fujitec.co.jp/)
       )
     },
+    User_Setting_Header(){
+        return [
+        {
+            text : '所属部課コード',
+            value:'DEPARTMENT_CODE',
+            filter : value =>{
+                if(!this.DEPARTMENT_CODE) return true
+                if(value.indexOf(this.DEPARTMENT_CODE))
+                    return false
+                else
+                    return true
+            }
+        },
+        {
+            text : '個人コード',
+            value:'USER_CODE',
+            filter : value =>{
+                if(!this.USER_CODE) return true
+                if(value.indexOf(this.USER_CODE))
+                    return false
+                else
+                    return true
+            }
+        },
+        ]
+    },
     dialogKouteiCodeTableHeader(){
         return[
         {
@@ -4264,6 +4359,62 @@ export default {
     
   },
   methods:{
+    getSettingChange(){
+        var DBGRID_NAME = "";
+        const index = this.userKoumokuItems.indexOf(this.userKoumokuSelect);
+        if(index == 0)
+        {
+            DBGRID_NAME = 'PPPMMS'
+        }
+        else if(index == 1)
+        {
+            DBGRID_NAME = 'PPPMORDER'
+        }
+        else if(index == 2)
+        {
+            DBGRID_NAME = ' '
+        }
+        else if(index == 3)
+        {
+            DBGRID_NAME =""//
+        }
+        else if(index == 4)
+        {
+            DBGRID_NAME =""//
+        }
+
+        if(DBGRID_NAME != "")
+        {
+            this.getUser_VisList(this.Test_userID,DBGRID_NAME);
+        }
+
+    },
+    getAllUserList(){
+        const Newlist = this.Draggable_list_1.concat(this.Draggable_list_2).sort((a,b) =>{
+            return (a.SEQ_NO < b.SEQ_NO)?-1:1;
+        })
+        this.Draggable_list_2 = Newlist;
+        this.Draggable_list_1 = [];
+    },
+    getAllList(){   
+        const Newlist = this.Draggable_list_1.concat(this.Draggable_list_2).sort((a,b) =>{
+            return (a.SEQ_NO < b.SEQ_NO)?-1:1;
+        })
+        this.Draggable_list_1 = Newlist;
+        this.Draggable_list_2 = [];
+    },
+    getDepartmentUser(){
+        const url ="http://localhost:59272/api/KensakuBtnGet/UserSetting"
+        const params = {
+            PROJECT_ID : 'PMRA0100'
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.User_Setting_Item = res.data
+        }).catch(err=>{
+
+        })
+    }
+    ,
     draggSlot(){
         var Left_list = [];
         this.Draggable_list_1.forEach(item => Left_list.push(Number(item.SEQ_NO)));
