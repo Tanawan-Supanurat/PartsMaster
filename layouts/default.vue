@@ -25,7 +25,9 @@
             >
                 <v-card color="indigo lighten-5" outlined>
                     <v-row class="mt-2 d-flex" no-gutters >
-                        <v-card :elevation ="$vuetify.breakpoint.mobile?'0':'1'" :style="$vuetify.breakpoint.mobile?'':'transform: rotate(-5deg); position:  relative;top: 30px; left: 30px; z-index:1;'">
+                        <v-card elevation ="1" :style="$vuetify.breakpoint.mdOnly?
+                            'transform: rotate(-5deg); position:  relative;top: 30px; left: 30px; z-index:1;':
+                            'transform: rotate(-5deg); position:  relative;top: 10px; left: 30px; z-index:1;'">
                             <v-card-title   
                             class="ml-7 mr-6 text-h5 font-weight-bold">
                             ユーザー設定画面
@@ -42,7 +44,7 @@
                     </v-row>
                         <v-card  class ="mx-10" outlined flat>
                             <v-row class="my-2 mx-2">
-                                <v-col :class="$vuetify.breakpoint.mobile?'d-flex mr-2':'d-flex ml-8 mr-2'" :cols = "$vuetify.breakpoint.mobile?'12':'5'">
+                                <v-col :class="$vuetify.breakpoint.mobile?'d-flex mr-2':'d-flex ml-8 mr-2'" :cols = "$vuetify.breakpoint.smAndUp?'5':'12'">
                                     <div class="align-self-center">
                                         <v-row>
                                             <v-col class="d-flex">
@@ -59,7 +61,7 @@
                                     </div>
                                 </v-col>
 
-                                <v-col :class="$vuetify.breakpoint.mobile?' mr-2':'ml-8'" :cols = "$vuetify.breakpoint.mobile?'12':'5'" >
+                                <v-col :class="$vuetify.breakpoint.mobile?' mr-2':'ml-8'" :cols = "$vuetify.breakpoint.smAndUp?'5':'12'" >
                                     <v-row no-gutters>
                                         <v-col>
                                             <h4 class=" py-0 font-weight-bold text-subtitle-1 text-decoration-underline">
@@ -145,6 +147,7 @@
                                         class ="ml-2"
                                         :cols="$vuetify.breakpoint.mobile? '4':'3'">
                                             <v-text-field 
+                                            v-model ="Serach_UserSetting"
                                             dense
                                             outlined
                                             label ="(個人コード)"
@@ -205,16 +208,17 @@
                                                     :items="User_Setting_Item"
                                                     :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                                     hide-default-footer
+                                                    @click:row="GetUsersetting"
                                                 ></v-data-table>
                                             </v-card>
                                         </v-dialog>
                                         <v-btn 
-                                        outlined icon tile small>
+                                        outlined icon tile small @click ="getAnotherUserSetting()">
                                         <v-icon small>mdi-magnify</v-icon>
                                         </v-btn>
                                     </v-row>
-                                    <v-row class="mb-5" no-gutters>
-                                        <v-col :cols ="this.$vuetify.breakpoint.mobile?'9':''">
+                                    <v-row class="d-flex justify-space-between mb-5" no-gutters>
+                                        <v-col :cols ="this.$vuetify.breakpoint.mobile?'5':''">
                                             <v-row>
                                                 <h4>表示可能な全項目</h4>
                                             </v-row>
@@ -257,9 +261,11 @@
                                                             <th classs = "text-left">
                                                                 項目
                                                             </th>
+                                                            <!--
                                                             <th  classs = "text-left">
                                                                 順番
                                                             </th>
+                                                            -->
                                                         </tr>
                                                     </thead>
                                                         <draggable group="people" :list="Draggable_list_1" tag="tbody" @end="handleChange()">
@@ -270,16 +276,18 @@
                                                                 <td>
                                                                     {{item.FIELD_NAME_J}}
                                                                 </td>
+                                                                <!--
                                                                 <td>
                                                                     {{item.SEQ_NO}}
                                                                 </td>
+                                                                -->
                                                             </tr>
                                                     </draggable>
                                                 </v-simple-table>
                                                 </v-card>
                                             </v-row>
                                             <v-row class="mr-4" v-if="this.$vuetify.breakpoint.mobile">
-                                                <v-btn class="mt-2" color="primary"  outlined large block><v-icon>mdi-arrow-right-bold-hexagon-outline</v-icon>全て追加</v-btn>
+                                                <v-btn @click="getAllUserList()" class="mt-2" color="primary"  outlined large block><v-icon>mdi-arrow-right-bold-hexagon-outline</v-icon>全て追加</v-btn>
                                             </v-row>
                                         </v-col>
                                         <!--
@@ -300,9 +308,9 @@
                                                 </v-row>
                                             </div>
                                         </v-col>
-                                        -->
-                                        <v-col :cols ="this.$vuetify.breakpoint.mobile?'9':''">
-                                            <v-row :class="this.$vuetify.breakpoint.mobile?'mt-5':''">
+                                    -->
+                                        <v-col :cols ="this.$vuetify.breakpoint.mobile?'5':''">
+                                            <v-row >
                                                 <h4>表示項目</h4>
                                             </v-row>
                                             <v-row>
@@ -340,9 +348,11 @@
                                                             <th classs = "text-left">
                                                                 項目
                                                             </th>
+                                                            <!--
                                                             <th  classs = "text-left">
                                                                 順番
                                                             </th>
+                                                            -->
                                                         </tr>
                                                     </thead>
                                                         <draggable group="people" :list="Draggable_list_2" tag="tbody" @end="handleChange()">
@@ -353,9 +363,11 @@
                                                                 <td>
                                                                     {{item.FIELD_NAME_J}}
                                                                 </td>
+                                                                <!--
                                                                 <td>
                                                                     {{item.SEQ_NO}}
                                                                 </td>
+                                                                -->
                                                             </tr>
                                                     </draggable>
                                                 </v-simple-table>
@@ -363,7 +375,7 @@
                                                 </v-card>
                                             </v-row>
                                             <v-row class="mr-4" v-if="this.$vuetify.breakpoint.mobile">
-                                                <v-btn class="mt-2" color ="error" outlined large block><v-icon>mdi-arrow-left-bold-hexagon-outline</v-icon>全て削除</v-btn>
+                                                <v-btn @click="getAllList()" class="mt-2" color ="error" outlined large block><v-icon>mdi-arrow-left-bold-hexagon-outline</v-icon>全て削除</v-btn>
                                             </v-row>
                                         </v-col>
                                     </v-row>
@@ -436,7 +448,7 @@
                                 </v-btn>
                             </v-col>
                             <v-col>
-                                <v-btn outlined large block >
+                                <v-btn outlined large block @click = "settingDialog = false" >
                                     <v-icon
                                             left
                                             dark
@@ -450,10 +462,10 @@
                         </v-row>
                         <v-row v-if="!this.$vuetify.breakpoint.mobile" class ="ml-10 my-2 " no-gutters>
                             <v-col cols='8'>
-                                <v-row no-gutters>
-                                    <v-col ><v-btn @click="getAllUserList()" color="primary" outlined large block><v-icon>mdi-arrow-right-bold-hexagon-outline</v-icon>全て追加</v-btn></v-col>
-                                    <v-col cols="2"></v-col>
-                                    <v-col><v-btn @click="getAllList()" color ="error" outlined large block><v-icon>mdi-arrow-left-bold-hexagon-outline</v-icon>全て削除</v-btn></v-col>
+                                <v-row  no-gutters>
+                                    <v-col  cols="4"><v-btn @click="getAllUserList()" color="primary" outlined large block><v-icon>mdi-arrow-right-bold-hexagon-outline</v-icon>全て追加</v-btn></v-col>
+                                    <v-col  cols= "2"></v-col>
+                                    <v-col cols="4"><v-btn @click="getAllList()" color ="error" outlined large block><v-icon>mdi-arrow-left-bold-hexagon-outline</v-icon>全て削除</v-btn></v-col>
                                 </v-row>
                             </v-col>
                             <v-col class="d-flex justify-end" cols='3'>
@@ -468,7 +480,7 @@
                                         </v-icon>
                                         <h3 class ="mr-3">保存</h3>
                                 </v-btn>
-                                <v-btn outlined large >
+                                <v-btn outlined large @click = "settingDialog = false">
                                     <v-icon
                                             left
                                             dark
@@ -2814,11 +2826,15 @@
                     <v-tab>代替</v-tab>
                 </v-tabs>
                 <!--  手配画面表示 -->
-                <v-text-field
-                    v-model="Test_userID"
-                    label="Enter USER_ID"
-                    >
-                </v-text-field>
+                <v-row>
+                    <v-col cols >
+                        <v-text-field
+                            v-model="Test_userID"
+                            label="Enter USER_ID"
+                            >
+                        </v-text-field>
+                    </v-col>
+                </v-row>
                 <v-container fluid>
                     <v-card outlined shaped tile>
                         <v-row no-gutters>
@@ -3758,8 +3774,9 @@
 import { MAX_VALUE_16BITS } from 'vue-js-xlsx';
 import { mapState } from 'vuex'
 import draggable from 'vuedraggable'
+import UniversalCookie from 'universal-cookie'
 
-export default {
+export default  {
   name: 'DefaultLayout',
   components:{
     draggable,
@@ -3782,6 +3799,7 @@ export default {
     Draggable_list_1:[],
     Draggable_list_2:[],
     dialog_DepartmentName: false,
+    Serach_UserSetting:"",
     /*
     User_Setting_Header:[
         {text : '所属部課コード',value:'DEPARTMENT_CODE'},
@@ -4036,7 +4054,7 @@ export default {
     }],
     //表示データ
     Page_data:[],
-    tab_select:"",
+    tab_select:0,
     tab_menu:["手配","製作","購買","入出庫","在庫","保守","PC/SP","P/S","代替",],
     search_width : "0%",
     table_width: "0%",
@@ -4230,7 +4248,7 @@ export default {
     Excel_Ensure : false,
   }),
   created(){
-    this.setListener()
+    this.setListener();
   },
   computed:{
     /** システムタイトル */
@@ -4278,10 +4296,10 @@ export default {
             value:'DEPARTMENT_CODE',
             filter : value =>{
                 if(!this.DEPARTMENT_CODE) return true
-                if(value.indexOf(this.DEPARTMENT_CODE))
-                    return false
-                else
+                if(value.includes(this.DEPARTMENT_CODE))
                     return true
+                else
+                    return false
             }
         },
         {
@@ -4289,10 +4307,10 @@ export default {
             value:'USER_CODE',
             filter : value =>{
                 if(!this.USER_CODE) return true
-                if(value.indexOf(this.USER_CODE))
-                    return false
-                else
+                if(value.includes(this.USER_CODE))
                     return true
+                else
+                    return false
             }
         },
         ]
@@ -4361,7 +4379,22 @@ export default {
     },
     
   },
+  mounted(){
+    // ユーザー初期画面を取得
+    this.getFirstPage();
+  },
   methods:{
+    GetUsersetting(item){
+        const USER_ID = item.USER_CODE.substr(1,4);
+        this.Serach_UserSetting = USER_ID;
+        this.dialog_DepartmentName = false;
+    },
+    // getFirstPage　ユーザー初期画面を取得
+    getFirstPage(){
+        const cookie = new UniversalCookie();
+        this.tab_select = parseInt(cookie.get('First_Page'));
+        //console.log(this.tab_select);
+    },
     getSettingChange(){
         var DBGRID_NAME = "";
         const index = this.userKoumokuItems.indexOf(this.userKoumokuSelect);
@@ -4421,7 +4454,11 @@ export default {
 
         //　　もし、なければデータベースに更新しない
         if(DBGRIDNAME != "")
-        {
+        {   //　初期画面順番設定を取得
+            const FP_value = this.userShougiItems.indexOf(this.userShougiSelect);
+            //　First_Page Cookieに保存する
+            const cookie = new UniversalCookie();
+            cookie.set('First_Page',FP_value);
             const url = "http://localhost:59272/api/KensakuBtnPost/SYDBGRID";
             //  今日をYYYYMMDDに変更する
             const Today =((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(0,4)
@@ -4557,9 +4594,44 @@ export default {
     },
     //ユーザー設定画面
     getUsersettingDialog(){
+        const cookie = new UniversalCookie();
         this.settingDialog = true;
+        this.userShougiSelect = this.userShougiItems[cookie.get('First_Page')];
         //getUser_VisList(ユーザーID、閲覧したいデータベース名)
         this.getUser_VisList(this.Test_userID,"PPPMMS");
+    },
+    getAnotherUserSetting()
+    {
+        var DBGRIDNAME = "";
+        //  index　現在選択している対象情報　Dropdown　の順番を取得
+        const index = this.userKoumokuItems.indexOf(this.userKoumokuSelect);
+        //  選択している対象情報のデータベース名をDBGRID_NAME　に保存
+        if(index == 0)
+        {
+            DBGRIDNAME = 'PPPMMS'
+        }
+        else if(index == 1)
+        {
+            DBGRIDNAME = 'PPPMORDER'
+        }
+        else if(index == 2)
+        {
+            DBGRIDNAME = 'KTSTDTIME'
+        }
+        else if(index == 3)
+        {
+            DBGRIDNAME =""//
+        }
+        else if(index == 4)
+        {
+            DBGRIDNAME =""//
+        }
+
+        //　　もし、なければデータベースに更新しない
+        if(DBGRIDNAME != "")
+        {   //　初期画面順番設定を取得   
+            this.getUser_VisList(this.Serach_UserSetting,DBGRIDNAME);
+        }
     },
     //ユーザー設定画面の表示項目リスト取得
     getUser_VisList(USERID,DBNAME){
