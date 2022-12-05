@@ -282,7 +282,9 @@
                                                 <v-btn class="mt-2" color="primary"  outlined large block><v-icon>mdi-arrow-right-bold-hexagon-outline</v-icon>全て追加</v-btn>
                                             </v-row>
                                         </v-col>
+                                        <!--
                                         <v-col cols="2" :class="this.$vuetify.breakpoint.mobile?'d-flex ml-3 mr-2':'d-flex ml-5'">
+                                            
                                             <div class ="align-self-center">
                                                 <v-row class="mb-2">
                                                     <v-btn large>
@@ -298,6 +300,7 @@
                                                 </v-row>
                                             </div>
                                         </v-col>
+                                        -->
                                         <v-col :cols ="this.$vuetify.breakpoint.mobile?'9':''">
                                             <v-row :class="this.$vuetify.breakpoint.mobile?'mt-5':''">
                                                 <h4>表示項目</h4>
@@ -4372,7 +4375,7 @@ export default {
         }
         else if(index == 2)
         {
-            DBGRID_NAME = ' '
+            DBGRID_NAME = 'KTSTDTIME'
         }
         else if(index == 3)
         {
@@ -4388,6 +4391,82 @@ export default {
             this.getUser_VisList(this.Test_userID,DBGRID_NAME);
         }
 
+    },
+    PostSettingSEQ(){
+        //  DBGRID_NAME　現在選択しているデータベース名を取得
+        var DBGRIDNAME = "";
+        //  index　現在選択している対象情報　Dropdown　の順番を取得
+        const index = this.userKoumokuItems.indexOf(this.userKoumokuSelect);
+        //  選択している対象情報のデータベース名をDBGRID_NAME　に保存
+        if(index == 0)
+        {
+            DBGRIDNAME = 'PPPMMS'
+        }
+        else if(index == 1)
+        {
+            DBGRIDNAME = 'PPPMORDER'
+        }
+        else if(index == 2)
+        {
+            DBGRIDNAME = 'KTSTDTIME'
+        }
+        else if(index == 3)
+        {
+            DBGRIDNAME =""//
+        }
+        else if(index == 4)
+        {
+            DBGRIDNAME =""//
+        }
+
+        //　　もし、なければデータベースに更新しない
+        if(DBGRIDNAME != "")
+        {
+            const url = "http://localhost:59272/api/KensakuBtnPost/SYDBGRID";
+            //  今日をYYYYMMDDに変更する
+            const Today =((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(0,4)
+                            +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(5,7)
+                            +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(8,10)
+
+            //  表示可能な全項目をデータベースに更新
+            this.Draggable_list_1.forEach((item) =>{
+                const params = {
+                    //  プライマリーキー
+                    USER_ID           : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+                    DBGRID_NAME       : DBGRIDNAME,
+                    FIELD_NAME        : item.FIELD_NAME,
+                    //  更新する値
+                    SEQ_NO            : item.SEQ_NO,
+                    COL_VISIBLE       : '1',
+                    UPD_WHO           : this.Test_userID,
+                    UPD_WHEN          : Today,
+                }
+                //console.log(params);
+                this.$axios.post(url,params).then(res =>{
+                }).catch(err=>{
+
+                })
+            })
+            //  表示項目をデータベースに更新
+            this.Draggable_list_2.forEach((item)=>{
+                const params = {
+                    //  プライマリーキー
+                    USER_ID           : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+                    DBGRID_NAME       : DBGRIDNAME,
+                    FIELD_NAME        : item.FIELD_NAME,
+                    //  更新する値
+                    SEQ_NO            : item.SEQ_NO,
+                    COL_VISIBLE       : '',
+                    UPD_WHO           : this.Test_userID,
+                    UPD_WHEN          : Today,
+                }
+                this.$axios.post(url,params).then(res =>{
+                }).catch(err=>{
+
+                })
+            })
+            alert("保存が完了。")
+        }
     },
     getAllUserList(){
         const Newlist = this.Draggable_list_1.concat(this.Draggable_list_2).sort((a,b) =>{
@@ -4413,33 +4492,42 @@ export default {
         }).catch(err=>{
 
         })
-    }
-    ,
+    },
+    //  draggslot 表示項目のSEQ_NOを並び順をテーブル順番を変更する
     draggSlot(){
+        //  Left_list  表示可能な全項目
         var Left_list = [];
+        //  表示可能な全項目の順番を取得
         this.Draggable_list_1.forEach(item => Left_list.push(Number(item.SEQ_NO)));
+        //　表示可能な全項目の順番を並び順の通りに並び替え
+        // [5,3,2,1] => [1,2,3,5]
         Left_list.sort((a, b) => a - b);
-        console.log(Left_list);
+        //console.log(Left_list);
         var count = 1
+        //  表示項目をテーブルの順番通りに並び替え
         this.Draggable_list_2.forEach((item,index) =>{
+            //　もし、 表示可能な全項目の順番に一致したらその順番を飛ばします
             while(Left_list[0] == count)
             {
-                console.log(count);
+                //console.log(count);
                 Left_list.shift();
                 count++;
             }
-            
+            //　保存先のデータベースが固定フォーマットのため、それを対応するためデータを変更する
+            //  '5'  => '005'  
             if(count < 10)
             {
                 this.Draggable_list_2[index].SEQ_NO = '00'+count
             }
+            //  '10' => '010'
             else
             {
                 this.Draggable_list_2[index].SEQ_NO = '0'+count
             }   
             count++;
-            
         })
+        //  データベースに更新する開始
+        this.PostSettingSEQ()
     },
     test(){
         console.log(this.Draggable_list_1);
