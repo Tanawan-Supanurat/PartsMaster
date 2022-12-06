@@ -74,28 +74,22 @@
                                             <h5>手配部門権限</h5>
                                         </v-col>
                                     </v-row>
-                                    <v-row no-gutters>
-                                        <v-col >
-                                            <h5>・P/S情報</h5>
-                                        </v-col>
+                                    <v-row class="d-flex" no-gutters>
+                                            <h5 class = "mr-14">・P/S情報</h5>
                                         <v-col>
-                                            <h5>:</h5>
+                                            <h5>  :  {{this.USER_PS_AUTH}}</h5>
                                         </v-col>
                                     </v-row>
-                                    <v-row no-gutters>
+                                    <v-row class="d-flex" no-gutters>
+                                        <h5 class = "mr-6">・代替部品情報</h5>
                                         <v-col>
-                                            <h5>・代替部品情報</h5>
-                                        </v-col>
-                                        <v-col>
-                                            <h5>:</h5>
+                                            <h5> :  {{this.USER_DAIKAE_AUTH}}</h5>
                                         </v-col>
                                     </v-row>
-                                    <v-row no-gutters>
+                                    <v-row class="d-flex" no-gutters>
+                                        <h5 class = "mr-6">・販売価格情報</h5>
                                         <v-col>
-                                            <h5>・販売価格情報</h5>
-                                        </v-col>
-                                        <v-col>
-                                            <h5>:</h5>
+                                            <h5> :   {{this.USER_HANBAI_AUTH}}</h5>
                                         </v-col>
                                     </v-row>
                                 </v-col>
@@ -183,25 +177,19 @@
                                                         </v-btn>
                                                     </v-col>
                                                 </v-row>
-                                                <v-row>
+                                                <v-row class="d-flex justify-space-between">
                                                     <v-col class = "ml-5" cols="5">
                                                         <v-text-field
                                                         v-model="DEPARTMENT_CODE"
                                                         label="(所属部課コード)" 
                                                         dense outlined></v-text-field>
                                                     </v-col>
-                                                    <v-col cols="5">
+                                                    <v-col class="mr-5" cols="5">
                                                         <v-text-field 
                                                         label="(個人コード)"
                                                         v-model="USER_CODE"                             
                                                         dense outlined></v-text-field>
                                                     </v-col>
-                                                    <v-spacer></v-spacer>
-                                                    <v-col class="mr-6">
-                                                        <v-btn outlined icon tile small>
-                                                            <v-icon small>mdi-magnify</v-icon>
-                                                        </v-btn>
-                                                    </v-col> 
                                                 </v-row>
                                                 <v-data-table
                                                     :headers="User_Setting_Header"
@@ -217,7 +205,13 @@
                                         <v-icon small>mdi-magnify</v-icon>
                                         </v-btn>
                                     </v-row>
-                                    <v-row class="d-flex justify-space-between mb-5" no-gutters>
+                                    <v-row>
+                                        <p class ="ml-5 my-2 mr-10" style="color: #26b72b">
+                                            ※ 【表示可能な全項目】と【表示項目】のリストはドラッグ・アンド・ドロップ機能が対応してますので、
+                                            項目を押してながら、別のリストに移動や順番を入れ替えが可能です。
+                                        </p>
+                                    </v-row>
+                                    <v-row :class="$vuetify.breakpoint.smAndUp?'d-flex justify-space-between mt-5 mb-5': 'd-flex justify-space-between mt-5 mb-5'" no-gutters>
                                         <v-col :cols ="this.$vuetify.breakpoint.mobile?'5':''">
                                             <v-row>
                                                 <h4>表示可能な全項目</h4>
@@ -261,11 +255,9 @@
                                                             <th classs = "text-left">
                                                                 項目
                                                             </th>
-                                                            <!--
-                                                            <th  classs = "text-left">
+                                                            <th v-if="$vuetify.breakpoint.smAndUp"  classs = "text-left">
                                                                 順番
                                                             </th>
-                                                            -->
                                                         </tr>
                                                     </thead>
                                                         <draggable group="people" :list="Draggable_list_1" tag="tbody" @end="handleChange()">
@@ -276,18 +268,16 @@
                                                                 <td>
                                                                     {{item.FIELD_NAME_J}}
                                                                 </td>
-                                                                <!--
-                                                                <td>
+                                                                <td v-if="$vuetify.breakpoint.smAndUp">
                                                                     {{item.SEQ_NO}}
                                                                 </td>
-                                                                -->
                                                             </tr>
                                                     </draggable>
                                                 </v-simple-table>
                                                 </v-card>
                                             </v-row>
                                             <v-row class="mr-4" v-if="this.$vuetify.breakpoint.mobile">
-                                                <v-btn @click="getAllUserList()" class="mt-2" color="primary"  outlined large block><v-icon>mdi-arrow-right-bold-hexagon-outline</v-icon>全て追加</v-btn>
+                                                <v-btn @click="getAllUserList()" class="mt-2" color="primary"  outlined :large ="$vuetify.breakpoint.smAndUp?true:false" block><v-icon>mdi-arrow-right-bold-hexagon-outline</v-icon>全て追加</v-btn>
                                             </v-row>
                                         </v-col>
                                         <!--
@@ -348,11 +338,9 @@
                                                             <th classs = "text-left">
                                                                 項目
                                                             </th>
-                                                            <!--
-                                                            <th  classs = "text-left">
+                                                            <th v-if="$vuetify.breakpoint.smAndUp" classs = "text-left">
                                                                 順番
                                                             </th>
-                                                            -->
                                                         </tr>
                                                     </thead>
                                                         <draggable group="people" :list="Draggable_list_2" tag="tbody" @end="handleChange()">
@@ -363,11 +351,9 @@
                                                                 <td>
                                                                     {{item.FIELD_NAME_J}}
                                                                 </td>
-                                                                <!--
-                                                                <td>
+                                                                <td v-if="$vuetify.breakpoint.smAndUp">
                                                                     {{item.SEQ_NO}}
                                                                 </td>
-                                                                -->
                                                             </tr>
                                                     </draggable>
                                                 </v-simple-table>
@@ -375,7 +361,7 @@
                                                 </v-card>
                                             </v-row>
                                             <v-row class="mr-4" v-if="this.$vuetify.breakpoint.mobile">
-                                                <v-btn @click="getAllList()" class="mt-2" color ="error" outlined large block><v-icon>mdi-arrow-left-bold-hexagon-outline</v-icon>全て削除</v-btn>
+                                                <v-btn @click="getAllList()" class="mt-2" color ="error" outlined :large ="$vuetify.breakpoint.smAndUp?true:false" block><v-icon>mdi-arrow-left-bold-hexagon-outline</v-icon>全て削除</v-btn>
                                             </v-row>
                                         </v-col>
                                     </v-row>
@@ -434,7 +420,7 @@
                                 </v-row>
                             </v-col>
                         </v-row>
-                        <v-row class="mr-4" v-if="this.$vuetify.breakpoint.mobile">
+                        <v-row class="mr-4 mb-5" v-if="this.$vuetify.breakpoint.mobile">
                             <v-col>
                                 <v-btn class ="mx-2" outlined large block @click="draggSlot()" >
                                     <v-icon
@@ -2884,7 +2870,7 @@
     
                         <v-card-text v-if ="!this.showHeader"></v-card-text>
                     </v-card>
-                    </v-container>
+                </v-container>
                 <div v-if="tab_select == 0">
                     
                     <v-container fluid>
@@ -2905,6 +2891,7 @@
                     <v-container fluid>
                         <v-row>
                             <v-col cols="12" :sm="this.$vuetify.breakpoint.mobile?12:6" xs="12">
+                                <!-- P/M 基本情報-->
                                 <v-card>   
                                     <v-row no-gutters>
                                         <v-col class="ml-2 mt-2">
@@ -2994,6 +2981,7 @@
                                 </v-card>
                             </v-col>
                             <v-col cols="12" :sm="this.$vuetify.breakpoint.mobile?12:6" xs="12">
+                                <!-- 手配情報-->
                                 <v-card>
                                     <v-row no-gutters>
                                         <v-col class = "ml-2 mt-2">
@@ -3583,8 +3571,261 @@
                 </div>
                 <!-- 購買画面表示 -->
                 <div v-if="tab_select == 2">
-                    <v-container>
-                        <h1>購買画面</h1>
+                    <v-container fluid>
+                        <v-row >
+                            <v-col :cols ="this.$vuetify.breakpoint.smAndDown?'12':'6'">
+                                <v-row no-gutters>
+                                    <v-col>
+                                        <!-- 購買情報  -->
+                                        <v-card  height="24vh">
+                                            <v-row class="d-flex">
+                                                <v-col class="mx-4">
+                                                    <h3>購買情報</h3>
+                                                </v-col>
+                                                <v-spacer></v-spacer>
+                                                <h5 class="mt-4">工場区分</h5>
+                                                <v-col class="mr-2">
+                                                    <v-combobox 
+                                                        dense
+                                                        outlined
+                                                    ></v-combobox>
+                                                </v-col>
+                                            </v-row>
+                                            <v-row>
+                                                <v-col class="mx-2">
+                                                    <v-data-table>
+                                                    </v-data-table>
+                                                </v-col>
+                                            </v-row>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
+                                <v-row class="mt-2" no-gutters>
+                                    <v-col>
+                                        <!-- 購買情報テーブル  -->
+                                        <v-card height="60vh">
+                                            <v-row class="d-flex justify-center">
+                                                <v-col class = "mx-2">
+                                                    <v-data-table>
+                                                    </v-data-table>
+                                                </v-col>
+                                            </v-row>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
+                            </v-col>
+                            <v-col :cols ="this.$vuetify.breakpoint.smAndDown?'12':'6'">
+                                <v-row >
+                                    <!-- 購買情報テーブル  -->
+                                    <v-col>
+                                        <v-card  height="20vh">  
+                                            <v-row no-gutters>
+                                                <v-col class="ml-2 mt-2">
+                                                    <h3>P/M基本情報</h3>
+                                                </v-col>
+                                                <v-spacer>
+                                                </v-spacer>
+                                                <v-col class="d-flex">
+                                                    <v-text-field
+                                                    class = "mt-2 mr-2"
+                                                    v-model = "EditTableSearch1"
+                                                    label = "フィルター"
+                                                    hide-details
+                                                    dense
+                                                    outlined
+                                                    ></v-text-field>
+                                                </v-col>
+                                            </v-row>
+                                            <v-form ref ="PPPMMS_FORM">
+                                                <v-data-table 
+                                                mobile-breakpoint='400'
+                                                fixed-header
+                                                :headers="this.Editinfo_Header"
+                                                :items="this.EditInfo_Value"
+                                                :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                hide-default-footer
+                                                height="20vh"
+                                                :search="EditTableSearch1"
+                                                dense
+                                                >
+                                                <template v-slot:item.CELL_TYPE="{item}">
+                                                    <!--  共用マスター -->
+                                                    <v-btn 
+                                                    v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                                    x-small 
+                                                    @click="getEditDialogBtn1(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
+                                                    >...</v-btn>
+                                                    <!-- 注文コードマスター  -->
+                                                    <v-btn
+                                                    v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2'&& item.CELL_TYPE == 'B'"
+                                                    @click = "getEditDialogBtn2(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
+                                                    x-small
+                                                    >...</v-btn>
+                                                    <!-- 担当コードマスター -->
+                                                    <v-btn
+                                                    v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                    @click = "getEditDialogBtn3(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),1)"
+                                                    x-small
+                                                    >...</v-btn>
+                                                    <!--　単位読替マスター　-->
+                                                    <v-btn
+                                                    v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                    x-small
+                                                    @click = "getEditDialogBtn4(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,2)"
+                                                    >...</v-btn>
+                                                    
+                                                    <v-btn
+                                                    v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                    @click ="getEditDialogBtn6(EditInfo_Value.indexOf(item),item.FIELD_NAME,1)"
+                                                    x-small
+                                                    >...</v-btn>
+                                                    
+                                                </template>
+                                                <template v-slot:item.FIELD_VALUE="{item}">
+                                                    <v-text-field
+                                                        :background-color = "item.Setsumei_Error?'red':''"
+                                                        :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                        :disabled = "item.AUTH_TYPE == '2' && EditRevDate_Eable ?false:true"
+                                                        :filled= "item.AUTH_TYPE == '2'?false:true"
+                                                        :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                        :rules="item.RULES"
+                                                        v-model = EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_VALUE
+                                                        @keyup="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
+                                                        @change="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
+                                                        dense
+                                                        outlined>
+                                                    </v-text-field>
+                                                </template>
+                                                <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                        <p
+                                                        :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                        {{EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_EXPLAIN}} 
+                                                        </p>
+                                                </template>
+                                                </v-data-table>
+                                            </v-form>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
+                                <v-row class="mt-8">
+                                     <v-col>
+                                         <!-- 手配情報テーブル  -->
+                                        <v-card height="48vh">
+                                            <v-row no-gutters>
+                                                    <v-col class = "ml-2 mt-2">
+                                                        <h3>手配情報</h3>
+                                                    </v-col>
+                                                    <v-spacer></v-spacer>
+                                                <v-col sm="4">
+                                                    <!-- EditTableSearch2　手配情報内に検査したいデータ -->
+                                                    <v-text-field
+                                                    class = "mt-2 mr-2"
+                                                    v-model = "EditTableSearch2"
+                                                    label = "フィルター"
+                                                    hide-details
+                                                    dense
+                                                    outlined
+                                                    ></v-text-field>
+                                                </v-col>
+                                            </v-row>
+                                                <!-- PPPMORDER_form 手配情報のテーブル  -->
+                                                <v-form ref="PPPMORDER_form">
+                                                    <v-data-table
+                                                    mobile-breakpoint='400'
+                                                    fixed-header
+                                                    :headers="this.Editinfo2_Header"
+                                                    :items="this.EditInfo2_Value"
+                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                    hide-default-footer
+                                                    :search="EditTableSearch2"
+                                                    height="50vh"
+                                                    dense
+                                                    >
+                                                    <template v-slot:item.CELL_TYPE="{item}">
+                                                        <!--  共用マスター -->
+                                                        <v-btn 
+                                                        v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                                        x-small 
+                                                        :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                        @click="getEditDialogBtn1(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                        >...</v-btn>
+                                                        <!-- 注文コードマスター -->
+                                                        <v-btn
+                                                        v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                        x-small
+                                                        :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                        @click = "getEditDialogBtn2(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                        >...</v-btn>
+                                                        <!-- 担当コードマスター -->
+                                                        <v-btn
+                                                        v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                        x-small
+                                                        :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                        @click = "getEditDialogBtn3(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
+                                                        >...</v-btn>
+                                                        <!-- 単位読替マスタ -->
+                                                        <v-btn
+                                                        v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                        @click = "getEditDialogBtn4(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,2)"
+                                                        :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                        x-small
+                                                        >...</v-btn>
+                                                        <v-btn
+                                                        v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                        :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                        @click ="getEditDialogBtn6(EditInfo2_Value.indexOf(item),item.FIELD_NAME,2)"
+                                                        x-small
+                                                        >...</v-btn>
+                                                    </template>
+                                                    <template v-slot:item.FIELD_VALUE="{item}">
+                                                        <v-text-field
+                                                            :background-color = "item.Setsumei_Error?'red':''"
+                                                            :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                            :disabled = "Edit_Combobox_1_select.substr(0,1) != '-' &&item.AUTH_TYPE == '2'?false:true"
+                                                            :filled= "Edit_Combobox_1_select.substr(0,1) != '-' &&item.AUTH_TYPE == '2' ?false:true"
+                                                            :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                            :rules="item.RULES"
+                                                            v-model = EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_VALUE
+                                                            @keyup="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
+                                                            @change="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
+                                                            outlined
+                                                            dense>
+                                                        </v-text-field>
+                                                    </template>
+                                                    <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                        <p
+                                                        :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                        {{EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_EXPLAIN}}
+                                                        </p>
+                                                </template>
+                                                    </v-data-table>
+                                                </v-form>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
+                                <!-- 可変購入単価 --><!-- 作業コード別注文仕様  -->
+                                <v-row class="mt-2" no-gutters>
+                                    <v-expansion-panels accordion>
+                                        <v-expansion-panel>
+                                            <v-expansion-panel-header>可変購入単価</v-expansion-panel-header>
+                                            <v-expansion-panel-content>
+                                                <!-- 可変購入単価テーブル  -->
+                                                <v-data-table>
+                                                </v-data-table>
+                                            </v-expansion-panel-content>
+                                        </v-expansion-panel>
+                                        <v-expansion-panel>
+                                            <v-expansion-panel-header>作業コード別注文仕様</v-expansion-panel-header>
+                                            <v-expansion-panel-content>
+                                                <!-- 作業コード別注文仕様テーブル  -->
+                                                <v-data-table>
+                                                </v-data-table>
+                                            </v-expansion-panel-content>
+                                        </v-expansion-panel>
+                                    </v-expansion-panels>
+                                </v-row>
+                            </v-col>
+                        </v-row>
                     </v-container>
                 </div>
                 <!-- 入出庫画面表示 -->
@@ -3800,6 +4041,9 @@ export default  {
     Draggable_list_2:[],
     dialog_DepartmentName: false,
     Serach_UserSetting:"",
+    USER_PS_AUTH:"",
+    USER_DAIKAE_AUTH:"",
+    USER_HANBAI_AUTH:"",
     /*
     User_Setting_Header:[
         {text : '所属部課コード',value:'DEPARTMENT_CODE'},
@@ -4384,6 +4628,74 @@ export default  {
     this.getFirstPage();
   },
   methods:{
+    GetUserAUTH_ST(){
+        const url = "http://localhost:59272/api/KensakuBtnGet/AUTH_ST";
+        const params = {
+            USER_ID  : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            //返信されたデータをUser_Visionable_Listに保存
+            res.data.map(item =>{
+                //  P/S 権限
+                if(item.ROLE_ID =='A1')
+                {
+                    switch(item.ROLE_VALUE){
+                        case '0':
+                            this.USER_PS_AUTH="システム権限"
+                            break;
+                        case '1':
+                            this.USER_PS_AUTH="参照可"
+                            break;
+                        case '2':
+                            this.USER_PS_AUTH="編集可"
+                            break;
+                    }
+                }
+                //  代替部品権限
+                if(item.ROLE_ID =='A3')
+                {
+                    switch(item.ROLE_VALUE){
+                        case '0':
+                            this.USER_DAIKAE_AUTH="システム権限"
+                            break;
+                        case '1':
+                            this.USER_DAIKAE_AUTH="参照"
+                            break;
+                        case '2':
+                            this.USER_DAIKAE_AUTH="編集可"
+                            break;
+                        case '3':
+                            this.USER_DAIKAE_AUTH="承認"
+                            break;
+                        case '4':
+                            this.USER_DAIKAE_AUTH="生産"
+                            break;
+                    }
+                }
+                //  販売価格
+                if(item.ROLE_ID =='A4')
+                {
+                    switch(item.ROLE_VALUE){
+                        case '0':
+                            this.USER_HANBAI_AUTH="システム権限"
+                            break;
+                        case '1':
+                            this.USER_HANBAI_AUTH="参照可"
+                            break;
+                        case '2':
+                            this.USER_HANBAI_AUTH="編集可"
+                            break;
+                        case '3':
+                            this.USER_HANBAI_AUTH="承認"
+                            break;
+                    }
+                }
+            });
+            
+        }).catch(err=>{
+
+        })
+    },
     GetUsersetting(item){
         const USER_ID = item.USER_CODE.substr(1,4);
         this.Serach_UserSetting = USER_ID;
@@ -4393,6 +4705,57 @@ export default  {
     getFirstPage(){
         const cookie = new UniversalCookie();
         this.tab_select = parseInt(cookie.get('First_Page'));
+        /*
+        ('PPPMORDER','手配情報'),
+        ('PPPMPOSPEC','購買仕様情報'),
+        ('PPPMPOMSB','可変購買情報'),
+        ('ZKMS','在庫情報'),
+        ('MAINTMS','保守情報'),
+        ('MAINTMS2','保守情報'),
+        ('PPPMMS','PM基本情報'),
+        ('CHMSA','購買情報'),
+        ('PPMFGINFO','製品情報'),
+        ('KTSTDTIME','標準時間マスタ'),
+        ('PPPMMAINTCONDMS','保守適用条件マスタ')
+        */ 
+        if(this.tab_select == '0')
+        {
+            //　手配テーブルを取得
+            this.LoadTeihaiTable();
+        }
+        else if(this.tab_select == '1')
+        {
+            //　製作テーブルを取得
+            this.LoadSeisakuTable();
+        }
+        else if(this.tab_select == '2')
+        {
+            //　購買テーブルを取得
+        }
+        else if(this.tab_select == '3')
+        {
+            //　入出庫テーブルを取得
+        }
+        else if(this.tab_select == '4')
+        {
+            //　在庫テーブルを取得
+        }
+        else if(this.tab_select == '5')
+        {
+            //　保守テーブルを取得
+        }
+        else if(this.tab_select == '6')
+        {
+            //　PC/SPテーブルを取得
+        }
+        else if(this.tab_select == '7')
+        {
+            //　P/Sテーブルを取得
+        }
+        else if(this.tab_select == '8')
+        {
+            //　代替テーブルを取得
+        }
         //console.log(this.tab_select);
     },
     getSettingChange(){
@@ -4412,11 +4775,11 @@ export default  {
         }
         else if(index == 3)
         {
-            DBGRID_NAME =""//
+            DBGRID_NAME ="CHMSA"
         }
         else if(index == 4)
         {
-            DBGRID_NAME =""//
+            DBGRID_NAME ="ZKMS"
         }
 
         if(DBGRID_NAME != "")
@@ -4445,11 +4808,11 @@ export default  {
         }
         else if(index == 3)
         {
-            DBGRIDNAME =""//
+            DBGRIDNAME ="CHMSA"
         }
         else if(index == 4)
         {
-            DBGRIDNAME =""//
+            DBGRIDNAME ="ZKMS"
         }
 
         //　　もし、なければデータベースに更新しない
@@ -4458,45 +4821,71 @@ export default  {
             const FP_value = this.userShougiItems.indexOf(this.userShougiSelect);
             //　First_Page Cookieに保存する
             const cookie = new UniversalCookie();
-            cookie.set('First_Page',FP_value);
+            cookie.set('First_Page',FP_value,{
+                 path:"/",
+                });
+            const url_FT = "http://localhost:59272/api/KensakuBtnPost/SYDBGRID_CKVALUE";
             const url = "http://localhost:59272/api/KensakuBtnPost/SYDBGRID";
             //  今日をYYYYMMDDに変更する
             const Today =((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(0,4)
                             +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(5,7)
                             +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(8,10)
-
-            //  表示可能な全項目をデータベースに更新
-            this.Draggable_list_1.forEach((item) =>{
-                const params = {
+            const params_FT ={
                     //  プライマリーキー
                     USER_ID           : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
                     DBGRID_NAME       : DBGRIDNAME,
-                    FIELD_NAME        : item.FIELD_NAME,
                     //  更新する値
-                    SEQ_NO            : item.SEQ_NO,
-                    COL_VISIBLE       : '1',
                     UPD_WHO           : this.Test_userID,
                     UPD_WHEN          : Today,
-                }
-                //console.log(params);
-                this.$axios.post(url,params).then(res =>{
-                }).catch(err=>{
+            }
+            this.$axios.post(url_FT,params_FT).then(res =>{
+            }).catch(err=>{
 
-                })
             })
             //  表示項目をデータベースに更新
-            this.Draggable_list_2.forEach((item)=>{
+            this.Draggable_list_2.forEach((item,index)=>{
                 const params = {
                     //  プライマリーキー
                     USER_ID           : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
                     DBGRID_NAME       : DBGRIDNAME,
                     FIELD_NAME        : item.FIELD_NAME,
                     //  更新する値
+                    FIELD_NAME_J      : item.FIELD_NAME_J,
                     SEQ_NO            : item.SEQ_NO,
                     COL_VISIBLE       : '',
                     UPD_WHO           : this.Test_userID,
                     UPD_WHEN          : Today,
                 }
+                if(index == 0)
+                {
+                    this.$axios.post(url_FT,params).then(res =>{
+                    }).catch(err=>{
+
+                    })
+                }
+                this.$axios.post(url,params).then(res =>{
+                }).catch(err=>{
+
+                })
+            })
+
+            //  表示可能な全項目をデータベースに更新
+            this.Draggable_list_1.forEach((item) =>{
+                
+                const params = {
+                    //  プライマリーキー
+                    USER_ID           : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+                    DBGRID_NAME       : DBGRIDNAME,
+                    FIELD_NAME        : item.FIELD_NAME,
+                    //  更新する値
+                    FIELD_NAME_J      : item.FIELD_NAME_J,
+                    SEQ_NO            : item.SEQ_NO.match(/^\d{3}$/)?item.SEQ_NO:item.SEQ_NO<10 ? '00'+item.SEQ_NO:'0' + item.SEQ_NO,
+                    COL_VISIBLE       : '1',
+                    UPD_WHO           : this.Test_userID,
+                    UPD_WHEN          : Today,
+                }
+                //console.log(params);
+               
                 this.$axios.post(url,params).then(res =>{
                 }).catch(err=>{
 
@@ -4566,16 +4955,12 @@ export default  {
         //  データベースに更新する開始
         this.PostSettingSEQ()
     },
-    test(){
-        console.log(this.Draggable_list_1);
-    },
     handleChange() {
         this.Draggable_list_1 = this.Draggable_list_1.sort(function(a,b){
            return (a.SEQ_NO < b.SEQ_NO)?-1:1;
         })
     },
     inputChanged(value) {
-        console.log(value);
       this.activeNames = value;
     },
     getComponentData() {
@@ -4599,6 +4984,7 @@ export default  {
         this.userShougiSelect = this.userShougiItems[cookie.get('First_Page')];
         //getUser_VisList(ユーザーID、閲覧したいデータベース名)
         this.getUser_VisList(this.Test_userID,"PPPMMS");
+        this.GetUserAUTH_ST();
     },
     getAnotherUserSetting()
     {
@@ -4620,11 +5006,11 @@ export default  {
         }
         else if(index == 3)
         {
-            DBGRIDNAME =""//
+            DBGRIDNAME ="CHMSA"
         }
         else if(index == 4)
         {
-            DBGRIDNAME =""//
+            DBGRIDNAME ="ZKMS"
         }
 
         //　　もし、なければデータベースに更新しない
@@ -4644,7 +5030,7 @@ export default  {
             //返信されたデータをUser_Visionable_Listに保存
             this.User_All_List = res.data;
             this.Draggable_list_1 = this.User_All_List.filter(list => list.COL_VISIBLE == '1');
-            this.Draggable_list_2 = this.User_All_List.filter(list => (list.COL_VISIBLE == null)&&(list.SEQ_NO != '1'));
+            this.Draggable_list_2 = this.User_All_List.filter(list => (list.COL_VISIBLE == null)&&(list.SEQ_NO.match(/^\d{3}$/)));
         }).catch(err=>{
 
         })
@@ -4662,7 +5048,7 @@ export default  {
         event.dataTransfer.setData('list-col',dragCOL)
     },
     dropList(event , dragCOL){
-        console.log("COL_V:" + dragCOL );
+        //console.log("COL_V:" + dragCOL );
         const dragId = event.dataTransfer.getData('list-id');
         const dragCol =event.dataTransfer.getData('list-col');
         const dragList = this.User_All_List.find(list =>  list.SEQ_NO == dragId);
