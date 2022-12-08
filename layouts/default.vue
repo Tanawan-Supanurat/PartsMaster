@@ -2803,7 +2803,7 @@
                     <v-tabs-slider color="yellow"></v-tabs-slider>
                     <v-tab @click="LoadTeihaiTable()">手配</v-tab>
                     <v-tab @click="LoadSeisakuTable()">製作</v-tab>
-                    <v-tab>購買</v-tab>
+                    <v-tab @click="LoadKoubaiTable()">購買</v-tab>
                     <v-tab>入出庫</v-tab>
                     <v-tab>在庫</v-tab>
                     <v-tab>保守</v-tab>
@@ -3577,8 +3577,8 @@
                                 <v-row no-gutters>
                                     <v-col>
                                         <!-- 購買情報  -->
-                                        <v-card  height="24vh">
-                                            <v-row class="d-flex">
+                                        <v-card class="mb-2"  :height="Koubai_Torisaki_CardHeight">
+                                            <v-row class="d-flex mb-n10">
                                                 <v-col class="mx-4">
                                                     <h3>購買情報</h3>
                                                 </v-col>
@@ -3586,27 +3586,109 @@
                                                 <h5 class="mt-4">工場区分</h5>
                                                 <v-col class="mr-2">
                                                     <v-combobox 
-                                                        dense
-                                                        outlined
+                                                    v-model="Edit_Combobox_1_select"
+                                                    :items = "Edit_Combobox_1_item"
+                                                    @change="GetCHMSA(Header_Data[Header_Data.length-1].PART_NO,Edit_Combobox_1_select.substring(0,1))"
+                                                    dense 
+                                                    outlined
                                                     ></v-combobox>
                                                 </v-col>
                                             </v-row>
                                             <v-row>
                                                 <v-col class="mx-2">
-                                                    <v-data-table>
+                                                    <v-data-table
+                                                    mobile-breakpoint='400'
+                                                    fixed-header
+                                                    dense
+                                                    :headers="this.Koubai_Torisaki_Header"
+                                                    :items="this.Koubai_Torisaki_Item"
+                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                    :height="Koubai_Torisaki_TableHeight"
+                                                    hide-default-footer
+                                                    @click:row="GetCHMSA_TABLE"
+                                                    >
                                                     </v-data-table>
                                                 </v-col>
                                             </v-row>
                                         </v-card>
                                     </v-col>
                                 </v-row>
-                                <v-row class="mt-2" no-gutters>
+                                <v-row class="mt-3" no-gutters>
                                     <v-col>
                                         <!-- 購買情報テーブル  -->
-                                        <v-card height="60vh">
+                                        <v-card :height="koubai_TableData_CardHeight">
                                             <v-row class="d-flex justify-center">
                                                 <v-col class = "mx-2">
-                                                    <v-data-table>
+                                                    <v-data-table
+                                                    mobile-breakpoint='400'
+                                                    fixed-header
+                                                    :headers="this.Koubai_EditTable_Header"
+                                                    :items="this.Koubai_EditTable_Item"
+                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                    hide-default-footer
+                                                    :height="koubai_TableData_TableHeight"
+                                                    dense
+                                                    >
+                                                        <!-- 値 -->
+                                                        <template v-slot:item.CELL_TYPE="{item}">
+                                                            <!--  共用マスター -->
+                                                            <v-btn 
+                                                            v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                                            x-small 
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            @click="getEditDialogBtn1(Koubai_EditTable_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                            >...</v-btn>
+                                                            <!-- 注文コードマスター -->
+                                                            <v-btn
+                                                            v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                            x-small
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            @click = "getEditDialogBtn2(Koubai_EditTable_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                            >...</v-btn>
+                                                            <!-- 担当コードマスター -->
+                                                            <v-btn
+                                                            v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                            x-small
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            @click = "getEditDialogBtn3(Koubai_EditTable_Item.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
+                                                            >...</v-btn>
+                                                            <!-- 単位読替マスタ -->
+                                                            <v-btn
+                                                            v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                            @click = "getEditDialogBtn4(Koubai_EditTable_Item.indexOf(item),item.MS_ITEM_NO,2)"
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            x-small
+                                                            >...</v-btn>
+                                                            <v-btn
+                                                            v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            @click ="getEditDialogBtn6(Koubai_EditTable_Item.indexOf(item),item.FIELD_NAME,2)"
+                                                            x-small
+                                                            >...</v-btn>
+                                                        </template>
+                                                        <!-- ボタン -->
+                                                        <template v-slot:item.FIELD_VALUE="{item}">
+                                                            <v-text-field
+                                                                :background-color = "item.Setsumei_Error?'red':''"
+                                                                :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                                :disabled = "item.AUTH_TYPE == '2'?false:true"
+                                                                :filled= "item.AUTH_TYPE == '2' ?false:true"
+                                                                :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                                :rules="item.RULES"
+                                                                @keyup="GetKoubaiSetsumei(Koubai_EditTable_Item.indexOf(item),item.FIELD_NAME)"
+                                                                @change="GetKoubaiSetsumei(Koubai_EditTable_Item.indexOf(item),item.FIELD_NAME)" 
+                                                                v-model = Koubai_EditTable_Item[Koubai_EditTable_Item.indexOf(item)].FIELD_VALUE
+                                                                outlined
+                                                                dense>
+                                                            </v-text-field>
+                                                        </template>
+                                                        <!-- 説明 -->
+                                                        <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                            <p
+                                                            :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                            {{Koubai_EditTable_Item[Koubai_EditTable_Item.indexOf(item)].FIELD_EXPLAIN}}
+                                                            </p>
+                                                        </template>
                                                     </v-data-table>
                                                 </v-col>
                                             </v-row>
@@ -3615,11 +3697,11 @@
                                 </v-row>
                             </v-col>
                             <v-col :cols ="this.$vuetify.breakpoint.smAndDown?'12':'6'">
-                                <v-row >
-                                    <!-- 購買情報テーブル  -->
+                                <v-row no-gutters >
                                     <v-col>
-                                        <v-card  height="20vh">  
-                                            <v-row no-gutters>
+                                        <!-- P/M基本情報テーブル  -->
+                                        <v-card  :height="Koubai_PM_CardHeight">  
+                                            <v-row class="d-flex">
                                                 <v-col class="ml-2 mt-2">
                                                     <h3>P/M基本情報</h3>
                                                 </v-col>
@@ -3644,7 +3726,7 @@
                                                 :items="this.EditInfo_Value"
                                                 :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                                 hide-default-footer
-                                                height="20vh"
+                                                :height="Koubai_PM_TableHeight"
                                                 :search="EditTableSearch1"
                                                 dense
                                                 >
@@ -3707,10 +3789,10 @@
                                         </v-card>
                                     </v-col>
                                 </v-row>
-                                <v-row class="mt-8">
+                                <v-row no-gutters class ="mt-2">
                                      <v-col>
                                          <!-- 手配情報テーブル  -->
-                                        <v-card height="48vh">
+                                        <v-card :height="Koubai_Teihai_CardHeight">
                                             <v-row no-gutters>
                                                     <v-col class = "ml-2 mt-2">
                                                         <h3>手配情報</h3>
@@ -3738,66 +3820,66 @@
                                                     :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                                     hide-default-footer
                                                     :search="EditTableSearch2"
-                                                    height="50vh"
+                                                    :height="Koubai_Teihai_TableHeight"
                                                     dense
                                                     >
-                                                    <template v-slot:item.CELL_TYPE="{item}">
-                                                        <!--  共用マスター -->
-                                                        <v-btn 
-                                                        v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
-                                                        x-small 
-                                                        :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
-                                                        @click="getEditDialogBtn1(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
-                                                        >...</v-btn>
-                                                        <!-- 注文コードマスター -->
-                                                        <v-btn
-                                                        v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
-                                                        x-small
-                                                        :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
-                                                        @click = "getEditDialogBtn2(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
-                                                        >...</v-btn>
-                                                        <!-- 担当コードマスター -->
-                                                        <v-btn
-                                                        v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
-                                                        x-small
-                                                        :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
-                                                        @click = "getEditDialogBtn3(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
-                                                        >...</v-btn>
-                                                        <!-- 単位読替マスタ -->
-                                                        <v-btn
-                                                        v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
-                                                        @click = "getEditDialogBtn4(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,2)"
-                                                        :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
-                                                        x-small
-                                                        >...</v-btn>
-                                                        <v-btn
-                                                        v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
-                                                        :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
-                                                        @click ="getEditDialogBtn6(EditInfo2_Value.indexOf(item),item.FIELD_NAME,2)"
-                                                        x-small
-                                                        >...</v-btn>
-                                                    </template>
-                                                    <template v-slot:item.FIELD_VALUE="{item}">
-                                                        <v-text-field
-                                                            :background-color = "item.Setsumei_Error?'red':''"
-                                                            :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
-                                                            :disabled = "Edit_Combobox_1_select.substr(0,1) != '-' &&item.AUTH_TYPE == '2'?false:true"
-                                                            :filled= "Edit_Combobox_1_select.substr(0,1) != '-' &&item.AUTH_TYPE == '2' ?false:true"
-                                                            :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
-                                                            :rules="item.RULES"
-                                                            v-model = EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_VALUE
-                                                            @keyup="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
-                                                            @change="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
-                                                            outlined
-                                                            dense>
-                                                        </v-text-field>
-                                                    </template>
-                                                    <template v-slot:item.FIELD_EXPLAIN="{ item }">
-                                                        <p
-                                                        :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
-                                                        {{EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_EXPLAIN}}
-                                                        </p>
-                                                </template>
+                                                        <template v-slot:item.CELL_TYPE="{item}">
+                                                            <!--  共用マスター -->
+                                                            <v-btn 
+                                                            v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                                            x-small 
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            @click="getEditDialogBtn1(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                            >...</v-btn>
+                                                            <!-- 注文コードマスター -->
+                                                            <v-btn
+                                                            v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                            x-small
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            @click = "getEditDialogBtn2(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                            >...</v-btn>
+                                                            <!-- 担当コードマスター -->
+                                                            <v-btn
+                                                            v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                            x-small
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            @click = "getEditDialogBtn3(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
+                                                            >...</v-btn>
+                                                            <!-- 単位読替マスタ -->
+                                                            <v-btn
+                                                            v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                            @click = "getEditDialogBtn4(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,2)"
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            x-small
+                                                            >...</v-btn>
+                                                            <v-btn
+                                                            v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            @click ="getEditDialogBtn6(EditInfo2_Value.indexOf(item),item.FIELD_NAME,2)"
+                                                            x-small
+                                                            >...</v-btn>
+                                                        </template>
+                                                        <template v-slot:item.FIELD_VALUE="{item}">
+                                                            <v-text-field
+                                                                :background-color = "item.Setsumei_Error?'red':''"
+                                                                :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                                :disabled = "Edit_Combobox_1_select.substr(0,1) != '-' &&item.AUTH_TYPE == '2'?false:true"
+                                                                :filled= "Edit_Combobox_1_select.substr(0,1) != '-' &&item.AUTH_TYPE == '2' ?false:true"
+                                                                :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                                :rules="item.RULES"
+                                                                v-model = EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_VALUE
+                                                                @keyup="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
+                                                                @change="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
+                                                                outlined
+                                                                dense>
+                                                            </v-text-field>
+                                                        </template>
+                                                        <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                            <p
+                                                            :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                            {{EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_EXPLAIN}}
+                                                            </p>
+                                                        </template>
                                                     </v-data-table>
                                                 </v-form>
                                         </v-card>
@@ -3805,26 +3887,136 @@
                                 </v-row>
                                 <!-- 可変購入単価 --><!-- 作業コード別注文仕様  -->
                                 <v-row class="mt-2" no-gutters>
-                                    <v-expansion-panels accordion>
-                                        <v-expansion-panel>
-                                            <v-expansion-panel-header>可変購入単価</v-expansion-panel-header>
+                                    <v-expansion-panels v-model="Koubai_Panel" multiple accordion>
+                                        <v-expansion-panel v-if="Koubai_CHMSB_ST">
+                                            <v-expansion-panel-header @click="Panel1_click_event()"><h3>可変購入単価</h3></v-expansion-panel-header>
                                             <v-expansion-panel-content>
                                                 <!-- 可変購入単価テーブル  -->
-                                                <v-data-table>
+                                                <v-data-table
+                                                    class="mt-n2"
+                                                    mobile-breakpoint='400'
+                                                    fixed-header
+                                                    dense
+                                                    :headers="this.Koubai_KanhenTanka_Header"
+                                                    :items="this.Koubai_KanhenTanka_Item"
+                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                    :height="Koubai_CHMSB_ST_TableHeight"
+                                                    hide-default-footer
+                                                    >
+                                                    <template v-slot:item.STD="{item}">
+                                                        <v-icon v-if="(Koubai_EditTable_Item[Koubai_TANKA_INDEX].FIELD_VALUE == item.VAR_CH_TANKA)">mdi-star</v-icon>
+                                                    </template>
                                                 </v-data-table>
                                             </v-expansion-panel-content>
                                         </v-expansion-panel>
                                         <v-expansion-panel>
-                                            <v-expansion-panel-header>作業コード別注文仕様</v-expansion-panel-header>
+                                            <v-expansion-panel-header  @click="Panel2_click_event()">
+                                                <h3>作業コード別注文仕様</h3>
+                                            </v-expansion-panel-header>
                                             <v-expansion-panel-content>
                                                 <!-- 作業コード別注文仕様テーブル  -->
-                                                <v-data-table>
-                                                </v-data-table>
+                                                <v-row class="d-flex" justify="end">
+                                                    <v-col class="mr-10" cols="3">
+                                                        <v-combobox 
+                                                        v-model ="Koubai_SGCODE_Select" 
+                                                        :items="Koubai_SGCODE_Item"
+                                                        @change="GET_PPPMPOSPEC"
+                                                        class="my-n11" dense outlined></v-combobox>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-form ref="PPPMPOSPEC_form">
+                                                    <v-data-table
+                                                    mobile-breakpoint='400'
+                                                    fixed-header
+                                                    :headers="this.Koubai_PPPMPOSPEC_Header"
+                                                    :items="this.Koubai_PPPMPOSPEC_Item"
+                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                    hide-default-footer
+                                                    :height="Koubai_PPPMPOSPEC_TableHeight"
+                                                    dense
+                                                    >
+                                                        <template v-slot:item.CELL_TYPE="{item}">
+                                                            <!--  共用マスター -->
+                                                            <v-btn 
+                                                            v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                                            x-small 
+                                                            @click="getEditDialogBtn1(Koubai_PPPMPOSPEC_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                            >...</v-btn>
+                                                            <!-- 注文コードマスター -->
+                                                            <v-btn
+                                                            v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                            x-small
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            @click = "getEditDialogBtn2(Koubai_PPPMPOSPEC_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                            >...</v-btn>
+                                                            <!-- 担当コードマスター -->
+                                                            <v-btn
+                                                            v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                            x-small
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            @click = "getEditDialogBtn3(Koubai_PPPMPOSPEC_Item.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
+                                                            >...</v-btn>
+                                                            <!-- 単位読替マスタ -->
+                                                            <v-btn
+                                                            v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                            @click = "getEditDialogBtn4(Koubai_PPPMPOSPEC_Item.indexOf(item),item.MS_ITEM_NO,2)"
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            x-small
+                                                            >...</v-btn>
+                                                            <v-btn
+                                                            v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                            @click ="getEditDialogBtn6(Koubai_PPPMPOSPEC_Item.indexOf(item),item.FIELD_NAME,2)"
+                                                            x-small
+                                                            >...</v-btn>
+                                                        </template>
+                                                        <!--
+                                                            @keyup="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
+                                                            @change="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
+                                                        -->
+                                                        <template v-slot:item.FIELD_VALUE="{item}">
+                                                            <v-text-field
+                                                                :background-color = "item.Setsumei_Error?'red':''"
+                                                                :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                                :disabled = "item.AUTH_TYPE == '2'?false:true"
+                                                                :filled= "item.AUTH_TYPE == '2' ?false:true"
+                                                                :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                                :rules="item.RULES"
+                                                                v-model = Koubai_PPPMPOSPEC_Item[Koubai_PPPMPOSPEC_Item.indexOf(item)].FIELD_VALUE
+                                                                outlined
+                                                                dense>
+                                                            </v-text-field>
+                                                        </template>
+                                                        <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                            <p
+                                                            :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                            {{Koubai_PPPMPOSPEC_Item[Koubai_PPPMPOSPEC_Item.indexOf(item)].FIELD_EXPLAIN}}
+                                                            </p>
+                                                        </template>
+                                                    </v-data-table>
+                                                </v-form>
                                             </v-expansion-panel-content>
                                         </v-expansion-panel>
                                     </v-expansion-panels>
                                 </v-row>
                             </v-col>
+                        </v-row>
+                    </v-container>
+                    <!-- 保存ボタン -->
+                    <v-container fluid>
+                        <v-row class="d-flex mb-1" justify="end">
+                            <v-btn class="mr-2" large>
+                                <v-icon left dark large >
+                                    mdi-content-save
+                                </v-icon>
+                                <h3 class="mr-4">保存</h3>
+                            </v-btn>
+                            <v-btn class="mr-2" large>
+                                <v-icon left dark large >
+                                    mdi-close-box-outline
+                                </v-icon> 
+                                <h3>閉じる</h3>
+                            </v-btn>
                         </v-row>
                     </v-container>
                 </div>
@@ -4023,6 +4215,73 @@ export default  {
     draggable,
   },
   data : () => ({
+    //購買画面
+    //購買優先テーブル
+    Koubai_Torisaki_Header:[
+        {text:"SG",value:"SG_CODE"},
+        {text:"優先",value:"PRIORITY"},
+        {text:"取引先コード",value:"VENDOR_CODE"},
+        {text:"取引先名",value:"VENDOR_NAME_J"},
+    ],
+    Koubai_Torisaki_Item:[],
+    //購買テーブル
+    Koubai_EditTable_Header:[
+        {text:"項目名",value:"FIELD_NAME_LOC1",width:"170px" },
+        {text:"値",value:"FIELD_VALUE",width:"170px"},
+        {text:"",value:"CELL_TYPE",width:"10px"},
+        {text:"説明",value:"FIELD_EXPLAIN",width:"200px"}
+    ],
+    Koubai_EditTable_Item:[],
+    Koubai_TANKA_INDEX:"",
+    Koubai_FC_FLAG_INDEX:"",
+    //テーブル高さ
+    Koubai_Torisaki_CardHeight :"20vh",
+    Koubai_Torisaki_TableHeight :"12vh",
+    koubai_TableData_CardHeight : "67vh",
+    koubai_TableData_TableHeight : "65vh",
+    Koubai_PM_CardHeight :"20vh",
+    Koubai_PM_TableHeight :"14vh",
+    Koubai_Teihai_CardHeight :"60vh",
+    Koubai_Teihai_TableHeight :"56vh",
+    Koubai_CHMSB_ST_TableHeight :"14vh",
+    Koubai_PPPMPOSPEC_TableHeight :"12vh",
+    Koubai_CHMSB_ST:false,
+    //アコーディオン
+    Koubai_Panel :[],
+    Koubai_Panel1_ST :false,
+    Koubai_Panel2_ST :false,
+    //作業コード別注文仕様DROPDOWN
+    Koubai_SGCODE_Select :"",
+    Koubai_SGCODE_Item :[],
+    //作業コード別注文仕様テーブル
+    Koubai_PPPMPOSPEC_Header:[
+        {text:"項目名",value:"FIELD_NAME_LOC1",width:"170px" },
+        {text:"値",value:"FIELD_VALUE",width:"170px"},
+        {text:"",value:"CELL_TYPE",width:"10px"},
+        {text:"説明",value:"FIELD_EXPLAIN",width:"200px"}
+    ],
+    Koubai_PPPMPOSPEC_Item:[],
+    //可変単価状態テーブル
+    Koubai_KanhenTanka_Header:[
+        {text:"標準",value:"STD",width:"50px"},
+        {text:"ロットサイズ",value:"LOT_SIZE",width:"100px"},
+        {text:"可変購入単価",value:"VAR_CH_TANKA",width:"100px"},
+        {text:"材料費",value:"CH_MATL_COST",width:"100px"},
+        {text:"有償支給品費",value:"CH_SUPPLY_COST",width:"100px"},
+        {text:"加工費",value:"CH_KAKOU_COST",width:"100px"},
+        {text:"二次加工費",value:"CH_NIJI_KAKOU_COST",width:"100px"},
+        {text:"梱包・運送費",value:"CH_TRNSPT_COST",width:"100px"},
+        {text:"管理費",value:"CH_MNG_COST",width:"100px"},
+        {text:"利益",value:"CH_GAIN_COST",width:"100px"},
+        {text:"その他コスト",value:"CH_ETC_COST",width:"100px"},
+        {text:"更新者",value:"UPD_WHO",width:"100px"},
+        {text:"更新日時",value:"UPD_WHEN",width:"100px"},
+        {text:"登録日",value:"ENT_DATE",width:"100px"},
+    ],
+    Koubai_KanhenTanka_Item:[],
+    Koubai_FC_DAY_OF_WEEK :["0 指定無","1:1月","2:2火","3:3水","4:4木","5:5金","6:6土","7:7日","8:8第一営(通常)"],
+    //購買画面
+
     //ユーザー設定画面
     DEPARTMENT_CODE:"",
     USER_CODE:"",
@@ -4044,15 +4303,9 @@ export default  {
     USER_PS_AUTH:"",
     USER_DAIKAE_AUTH:"",
     USER_HANBAI_AUTH:"",
-    /*
-    User_Setting_Header:[
-        {text : '所属部課コード',value:'DEPARTMENT_CODE'},
-        {text : '個人コード',value:'USER_CODE'},
-    ],
-    */
     User_Setting_Item:[],
-    //修正時置き換える
-    //mobile-breakpoint='400'
+     //ユーザー設定画面
+
     mobileBreakStatus:false,
     clipped: false,
     drawer: false,
@@ -4344,7 +4597,7 @@ export default  {
     {text:"項目名",value:"FIELD_NAME_LOC1",width:"170px" },
     {text:"値",value:"FIELD_VALUE",width:"170px"},
     {text:"",value:"CELL_TYPE",width:"10px"},
-    {text:"説明",value:"FIELD_EXPLAIN",width:"150px"}
+    {text:"説明",value:"FIELD_EXPLAIN",width:"200px"}
     ],
     EditInfo_Value:[],
     NRPMA_POST:{},
@@ -4361,7 +4614,7 @@ export default  {
     Edit_Combobox_2_select:"",
     Edit_Combobox_2_item:[],
     Edit_checkbox : false,
-    Test_userID : "A753",//"2085",
+    Test_userID : "X520",//"A753",//"2085",
     EditRevDate_Eable : false,
     TODAY:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
     Pic_Loc:"",
@@ -4377,6 +4630,8 @@ export default  {
 
     /*　フォームのルール */
     formRules:{
+        TrueRule: true,
+        FalseRule:false,
         required: value => !!value || "",//"数値を入力して下さい",
         IsNumber: value => value === null ?true : value.match(/[^a-z]/) ||value.match(/[^A-Z]/) ?true :"",// "数値を入力して下さい。",
         VoidOne: value => value === null ? true : value == "" || value == "1" || "",//"空白か1を入力下さい" ,
@@ -4395,11 +4650,11 @@ export default  {
         lengthThan100: value => value === null ? true :  value.length <= 100 || "",//"100文字以内で入力下さい。",
         lengthThan200: value => value === null ? true : value.length <= 200 || "",//"200文字以内で入力下さい。",
         lengthThan400: value => value === null ? true : value.length <= 400 ||"",// "400文字以内で入力下さい。",
-        InterOnlyThan2: value => value === null ? true : !value.match(/^\d{3,}/) ?true :"",// "2桁以下の数字のみ入力可能です",
-        InterOnlyThan3: value => value === null ? true : !value.match(/^\d{4,}/) ?true :"",// "3桁以下の数字のみ入力可能です",
-        InterOnlyThan5: value => value === null ? true : !value.match(/^\d{6,}/) ?true :"",// "5桁以下の数字のみ入力可能です",
-        InterOnlyThan6: value => value === null ? true : !value.match(/^\d{7,}/) ?true :"",// "6桁以下の数字のみ入力可能です",
-        InterOnlyThan7: value => value === null ? true : !value.match(/^\d{8,}/) ?true :"",// "7桁以下の数字のみ入力可能です",
+        InterOnlyThan2: value => value === null ? true : !value.match(/^\d{0,2}$/) ?true :"",// "2桁以下の数字のみ入力可能です",
+        InterOnlyThan3: value => value === null ? true : !value.match(/^\d{0,3}$/) ?true :"",// "3桁以下の数字のみ入力可能です",
+        InterOnlyThan5: value => value === null ? true : !value.match(/^\d{0,5}$/) ?true :"",// "5桁以下の数字のみ入力可能です",
+        InterOnlyThan6: value => value === null ? true : !value.match(/^\d{0,6}$/) ?true :"",// "6桁以下の数字のみ入力可能です",
+        InterOnlyThan7: value => value === null ? true : !value.match(/^\d{0,7}$/) ?true :"",// "7桁以下の数字のみ入力可能です",
         Range100: value => value == null ? true :value <= 100 && value >=0 ||"",//"０～１００で入力して下さい",
         FloatLess2 : value => value == null ? true : !value.match(/\.\d{3,}/)? true :"",//"少数部分2桁以内で入力して下さい",
         IntegetThan6 : value => value === null ? true :  value.indexOf(".") == -1 ? 
@@ -4628,6 +4883,184 @@ export default  {
     this.getFirstPage();
   },
   methods:{
+    //購買画面
+    Panel1_click_event(){
+        this.Koubai_Panel1_ST = !this.Koubai_Panel1_ST;
+        this.CheckKoubaiPanel_ST();
+    },
+    Panel2_click_event(){
+        this.Koubai_Panel2_ST = !this.Koubai_Panel2_ST;
+        this.CheckKoubaiPanel_ST();
+    },
+    CheckKoubaiPanel_ST(){
+        var CardHeight = this.Koubai_CHMSB_ST?54:60;
+        var TableHeight = this.Koubai_CHMSB_ST?50:56;
+        if(this.Koubai_Panel1_ST)
+        {
+            CardHeight -=16;
+            TableHeight -=16;
+        }
+        if(this.Koubai_Panel2_ST)
+        {
+            CardHeight -=16;
+            TableHeight -=16;
+        }
+        this.Koubai_Teihai_CardHeight  =  CardHeight.toString() + "vh";         
+        this.Koubai_Teihai_TableHeight =  TableHeight.toString() + "vh";
+    },
+    //購買情報の優先テーブルと手配情報を取得
+    GetCHMSA(PARTNO,PLANTNO){
+        //手配情報高さ初期化
+        this.Koubai_Teihai_CardHeight ="54vh";
+        this.Koubai_Teihai_TableHeight ="50vh";
+        //アコーディオン状態を初期化
+        this.Koubai_Panel =[];
+        this.Koubai_Panel1_ST = false;
+        this.Koubai_Panel2_ST = false;
+        //手配情報を取得
+        this.getEditTable2(PARTNO,PLANTNO);
+        //購買情報の優先リスト取得
+        this.GetCHMSA_PRIORITY(PARTNO,PLANTNO);
+        //可変単価テーブル取得
+        this.GET_CHMSB(PARTNO,PLANTNO);
+        //購買画面全テーブル長さ変更
+        this.CheckKoubaiPanel_ST();
+    },
+    //購買情報の優先リストを取得
+    GetCHMSA_PRIORITY(PARTNO,PLANTNO)
+    {
+        const url = "http://localhost:59272/api/KensakuBtnGet/CHMSA";
+        const params = {
+            PART_NO  : PARTNO, //部品コード
+            PLANT_NO : PLANTNO,//工場区分
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            //もし、検査情報があればテーブルに格納する
+            if(res.data.length != 0)
+            {
+                this.Koubai_Torisaki_Item = res.data;
+                //console.log("取引先リスト数: ",this.Koubai_Torisaki_Item.length);
+                this.GetCHMSA_TABLE(this.Koubai_Torisaki_Item[0]);
+            }
+            //ないであれば、テーブルを空にする
+            else
+            {
+                this.Koubai_Torisaki_Item = [];
+            }
+        }).catch(err =>{
+
+        })
+    },
+    //購買情報のテーブルを取得
+    GetCHMSA_TABLE(ITEM)
+    {
+        this.Koubai_TANKA_INDEX ="";
+        const url = "http://localhost:59272/api/KensakuBtnGet/CHMSA_TABLE";
+        const params = {
+            PART_NO : this.Header_Data[this.Header_Data.length-1].PART_NO,
+            PLANT_NO : this.Edit_Combobox_1_select.substring(0,1),
+            USER_ID : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+            SG_CODE : ITEM.SG_CODE,
+            VENDOR_CODE : ITEM.VENDOR_CODE,
+            PRIORITY :ITEM.PRIORITY,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.Koubai_EditTable_Item = res.data.map((item,index) => {
+                if(item.FIELD_NAME == "STD_CH_TANKA")
+                {
+                    //単価のインデックスを保存
+                    this.Koubai_TANKA_INDEX = index;
+                }
+                if(item.FIELD_NAME == "CH_FC_FLAG")
+                {
+                    //フォーキャスト判定のインデックスを保存
+                    this.Koubai_FC_FLAG_INDEX = index;
+                }
+                // 入力確認用プロパティ追加
+                item.RULES = [];
+                item.Setsumei_Error = false;
+                item.CHECK_LIST = [];
+                item.UPDATE_ST = false;
+                item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
+                return item;
+            });
+            //　説明と入力ルールの追加
+            this.Koubai_EditTable_Item.forEach(Row =>{
+                var index = this.Koubai_EditTable_Item.indexOf(Row);
+                this.GetKoubaiSetsumei(index,Row.FIELD_NAME);
+                //this.getKoubai_RULE(index,Row.FIELD_NAME);
+            })
+        }).catch(err =>{
+
+        })
+        
+    },
+    //作業コード別注文仕様DropDown取得
+    GET_SGCODE(SGKUBUN){
+        var ITEM =[];
+        const url = "http://localhost:59272/api/KensakuBtnGet/SG_CODE_DROPDOWN";
+        const params = {
+            SG_KUBUN : SGKUBUN,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            res.data.forEach(item =>{
+                ITEM.push(item.SG_CODE);
+            })
+            this.Koubai_SGCODE_Item = ITEM;
+        }).catch(err =>{
+
+        })
+    },
+    //作業コード別注文仕様テーブル取得
+    GET_PPPMPOSPEC(){
+        const url = "http://localhost:59272/api/KensakuBtnGet/PPPMPOSPEC";
+        const params = {
+            PART_NO : this.Header_Data[this.Header_Data.length-1].PART_NO,
+            WORK_CODE : this.Koubai_SGCODE_Select.substr(0,2),
+            USER_ID : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.Koubai_PPPMPOSPEC_Item = res.data.map(item => {
+                // 入力確認用プロパティ追加
+                item.RULES = [];
+                item.Setsumei_Error = false;
+                item.CHECK_LIST = [];
+                item.UPDATE_ST = false;
+                item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
+                return item;
+            });
+            //　説明と入力ルールの追加
+            /*
+            this.Koubai_PPPMPOSPEC_Item.forEach(Row =>{
+                var index = this.Koubai_PPPMPOSPEC_Item.indexOf(Row);
+                this.getSTD_Setsumei(index,Row.FIELD_NAME);
+                this.getSTD_RULE(index,Row.FIELD_NAME);
+            })
+            */ 
+        }).catch(err =>{
+
+        })
+    },
+    //可変単価状態テーブル取得
+    GET_CHMSB(PARTNO,PLANTNO){
+        this.Koubai_CHMSB_ST=false;
+        const url = "http://localhost:59272/api/KensakuBtnGet/CHMSB";
+        const params = {
+            PART_NO : PARTNO,
+            PLANT_NO : PLANTNO,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            if(res.data.length != 0)
+            {
+                this.Koubai_CHMSB_ST=true;
+                this.Koubai_KanhenTanka_Item = res.data;
+                this.CheckKoubaiPanel_ST();
+            }
+        }).catch(err =>{
+
+        })
+    },
+    //購買画面
     GetUserAUTH_ST(){
         const url = "http://localhost:59272/api/KensakuBtnGet/AUTH_ST";
         const params = {
@@ -4730,6 +5163,7 @@ export default  {
         }
         else if(this.tab_select == '2')
         {
+            this.LoadKoubaiTable();
             //　購買テーブルを取得
         }
         else if(this.tab_select == '3')
@@ -4823,6 +5257,7 @@ export default  {
             const cookie = new UniversalCookie();
             cookie.set('First_Page',FP_value,{
                  path:"/",
+                 maxAge: 12 * 4 * 60 * 60 * 24 * 7,
                 });
             const url_FT = "http://localhost:59272/api/KensakuBtnPost/SYDBGRID_CKVALUE";
             const url = "http://localhost:59272/api/KensakuBtnPost/SYDBGRID";
@@ -5173,6 +5608,7 @@ export default  {
             })
         }
     },
+    //  タブメソッド
     LoadTeihaiTable(){
         if(this.Header_Data[this.Header_Data.length-1].PART_NO != "")
         {
@@ -5189,6 +5625,18 @@ export default  {
             //this.getKouteiJunjo(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
         }
     },
+    LoadKoubaiTable(){
+        if(this.Header_Data[this.Header_Data.length-1].PART_NO != "")
+        {
+            //console.log("購買画面ロード");
+            this.getEditTable(this.Header_Data[0].PART_NO,this.Header_Data[0].PART_REV_NO);
+            this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
+            this.getSokoType(false);
+            //作業コード別注文仕様DropDown取得
+            this.GET_SGCODE('G');
+        }
+    },
+    //  タブメソッド
     check_date(value)
     {
         if(typeof value == "string"){
@@ -5757,11 +6205,11 @@ export default  {
 
         })
     },
-    getEditTable(Part_NO,REV_NO){
+    getEditTable(Part_NO,Rev_NO){
         const url = "http://localhost:59272/api/KensakuBtnGet";
         const params = {
             Edit_PART_NO : Part_NO,
-            Edit_REV_NO : REV_NO,
+            Edit_REV_NO : Rev_NO,
             USER_ID : this.Test_userID,
         }
         this.$axios.get(url,{params}).then(res =>{
@@ -6074,7 +6522,55 @@ export default  {
                     }
             })    
         }
+    },
+    CHMSACheck_CellType(index){
+        if(this.Koubai_EditTable_Item[index].CHECK_LIST == ""){
+            /*参照先確認（MS_TABLE）*/
+            switch(this.Koubai_EditTable_Item[index].MS_TABLE){
+                /*共用マスター(CMMSB)*/ 
+                case '1':
+                    //console.log("共用マスター(CMMSB)");
+                    this.getCM_CODE("CHMSA",index,this.Koubai_EditTable_Item[index].MS_ITEM_NO,true)
+                    break;
+                /*注文コードマスタ(CHCDMS) */
+                case '2':
+                    //console.log("注文コードマスタ(CHCDMS)");
+                    break;
+                /*担当コードマスタ(CMTANTOMS) */
+                case'3':
+                    //console.log("単位読替マスタ(NRTANIMS)");
+                    break;
+                /*単位読替マスタ(NRTANIMS) */
+                case'4':
+                    break;
+                /*工程コードマスタ(KTSTDTIME) */
+                case'5':
+                    break;
+            }
+        }
+        else
+        {
+            this.Koubai_EditTable_Item[index].CHECK_LIST.find(item =>{
         
+                /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                if(this.Koubai_EditTable_Item[index].FIELD_VALUE !== null ||this.Koubai_EditTable_Item[index].FIELD_VALUE == "")
+                    {
+                    /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                        if(this.Koubai_EditTable_Item[index].FIELD_VALUE == item.CM_CODE || this.Koubai_EditTable_Item[index].FIELD_VALUE ==""){
+                            this.Koubai_EditTable_Item[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                            this.Koubai_EditTable_Item[index].Setsumei_Error =false;
+                            return true;
+                        }
+                        /*入力値と一致しない場合、テーブルにエラーを表示する */
+                        else 
+                        {
+                            this.Koubai_EditTable_Item[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                            this.Koubai_EditTable_Item[index].Setsumei_Error =true;
+                            return false;
+                        }
+                    }
+            })    
+        }
     },
     PPPMMS_UPDATE_CHECK(index){
         this.EditInfo_Value[index].UPDATE_ST = this.EditInfo_Value[index].FIELD_VALUE != this.EditInfo_Value[index].BEFORE_UPDATE_VALUE 
@@ -6090,6 +6586,11 @@ export default  {
         this.STD_EditInfo_Item[index].UPDATE_ST = this.STD_EditInfo_Item[index].FIELD_VALUE != this.STD_EditInfo_Item[index].BEFORE_UPDATE_VALUE 
             && !((this.STD_EditInfo_Item[index].FIELD_VALUE == "") && (this.STD_EditInfo_Item[index].BEFORE_UPDATE_VALUE === null) )? true: this.STD_EditInfo_Item[index].UPDATE_ST ;
         this.STD_EditInfo_Item[index].BEFORE_UPDATE_VALUE =this.STD_EditInfo_Item[index].FIELD_VALUE
+    },
+    CHMSA_UPDATE_CHECH(index){
+        this.Koubai_EditTable_Item[index].UPDATE_ST = this.Koubai_EditTable_Item[index].FIELD_VALUE != this.Koubai_EditTable_Item[index].BEFORE_UPDATE_VALUE 
+            && !((this.Koubai_EditTable_Item[index].FIELD_VALUE == "") && (this.Koubai_EditTable_Item[index].BEFORE_UPDATE_VALUE === null) )? true: this.Koubai_EditTable_Item[index].UPDATE_ST ;
+        this.Koubai_EditTable_Item[index].BEFORE_UPDATE_VALUE =this.Koubai_EditTable_Item[index].FIELD_VALUE
     },
     getEditTableSetsumei(index,item){
         var Setsumei ="";
@@ -6884,7 +7385,6 @@ export default  {
         var check_change=false;
         var Setsumei ="";
         var Setsumei_Error = false;
-        this.PPPMORDER_buttonIndex = index;
         if(this.EditInfo2_Value[index].FIELD_VALUE === null)
         {
             if ( item == "SCRAP_PCNT")             
@@ -7096,8 +7596,375 @@ export default  {
         }
         this.PPPMORDER_UPDATE_CHECK(index);
     },
-    GetSTDTableSetsumeu(index,item){
-        
+    GetKoubaiSetsumei(index,item){
+        //  check_change 特定の入力フォーマットの変化を確認するプロパティ
+        //  True  : 入力確認
+        //　False : 入力確認未確認
+        var check_change=false;
+        var Setsumei ="";
+        var Setsumei_Error = false;
+        //console.log("Index :" +index + ", Item :"+ item);
+        //  入力確認条件が空だった場合こちらで確認
+        if(this.Koubai_EditTable_Item[index].FIELD_VALUE === null)
+        {
+            //最小発注量
+            if(item == "CH_MIN_LOT_SIZE")
+            {
+                Setsumei = "この項目は必須入力の項目です。";
+                Setsumei_Error = true;
+                check_change = true;
+            }
+            //購入リードタイム
+            else if(item == "CH_LEADTIME")
+            {
+                Setsumei = "この項目は必須入力の項目です。";
+                Setsumei_Error = true;
+                check_change = true;
+            }
+            //自動発注区分
+            else if(item == "AUTO_ORD_FLG")
+            {
+                Setsumei = "この項目は必須入力の項目です。";
+                Setsumei_Error = true;
+                check_change = true;
+            }
+            //フォーキャスト判定
+            else if(item == "CH_FC_FLAG")
+            {
+                Setsumei = "この項目は必須入力の項目です。";
+                Setsumei_Error = true;
+                check_change = true;
+            }
+            //引取り猶予期間
+            else if(item == "FC_PICKUP_PERIOD")
+            {
+                Setsumei = "0-99(ヵ月) or 空値(初期値)を指定。※空値は引取り責任なし。0(ヵ月)は当月引取要、4(ヶ月)は4ヵ月後までに引取要。";
+                Setsumei_Error = false;
+                check_change = true;
+            }
+            //フォーキャスト判定'1'に設定された場合
+            else if(this.Koubai_EditTable_Item[this.Koubai_FC_FLAG_INDEX].FIELD_VALUE == "1")
+            {
+                //フォーキャスト期間
+                if(item == "FC_PERIOD")
+                {
+                    Setsumei = "ﾌｫｰｷｬｽﾄ判定が'1'のとき、必ず入力してください。";
+                    Setsumei_Error = true;
+                    check_change = true;
+                }
+                //フォーキュスト固定期間
+                else if(item == "FC_FIX_PERIOD")
+                {
+                    Setsumei = "ﾌｫｰｷｬｽﾄ判定が'1'のとき、必ず入力してください。";
+                    Setsumei_Error = true;
+                    check_change = true;
+                }
+                //フォーキャスト作成曜日
+                else if(item == "FC_DAY_OF_WEEK")
+                {
+                    Setsumei = "ﾌｫｰｷｬｽﾄ判定が'1'のとき、必ず入力してください。";
+                    Setsumei_Error = true;
+                    check_change = true;
+                }
+                //複数社分配率
+                else if(item == "VENDOR_DISTN")
+                {
+                    Setsumei = "ﾌｫｰｷｬｽﾄ判定が'1'のとき、必ず入力してください。";
+                    Setsumei_Error = true;
+                    check_change = true;
+                }
+                //フォーキャスト開始月
+                else if(item == "FC_START_YM")
+                {
+                    Setsumei = "ﾌｫｰｷｬｽﾄ判定が'1'のとき、必ず入力してください。";
+                    Setsumei_Error = true;
+                    check_change = true;
+                }
+                //フォーキャスト終了月
+                else if(item == "FC_STOP_YM")
+                {
+                    Setsumei = "ﾌｫｰｷｬｽﾄ判定が'1'のとき、必ず入力してください。";
+                    Setsumei_Error = true;
+                    check_change = true;
+                }
+            }
+        }
+        //  通常入力確認条件だった場合こちらで確認
+        else
+        {
+            //業者部品コード
+            if(item == "VENDOR_PART_NO")
+            {
+                Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.length > 60 ?
+                        "60桁以内で入力して下さい。":"";
+                Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.length > 60 ?
+                        true:false;
+                check_change = true;
+            }
+            //最小発注量
+            else if(item == "CH_MIN_LOT_SIZE")
+            {
+                Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{1,6}$/)?
+                        "":"数値を6桁以内で入力して下さい。";
+                Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{1,6}$/)?
+                        false:true;
+                check_change = true;
+            }
+            //購入リードタイム
+            else if(item == "CH_LEADTIME")
+            {
+                Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{1,3}$/)?
+                        "":"数値を3桁以内で入力して下さい。";
+                Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{1,3}$/)?
+                        false:true;
+                check_change = true;
+            }
+            //自動発注区分
+            else if(item == "AUTO_ORD_FLG")
+            {
+                Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[0-1]$/)?
+                            "0=対象外 1=対象":"0,1を入力下さい。";
+                Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[0-1]$/)?
+                            false:true;
+                check_change = true;
+            }
+            //フォーキャスト判定
+            else if(item == "CH_FC_FLAG")
+            {
+                Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[0-1]$/)?
+                            "0=対象外 1=対象":"0,1を入力下さい。";
+                Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[0-1]$/)?
+                            false:true;
+                check_change = true;
+            }
+            //引取り猶予期間
+            else if(item == "FC_PICKUP_PERIOD")
+            {
+                Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,2}$/)?
+                            "0-99(ヵ月) or 空値(初期値)を指定。※空値は引取り責任なし。0(ヵ月)は当月引取要、4(ヶ月)は4ヵ月後までに引取要。":
+                            "数値2桁(0 ～ 99)を指定してください。（空値も可）。";
+                Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,2}$/)?
+                                false:true;
+                check_change = true;
+            }
+            //フォーキャスト判定'1'に設定された場合
+            else if(this.Koubai_EditTable_Item[this.Koubai_FC_FLAG_INDEX].FIELD_VALUE == "1")
+            {
+                //フォーキャスト期間
+                if(item == "FC_PERIOD")
+                {
+                    Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[1-9]$/) || 
+                               this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[1][0-2]$/)?
+                                "1~12(ヶ月)。※業者への提示期間。フォーキャスト判定が0でない場合は必須。":
+                                "1 ～ 12までの数値を指定してください。";
+                    Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[1-9]$/) || 
+                               this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[1][0-2]$/)?
+                                    false:true;
+                    check_change = true;
+                }
+                //フォーキュスト固定期間
+                else if(item == "FC_FIX_PERIOD")
+                {
+                    Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d$/) || 
+                               this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[1][0-2]$/)?
+                                "0~12(ヶ月)。※業者への提示期間。フォーキャスト判定が0でない場合は必須。":
+                                "0 ～ 12までの数値を指定してください。";
+                    Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d$/) || 
+                                    this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[1][0-2]$/)?
+                                    false:true;
+                    check_change = true;
+                }
+                //フォーキャスト作成曜日
+                else if(item == "FC_DAY_OF_WEEK")
+                {
+                    Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[0-8]$/)?
+                               this.Koubai_FC_DAY_OF_WEEK[this.Koubai_EditTable_Item[index].FIELD_VALUE]:
+                                "0 ～ 8までの数値を指定してください。";
+                    Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[0-8]$/)?
+                                    false:true;
+                    check_change = true;
+                }
+                //複数社分配率
+                else if(item == "VENDOR_DISTN")
+                {
+                    Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[1][0][0]$/) ||
+                                this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,2}$/)?
+                               "":"数値3桁(0 ～ 100)を指定してください";
+                    Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[1][0][0]$/) ||
+                                this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,2}$/)?
+                                    false:true;
+                    check_change = true;
+                }
+                //複数社分配率
+                else if(item == "FC_START_YM")
+                {
+                    Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{6}$/)?
+                               "":"年月(YYYYMM)で入力下さい";
+                    Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{6}$/)?
+                                    false:true;
+                    check_change = true;
+                }
+                //フォーキャスト終了月
+                else if(item == "FC_STOP_YM")
+                {
+                    Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{6}$/)?
+                               "":"年月(YYYYMM)で入力下さい";
+                    Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{6}$/)?
+                                    false:true;
+                    check_change = true;
+                }
+            }
+            //フォーキャスト判定'0'に設定された場合
+            else if(this.Koubai_EditTable_Item[this.Koubai_FC_FLAG_INDEX].FIELD_VALUE == "0")
+            {
+                //フォーキャスト期間
+                if(item == "FC_PERIOD")
+                {
+                    Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[0-1]?\d$/)?
+                                "1~12(ヶ月)。※業者への提示期間。フォーキャスト判定が0でない場合は必須。":
+                                this.Koubai_EditTable_Item[index].FIELD_VALUE ==""?"":
+                                "1 ～ 12までの数値を指定してください。";
+                    Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[0-1]?\d$/)||
+                                    this.Koubai_EditTable_Item[index].FIELD_VALUE ==""?
+                                    false:true;
+                    check_change = true;
+                }
+                //フォーキュスト固定期間
+                else if(item == "FC_FIX_PERIOD")
+                {
+                    Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[0-1]?[1-9]$/)?
+                                "1~12(ヶ月)。※業者への提示期間。フォーキャスト判定が0でない場合は必須。":
+                                this.Koubai_EditTable_Item[index].FIELD_VALUE ==""?"":
+                                "1 ～ 12までの数値を指定してください。";
+                    Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[0-1]?[1-9]$/)||
+                                    this.Koubai_EditTable_Item[index].FIELD_VALUE ==""?
+                                    false:true;
+                    check_change = true;
+                }
+                //フォーキャスト作成曜日
+                else if(item == "FC_DAY_OF_WEEK")
+                {
+                    Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[0-8]$/)?
+                               this.Koubai_FC_DAY_OF_WEEK[this.Koubai_EditTable_Item[index].FIELD_VALUE]:
+                               this.Koubai_EditTable_Item[index].FIELD_VALUE ==""?"":
+                                "0 ～ 8までの数値を指定してください。";
+                    Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[0-8]$/)||
+                                    this.Koubai_EditTable_Item[index].FIELD_VALUE ==""?
+                                    false:true;
+                    check_change = true;
+                }
+                //複数社分配率
+                else if(item == "VENDOR_DISTN")
+                {
+                    Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[1][0][0]$/) ||
+                                this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,2}$/) ||
+                               this.Koubai_EditTable_Item[index].FIELD_VALUE ==""?
+                               "":"数値3桁(0 ～ 100)を指定してください";
+                    Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^[1][0][0]$/) ||
+                                this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,2}$/)||
+                                    this.Koubai_EditTable_Item[index].FIELD_VALUE ==""?
+                                    false:true;
+                    check_change = true;
+                }
+                //複数社分配率
+                else if(item == "FC_START_YM")
+                {
+                    Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{6}$/)||
+                               this.Koubai_EditTable_Item[index].FIELD_VALUE ==""?
+                               "":"年月(YYYYMM)で入力下さい";
+                    Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{6}$/)||
+                                    this.Koubai_EditTable_Item[index].FIELD_VALUE ==""?
+                                    false:true;
+                    check_change = true;
+                }
+                //フォーキャスト終了月
+                else if(item == "FC_STOP_YM")
+                {
+                    Setsumei = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{6}$/)||
+                                this.Koubai_EditTable_Item[index].FIELD_VALUE ==""?
+                               "":"年月(YYYYMM)で入力下さい";
+                    Setsumei_Error = this.Koubai_EditTable_Item[index].FIELD_VALUE.match(/^\d{6}$/)||
+                                    this.Koubai_EditTable_Item[index].FIELD_VALUE ==""?
+                                    false:true;
+                    check_change = true;
+                }
+            }
+        }
+        //  check_change　が　Trueであれば　「Setsumei」と「Setsumei_Error」を購買テーブルに保存する
+        if(check_change){
+            this.Koubai_EditTable_Item[index].FIELD_EXPLAIN = Setsumei; 
+            this.Koubai_EditTable_Item[index].Setsumei_Error =Setsumei_Error;
+            this.Koubai_EditTable_Item[index].RULES = [];
+            if(!Setsumei_Error)
+            {
+                this.Koubai_EditTable_Item[index].RULES.push(this.formRules.TrueRule);
+            }
+            else
+            {
+                this.Koubai_EditTable_Item[index].RULES.push(this.formRules.FalseRule);
+            }
+        }
+        //  データベースから説明部を取得必要ある項目はこちらで確認
+        if(this.Koubai_EditTable_Item[index].MS_TABLE !== null && this.Koubai_EditTable_Item[index].MS_TABLE.match(/^[1-5]$/) && this.Koubai_EditTable_Item[index].AUTH_TYPE == 2)
+        {
+            //this.CHMSACheck_CellType(index);
+        }
+        //　更新項目をリストに追加
+        this.CHMSA_UPDATE_CHECH(index);
+    },
+    GetKoubaiRule(index,item){
+        if(item=="VENDOR_PART_NO")
+        {
+            this.Koubai_EditTable_Item[index].RULES.push(this.formRules.lengthThan60);
+        }
+        if(item=="CH_MIN_LOT_SIZE")
+        {
+            this.Koubai_EditTable_Item[index].RULES.push(this.formRules.required);
+            this.Koubai_EditTable_Item[index].RULES.push(this.formRules.InterOnlyThan6);
+        }
+        if(item=="CH_LEADTIME")
+        {
+            this.Koubai_EditTable_Item[index].RULES.push(this.formRules.required);
+            this.Koubai_EditTable_Item[index].RULES.push(this.formRules.InterOnlyThan3);
+        }
+        if(item=="AUTO_ORD_FLG")
+        {
+            this.Koubai_EditTable_Item[index].RULES.push(this.formRules.required);
+            this.Koubai_EditTable_Item[index].RULES.push(this.formRules.ZeroOne);
+        }
+        if(item=="CH_FC_FLAG")
+        {
+            this.Koubai_EditTable_Item[index].RULES.push(this.formRules.required);
+            this.Koubai_EditTable_Item[index].RULES.push(this.formRules.ZeroOne);
+        }
+        if(item=="FC_PERIOD")
+        {
+
+        }
+        if(item=="FC_FIX_PERIOD")
+        {
+
+        }
+        if(item=="FC_DAY_OF_WEEK")
+        {
+
+        }
+        if(item=="FC_PICKUP_PERIOD")
+        {
+
+        }
+        if(item=="VENDOR_DISTN")
+        {
+
+        }
+        if(item=="FC_START_YM")
+        {
+
+        }
+        if(item=="FC_STOP_YM")
+        {
+
+        }
     },
     OpenCloseNav(){
         
@@ -7262,6 +8129,29 @@ export default  {
                         {
                             this.EditInfo2_Value[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
                             this.EditInfo2_Value[index].Setsumei_Error =true;
+                            return false;
+                        }
+                    }
+                })    
+            }
+            else if (table_name == "CHMSA")
+            {
+                this.Koubai_EditTable_Item[index].CHECK_LIST = ck_list;
+                /*入力確認開始 */
+                this.Koubai_EditTable_Item[index].CHECK_LIST.find(item =>{
+                    if(this.Koubai_EditTable_Item[index].FIELD_VALUE !== null ||this.Koubai_EditTable_Item[index].FIELD_VALUE == "")
+                    {
+                    /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                        if(this.Koubai_EditTable_Item[index].FIELD_VALUE == item.CM_CODE){
+                            this.Koubai_EditTable_Item[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                            this.Koubai_EditTable_Item[index].Setsumei_Error =false;
+                            return true;
+                        }
+                        /*入力値と一致しない場合、テーブルにエラーを表示する */
+                        else 
+                        {
+                            this.Koubai_EditTable_Item[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                            this.Koubai_EditTable_Item[index].Setsumei_Error =true;
                             return false;
                         }
                     }
