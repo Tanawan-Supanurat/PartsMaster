@@ -3619,77 +3619,79 @@
                                         <v-card :height="koubai_TableData_CardHeight">
                                             <v-row class="d-flex justify-center">
                                                 <v-col class = "mx-2">
-                                                    <v-data-table
-                                                    mobile-breakpoint='400'
-                                                    fixed-header
-                                                    :headers="this.Koubai_EditTable_Header"
-                                                    :items="this.Koubai_EditTable_Item"
-                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                                    hide-default-footer
-                                                    :height="koubai_TableData_TableHeight"
-                                                    dense
-                                                    >
-                                                        <!-- 値 -->
-                                                        <template v-slot:item.CELL_TYPE="{item}">
-                                                            <!--  共用マスター -->
-                                                            <v-btn 
-                                                            v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
-                                                            x-small 
-                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
-                                                            @click="getEditDialogBtn1(Koubai_EditTable_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
-                                                            >...</v-btn>
-                                                            <!-- 注文コードマスター -->
-                                                            <v-btn
-                                                            v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
-                                                            x-small
-                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
-                                                            @click = "getEditDialogBtn2(Koubai_EditTable_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
-                                                            >...</v-btn>
-                                                            <!-- 担当コードマスター -->
-                                                            <v-btn
-                                                            v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
-                                                            x-small
-                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
-                                                            @click = "getEditDialogBtn3(Koubai_EditTable_Item.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
-                                                            >...</v-btn>
-                                                            <!-- 単位読替マスタ -->
-                                                            <v-btn
-                                                            v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
-                                                            @click = "getEditDialogBtn4(Koubai_EditTable_Item.indexOf(item),item.MS_ITEM_NO,2)"
-                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
-                                                            x-small
-                                                            >...</v-btn>
-                                                            <v-btn
-                                                            v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
-                                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
-                                                            @click ="getEditDialogBtn6(Koubai_EditTable_Item.indexOf(item),item.FIELD_NAME,2)"
-                                                            x-small
-                                                            >...</v-btn>
-                                                        </template>
-                                                        <!-- ボタン -->
-                                                        <template v-slot:item.FIELD_VALUE="{item}">
-                                                            <v-text-field
-                                                                :background-color = "item.Setsumei_Error?'red':''"
-                                                                :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
-                                                                :disabled = "item.AUTH_TYPE == '2'?false:true"
-                                                                :filled= "item.AUTH_TYPE == '2' ?false:true"
-                                                                :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
-                                                                :rules="item.RULES"
-                                                                @keyup="GetKoubaiSetsumei(Koubai_EditTable_Item.indexOf(item),item.FIELD_NAME)"
-                                                                @change="GetKoubaiSetsumei(Koubai_EditTable_Item.indexOf(item),item.FIELD_NAME)" 
-                                                                v-model = Koubai_EditTable_Item[Koubai_EditTable_Item.indexOf(item)].FIELD_VALUE
-                                                                outlined
-                                                                dense>
-                                                            </v-text-field>
-                                                        </template>
-                                                        <!-- 説明 -->
-                                                        <template v-slot:item.FIELD_EXPLAIN="{ item }">
-                                                            <p
-                                                            :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
-                                                            {{Koubai_EditTable_Item[Koubai_EditTable_Item.indexOf(item)].FIELD_EXPLAIN}}
-                                                            </p>
-                                                        </template>
-                                                    </v-data-table>
+                                                    <v-form ref = "CHMSA_FORM">
+                                                        <v-data-table
+                                                        mobile-breakpoint='400'
+                                                        fixed-header
+                                                        :headers="this.Koubai_EditTable_Header"
+                                                        :items="this.Koubai_EditTable_Item"
+                                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                        hide-default-footer
+                                                        :height="koubai_TableData_TableHeight"
+                                                        dense
+                                                        >
+                                                            <!-- 値 -->
+                                                            <template v-slot:item.CELL_TYPE="{item}">
+                                                                <!--  共用マスター -->
+                                                                <v-btn 
+                                                                v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                                                x-small 
+                                                                :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                                @click="getEditDialogBtn1(Koubai_EditTable_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                                >...</v-btn>
+                                                                <!-- 注文コードマスター -->
+                                                                <v-btn
+                                                                v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                                x-small
+                                                                :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                                @click = "getEditDialogBtn2(Koubai_EditTable_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                                >...</v-btn>
+                                                                <!-- 担当コードマスター -->
+                                                                <v-btn
+                                                                v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                                x-small
+                                                                :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                                @click = "getEditDialogBtn3(Koubai_EditTable_Item.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
+                                                                >...</v-btn>
+                                                                <!-- 単位読替マスタ -->
+                                                                <v-btn
+                                                                v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                                @click = "getEditDialogBtn4(Koubai_EditTable_Item.indexOf(item),item.MS_ITEM_NO,2)"
+                                                                :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                                x-small
+                                                                >...</v-btn>
+                                                                <v-btn
+                                                                v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                                :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                                @click ="getEditDialogBtn6(Koubai_EditTable_Item.indexOf(item),item.FIELD_NAME,2)"
+                                                                x-small
+                                                                >...</v-btn>
+                                                            </template>
+                                                            <!-- ボタン -->
+                                                            <template v-slot:item.FIELD_VALUE="{item}">
+                                                                <v-text-field
+                                                                    :background-color = "item.Setsumei_Error?'red':''"
+                                                                    :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                                    :disabled = "item.AUTH_TYPE == '2'?false:true"
+                                                                    :filled= "item.AUTH_TYPE == '2' ?false:true"
+                                                                    :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                                    :rules="item.RULES"
+                                                                    @keyup="GetKoubaiSetsumei(Koubai_EditTable_Item.indexOf(item),item.FIELD_NAME)"
+                                                                    @change="GetKoubaiSetsumei(Koubai_EditTable_Item.indexOf(item),item.FIELD_NAME)" 
+                                                                    v-model = Koubai_EditTable_Item[Koubai_EditTable_Item.indexOf(item)].FIELD_VALUE
+                                                                    outlined
+                                                                    dense>
+                                                                </v-text-field>
+                                                            </template>
+                                                            <!-- 説明 -->
+                                                            <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                                <p
+                                                                :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                                {{Koubai_EditTable_Item[Koubai_EditTable_Item.indexOf(item)].FIELD_EXPLAIN}}
+                                                                </p>
+                                                            </template>
+                                                        </v-data-table>
+                                                    </v-form>
                                                 </v-col>
                                             </v-row>
                                         </v-card>
@@ -3891,7 +3893,7 @@
                                         <v-expansion-panel v-if="Koubai_CHMSB_ST">
                                             <v-expansion-panel-header @click="Panel1_click_event()"><h3>可変購入単価</h3></v-expansion-panel-header>
                                             <v-expansion-panel-content>
-                                                <!-- 可変購入単価テーブル  -->
+                                                <!-- 可変購入単価テーブル  変更不可-->
                                                 <v-data-table
                                                     class="mt-n2"
                                                     mobile-breakpoint='400'
@@ -4224,6 +4226,9 @@ export default  {
         {text:"取引先名",value:"VENDOR_NAME_J"},
     ],
     Koubai_Torisaki_Item:[],
+    Koubai_SG_CODE:"",
+    Koubai_PRIORITY:"",
+    Koubai_VENDOR_CODE:"",
     //購買テーブル
     Koubai_EditTable_Header:[
         {text:"項目名",value:"FIELD_NAME_LOC1",width:"170px" },
@@ -4955,6 +4960,9 @@ export default  {
     GetCHMSA_TABLE(ITEM)
     {
         this.Koubai_TANKA_INDEX ="";
+        this.Koubai_SG_CODE = ITEM.SG_CODE;
+        this.Koubai_PRIORITY = ITEM.PRIORITY;
+        this.Koubai_VENDOR_CODE = ITEM.VENDOR_CODE;
         const url = "http://localhost:59272/api/KensakuBtnGet/CHMSA_TABLE";
         const params = {
             PART_NO : this.Header_Data[this.Header_Data.length-1].PART_NO,
@@ -7912,6 +7920,7 @@ export default  {
         //　更新項目をリストに追加
         this.CHMSA_UPDATE_CHECH(index);
     },
+    /*
     GetKoubaiRule(index,item){
         if(item=="VENDOR_PART_NO")
         {
@@ -7966,6 +7975,7 @@ export default  {
 
         }
     },
+    */
     OpenCloseNav(){
         
         /*Xl～LGの間*/
@@ -8678,7 +8688,7 @@ export default  {
             alert("入力が間違います。")
         }
     },
-    //　seisakuPostReq()　製作画面内のデータをデータペースに更新するメソッドメソッド
+    //　seisakuPostReq()　製作画面内のデータをデータペースに更新するメソッド
     seisakuPostReq()
     {
         var check =false; 
@@ -8688,6 +8698,7 @@ export default  {
         //  入力の確認、もし入力が正しくない場合警告画面を表示する
         if(this.$refs.PPPMORDER_form.validate() && this.$refs.KTSTDTIME_FORM.validate() && !check)
         {
+            
             if(this.Edit_Combobox_1_select.substr(0,1) != '-')
             {
                 // POST_PPPMORDER() PPPMORDERデータベースに更新するメソッド
@@ -8700,8 +8711,40 @@ export default  {
         {
             alert("入力が間違います。")
         }
-    }
-    ,
+    },
+    //  kobaiPostReq()  購買が画面内のデータをデータベースに更新するメソッド
+    kobaiPostReq(){
+        //　入力フォーマットの入力正しいを確認
+        var Update_check = false;
+        //　購買情報入力確認
+        this.Koubai_EditTable_Item.forEach(value =>{
+            Update_check =value.Setsumei_Error || Update_check;
+        })
+        //　PM基本情報入力確認
+        this.EditInfo_Value.forEach(value =>{
+            Update_check = value.Setsumei_Error || Update_check;
+        })
+        //  手配情報入力確認
+        this.EditInfo2_Value.forEach(value =>{
+            Update_check = value.Setsumei_Error || Update_check;
+        })
+        //  もし、全項目の入力が正しいであれば、データベースにデータ更新開始します。
+        if(this.$ref.CHMSA_FORM.validate() && this.$refs.PPPMORDER_form.validate() && this.$refs.PPPMMS_FORM.validate() && !Update_check)
+        {
+            //　POST_PPPMMMS()　PM基本情報をデータに更新
+            //　this.POST_PPPMMMS();
+            if(this.Edit_Combobox_1_select.substr(0,1) != '-')
+            {
+                // POST_PPPMORDER() PPPMORDERデータベースに更新するメソッド
+                //this.POST_PPPMORDER();  
+            }
+        }
+        //　入力が間違っている場合警告画面を表示
+        else
+        {
+
+        }
+    },
     POST_PPPMMMS(){
         const url = "http://localhost:59272/api/KensakuBtnPost/PPPMMS";
         this.NRPMA_POST={};
@@ -8857,6 +8900,43 @@ export default  {
             req["PLANT_NO"] = this.Edit_Combobox_1_select.substr(0,1);
             req["SEQ_NO"] =SEQ_NO ;
             this.STD_EditInfo_Item=this.STD_EditInfo_Item.map(item =>{
+                item.UPDATE_ST = false;
+                return item;
+            })
+            const params =req;
+            this.$axios.post(url,params).then(
+            
+            ).catch(err=>{
+                
+            })
+        }
+    },
+    POST_CHMSA(){
+        const url = "http://localhost:59272/api/KensakuBtnPost/CHMSA";
+        var req ={};
+        var SEQ_NO ="";
+        //　更新する情報入力
+        this.Koubai_EditTable_Item.forEach(item => {
+            //　入力した項目だけ更新する
+            if(item.UPDATE_ST)
+            {
+                if(item.AUTH_TYPE == "2")
+                {
+                    req[item.FIELD_NAME] = item.FIELD_VALUE;
+                }
+            }
+            
+        })
+
+        if(req !== {})
+        {
+            //  プライマリーキー
+            req["PART_NO"] = this.Header_Data[this.Header_Data.length-1].PART_NO;
+            req["PLANT_NO"] = this.Edit_Combobox_1_select.substr(0,1);
+            req["SG_CODE"] = this.Koubai_SG_CODE;
+            req["VENDOR_CODE"] = this.Koubai_PRIORITY;
+            req["PRIORITY"] = this.Koubai_VENDOR_CODE;
+            this.Koubai_EditTable_Item=this.Koubai_EditTable_Item.map(item =>{
                 item.UPDATE_ST = false;
                 return item;
             })
