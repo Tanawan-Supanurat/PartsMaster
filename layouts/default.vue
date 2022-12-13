@@ -4879,9 +4879,7 @@ export default  {
   },
   mounted(){
     // ユーザー初期画面を取得
-    console.log("Chek process");
     this.getFirstPage();
-    console.log(process.browser);
   },
   methods:{
     //購買画面
@@ -6156,7 +6154,7 @@ export default  {
     open_new_tab(url){
       if(url != "")
       {
-        url = "/pm/kensakuPage/"+url
+        url = "/pm/searchpage/"+url
         window.open(url,'_blank')
       }
     },

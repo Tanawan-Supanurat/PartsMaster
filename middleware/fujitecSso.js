@@ -3,7 +3,6 @@
  */
 export default async ({ store, route, redirect }) => {
   console.log("In Middlewave ");
-  console.log(process.client);
   if (process.client) {
   // SSO初期セット(権限なし. SSOあり)
   store.dispatch('initSso')
