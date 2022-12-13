@@ -4007,7 +4007,7 @@
                     <!-- 保存ボタン -->
                     <v-container fluid>
                         <v-row class="d-flex mb-1" justify="end">
-                            <v-btn class="mr-2" large>
+                            <v-btn @click ="kobaiPostReq()" class="mr-2" large>
                                 <v-icon left dark large >
                                     mdi-content-save
                                 </v-icon>
@@ -4217,6 +4217,7 @@ export default  {
     draggable,
   },
   data : () => ({
+    Main_URL : "http://localhost:59272/api/",
     //購買画面
     //購買優先テーブル
     Koubai_Torisaki_Header:[
@@ -4754,27 +4755,22 @@ export default  {
   created(){
     this.setListener();
   },
+  
   computed:{
-    /** システムタイトル */
     title() {
       return this.$config.SYSTEM_TITLE
     },
-    /** プロセス */
     process() {
       return this.$config.PROCESS
     },
-    /** プロセス名 */
     processName() {
       return this.$config.PROCESS_NAME
     },
-    /** バージョン */
     ver() {
       return this.$config.VER
     },
     ...mapState(['authority', 'isSso']),
-    /** シングルサインオンの情報(storeから) */
     ...mapState('fujitecSso', ['userId', 'userName', 'departmentId','departmentName']),
-    /** ダークモード(middleware で localStorage からロード済み) */
     ...mapState('headerSql',['headerItem']),
     dark: {
       get() {
@@ -4782,11 +4778,9 @@ export default  {
       },
       set(val) {
         this.$vuetify.theme.dark = val
-        // localStorage に保存
         localStorage.setItem('vuetify_theme_dark', val ? '1' : '0')
       },
     },
-    /** ログアウト表示・非表示(SSO認証なし、FIND-PAGEアプリ経由は非表示) */
     dispLogout() {
       return (
         this.isSso &&
@@ -4885,7 +4879,9 @@ export default  {
   },
   mounted(){
     // ユーザー初期画面を取得
+    console.log("Chek process");
     this.getFirstPage();
+    console.log(process.browser);
   },
   methods:{
     //購買画面
@@ -4934,7 +4930,7 @@ export default  {
     //購買情報の優先リストを取得
     GetCHMSA_PRIORITY(PARTNO,PLANTNO)
     {
-        const url = "http://localhost:59272/api/KensakuBtnGet/CHMSA";
+        const url = this.Main_URL + "KensakuBtnGet/CHMSA";
         const params = {
             PART_NO  : PARTNO, //部品コード
             PLANT_NO : PLANTNO,//工場区分
@@ -4963,7 +4959,7 @@ export default  {
         this.Koubai_SG_CODE = ITEM.SG_CODE;
         this.Koubai_PRIORITY = ITEM.PRIORITY;
         this.Koubai_VENDOR_CODE = ITEM.VENDOR_CODE;
-        const url = "http://localhost:59272/api/KensakuBtnGet/CHMSA_TABLE";
+        const url = this.Main_URL + "KensakuBtnGet/CHMSA_TABLE";
         const params = {
             PART_NO : this.Header_Data[this.Header_Data.length-1].PART_NO,
             PLANT_NO : this.Edit_Combobox_1_select.substring(0,1),
@@ -5006,7 +5002,7 @@ export default  {
     //作業コード別注文仕様DropDown取得
     GET_SGCODE(SGKUBUN){
         var ITEM =[];
-        const url = "http://localhost:59272/api/KensakuBtnGet/SG_CODE_DROPDOWN";
+        const url = this.Main_URL + "KensakuBtnGet/SG_CODE_DROPDOWN";
         const params = {
             SG_KUBUN : SGKUBUN,
         }
@@ -5021,7 +5017,7 @@ export default  {
     },
     //作業コード別注文仕様テーブル取得
     GET_PPPMPOSPEC(){
-        const url = "http://localhost:59272/api/KensakuBtnGet/PPPMPOSPEC";
+        const url = this.Main_URL + "KensakuBtnGet/PPPMPOSPEC";
         const params = {
             PART_NO : this.Header_Data[this.Header_Data.length-1].PART_NO,
             WORK_CODE : this.Koubai_SGCODE_Select.substr(0,2),
@@ -5052,7 +5048,7 @@ export default  {
     //可変単価状態テーブル取得
     GET_CHMSB(PARTNO,PLANTNO){
         this.Koubai_CHMSB_ST=false;
-        const url = "http://localhost:59272/api/KensakuBtnGet/CHMSB";
+        const url = this.Main_URL + "KensakuBtnGet/CHMSB";
         const params = {
             PART_NO : PARTNO,
             PLANT_NO : PLANTNO,
@@ -5070,7 +5066,7 @@ export default  {
     },
     //購買画面
     GetUserAUTH_ST(){
-        const url = "http://localhost:59272/api/KensakuBtnGet/AUTH_ST";
+        const url = this.Main_URL + "KensakuBtnGet/AUTH_ST";
         const params = {
             USER_ID  : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
         }
@@ -5267,8 +5263,8 @@ export default  {
                  path:"/",
                  maxAge: 12 * 4 * 60 * 60 * 24 * 7,
                 });
-            const url_FT = "http://localhost:59272/api/KensakuBtnPost/SYDBGRID_CKVALUE";
-            const url = "http://localhost:59272/api/KensakuBtnPost/SYDBGRID";
+            const url_FT = this.Main_URL + "KensakuBtnPost/SYDBGRID_CKVALUE";
+            const url = this.Main_URL + "KensakuBtnPost/SYDBGRID";
             //  今日をYYYYMMDDに変更する
             const Today =((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(0,4)
                             +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(5,7)
@@ -5352,7 +5348,7 @@ export default  {
         this.Draggable_list_2 = [];
     },
     getDepartmentUser(){
-        const url ="http://localhost:59272/api/KensakuBtnGet/UserSetting"
+        const url =this.Main_URL + "KensakuBtnGet/UserSetting"
         const params = {
             PROJECT_ID : 'PMRA0100'
         }
@@ -5464,7 +5460,7 @@ export default  {
     },
     //ユーザー設定画面の表示項目リスト取得
     getUser_VisList(USERID,DBNAME){
-        const url = "http://localhost:59272/api/KensakuBtnGet/UserSettingVis"
+        const url = this.Main_URL + "KensakuBtnGet/UserSettingVis"
         const params = {
             USER_ID : USERID,
             DBGRID_NAME : DBNAME,
@@ -5532,7 +5528,7 @@ export default  {
     },
     //  エクセル取り込み画面内に表示しているデータをKTSTDTIMEデータペースに登録
     Excel_Upload(){
-        const url = "http://localhost:59272/api/KensakuBtnPost/KTSTDTIME_Excel";
+        const url = this.Main_URL + "KensakuBtnPost/KTSTDTIME_Excel";
         //　テーブルのデータを一列ずつに更新する
         this.ExcelTable_Item.forEach(item =>{
             //　req 更新するデータを格納値
@@ -5585,7 +5581,7 @@ export default  {
     GetHyouJunMaster(item){
         if(item != null)
         {
-            const url = "http://localhost:59272/api/KensakuBtnGet/Seisaku";
+            const url = this.Main_URL + "KensakuBtnGet/Seisaku";
             const params = {
                 PART_NO : this.Header_Data[this.Header_Data.length-1].PART_NO,
                 KT_CODE : this.KT_CODE_SELECT,
@@ -6160,7 +6156,7 @@ export default  {
     open_new_tab(url){
       if(url != "")
       {
-        url = "/PartsMaster/kensakuPage/"+url
+        url = "/pm/kensakuPage/"+url
         window.open(url,'_blank')
       }
     },
@@ -6181,7 +6177,7 @@ export default  {
     },
     getKouteiJunjo(Part_no,Plant_no){
         var List_KT =[];
-        const url = "http://localhost:59272/api/KensakuBtnGet/Seisaku";
+        const url = this.Main_URL + "KensakuBtnGet/Seisaku";
         const params = {
             PART_NO : Part_no,
             PLANT_NO : Plant_no,
@@ -6200,7 +6196,7 @@ export default  {
     },
     getKouteiJunjo_table(Part_no,Kt_code,Plant_no)
     {
-        const url = "http://localhost:59272/api/KensakuBtnGet/Seisaku";
+        const url = this.Main_URL + "KensakuBtnGet/Seisaku";
         const params = {
             KT_CODE : Kt_code,
             PART_NO : Part_no,
@@ -6214,7 +6210,7 @@ export default  {
         })
     },
     getEditTable(Part_NO,Rev_NO){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         const params = {
             Edit_PART_NO : Part_NO,
             Edit_REV_NO : Rev_NO,
@@ -7275,7 +7271,7 @@ export default  {
         
     },  
     getEditTable2(Part_NO,PLANT_NO){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         const params = {
           Edit_PART_NO : Part_NO,
           USER_ID : this.Test_userID,
@@ -8014,7 +8010,7 @@ export default  {
         }
     },
     getKensakuBtn1(){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         const params = {
             PART_NO : this.buhincode,
             PART_NAME_LOC1 : this.buhinmei,
@@ -8031,7 +8027,7 @@ export default  {
         }
     },
     getKensakuBtn2(){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         const params = {
             PRODUCT_TYPE : this.selectSeihin.substring(0,1),
             ISSUE_DATE_1 : this.hakkouDate1,
@@ -8050,7 +8046,7 @@ export default  {
     getPic(PART_NO){
       if(PART_NO != "")
       {
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         const params = {
           PIC_PART_NO : PART_NO
         }
@@ -8067,7 +8063,7 @@ export default  {
     getHeaderPic(PART_NO){
       if(PART_NO != "")
       {
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         const params = {
           PIC_PART_NO : PART_NO
         }
@@ -8084,7 +8080,7 @@ export default  {
     getCM_CODE(table_name,index,MS_ITEM_NO,CM_CODE_ONLY)
     {
         var ck_list = [];
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         const params = {
             CM_KOUNO : MS_ITEM_NO,
             START_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
@@ -8172,7 +8168,7 @@ export default  {
         })
     },
     getSokoType(value){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         var JSON_RES=[{CM_CODE:"",CM_CODE_SETUMEI:"", }]
         var ITEM=[];
         const params ={
@@ -8201,7 +8197,7 @@ export default  {
         }
     },
     getSoko(){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         const params={
                 CM_KOUNO : "310",
                 data3 :this.shousaiSelectSouko.substring(0,1),
@@ -8221,7 +8217,7 @@ export default  {
         this.SG_CODE ="";
     },
     getShousaiKensaku(){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         var pWhCode_value=[];
         if(this.shousaiSokoCodeCheckbox)
         {
@@ -8303,7 +8299,7 @@ export default  {
         this.dialogKoumokuName = KoumokuName;
         this.TableHeight ="500px"
         this.TabledialogWidth ="700px"
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         const params ={
             CM_KOUNO : this.dialogKoumokuNO,
             START_DATE : (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
@@ -8319,7 +8315,7 @@ export default  {
     }
     ,
     getdialogChoumon(KOUNO){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         this.TableHeight ="500px"
         this.TabledialogWidth ="700px"
         const params ={
@@ -8334,7 +8330,7 @@ export default  {
         })
     },
     getdialogTantou(TANTO_KUBUN,PLANT_NO){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         this.TableHeight ="500px"
         this.TabledialogWidth ="700px"
         const params ={
@@ -8350,7 +8346,7 @@ export default  {
         })
     },
     getdialogTantai(LANGU){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         this.TableHeight ="500px"
         this.TabledialogWidth ="700px"
         const params ={
@@ -8411,7 +8407,7 @@ export default  {
         }
     },
     getDialogKouteiCode_Init(){
-        const url = "http://localhost:59272/api/KensakuBtnGet";
+        const url = this.Main_URL + "KensakuBtnGet";
         let cur_date = new Date(Date.now());
         cur_date.setDate(cur_date.getDate());
         const params = {
@@ -8428,7 +8424,7 @@ export default  {
     },
     getHeaderInfo(value){
       this.getHeaderPic(value);
-      const url = "http://localhost:59272/api/KensakuBtnGet";
+      const url = this.Main_URL + "KensakuBtnGet";
       
       const params = {
           Table_Id : value,
@@ -8718,6 +8714,7 @@ export default  {
         var Update_check = false;
         //　購買情報入力確認
         this.Koubai_EditTable_Item.forEach(value =>{
+            this.GetKoubaiSetsumei(this.Koubai_EditTable_Item.indexOf(value),value.FIELD_NAME)
             Update_check =value.Setsumei_Error || Update_check;
         })
         //　PM基本情報入力確認
@@ -8729,24 +8726,26 @@ export default  {
             Update_check = value.Setsumei_Error || Update_check;
         })
         //  もし、全項目の入力が正しいであれば、データベースにデータ更新開始します。
-        if(this.$ref.CHMSA_FORM.validate() && this.$refs.PPPMORDER_form.validate() && this.$refs.PPPMMS_FORM.validate() && !Update_check)
+        if( !Update_check && this.$refs.CHMSA_FORM.validate() )//&& this.$refs.PPPMORDER_form.validate() && this.$refs.PPPMMS_FORM.validate() )
         {
             //　POST_PPPMMMS()　PM基本情報をデータに更新
             //　this.POST_PPPMMMS();
             if(this.Edit_Combobox_1_select.substr(0,1) != '-')
             {
                 // POST_PPPMORDER() PPPMORDERデータベースに更新するメソッド
-                //this.POST_PPPMORDER();  
+                //this.POST_PPPMORDER(); 
+                // POST_CHMSA() CHMSA データベースに更新するメソッド
+                this.POST_CHMSA();
             }
         }
         //　入力が間違っている場合警告画面を表示
         else
         {
-
+            alert("入力が間違います。")
         }
     },
     POST_PPPMMMS(){
-        const url = "http://localhost:59272/api/KensakuBtnPost/PPPMMS";
+        const url = this.Main_URL + "KensakuBtnPost/PPPMMS";
         this.NRPMA_POST={};
         this.NRPMHIS_POST={};
         var req ={};
@@ -8796,7 +8795,7 @@ export default  {
         
     },
     POST_NRPMA(){
-        const url = "http://localhost:59272/api/KensakuBtnPost/NRPMA";
+        const url = this.Main_URL + "KensakuBtnPost/NRPMA";
         const params = this.NRPMA_POST;
         this.$axios.post(url,params).then(
             
@@ -8806,7 +8805,7 @@ export default  {
         this.NRPMA_POST={};
     },
     POST_NRPMB(){
-        const url = "http://localhost:59272/api/KensakuBtnPost/NRPMB";
+        const url = this.Main_URL + "KensakuBtnPost/NRPMB";
         const params = this.NRPMB_POST;
         this.$axios.post(url,params).then(
             
@@ -8816,7 +8815,7 @@ export default  {
         this.NRPMB_POST={};
     },
     POST_NRPHIS(){
-        const url = "http://localhost:59272/api/KensakuBtnPost/NRPMHIS";
+        const url = this.Main_URL + "KensakuBtnPost/NRPMHIS";
         const params = this.NRPMHIS_POST;
         this.$axios.post(url,params).then(
             
@@ -8827,7 +8826,7 @@ export default  {
 
     },
     POST_PPPMORDER(){
-        const url = "http://localhost:59272/api/KensakuBtnPost/PPPMORDER";
+        const url = this.Main_URL + "KensakuBtnPost/PPPMORDER";
         this.NRPMB_POST={};
         var PART_NO ="";
         var req_PPPMOREDR ={};
@@ -8875,7 +8874,7 @@ export default  {
         req_PPPMOREDR ={};
     },
     POST_KTSTDTIME(){
-        const url = "http://localhost:59272/api/KensakuBtnPost/KTSTDTIME";
+        const url = this.Main_URL + "KensakuBtnPost/KTSTDTIME";
         var req ={};
         var SEQ_NO ="";
         this.STD_EditInfo_Item.forEach(item => {
@@ -8912,14 +8911,15 @@ export default  {
         }
     },
     POST_CHMSA(){
-        const url = "http://localhost:59272/api/KensakuBtnPost/CHMSA";
+        const url = this.Main_URL + "KensakuBtnPost/CHMSA";
+        var UP_check= false;
         var req ={};
-        var SEQ_NO ="";
         //　更新する情報入力
         this.Koubai_EditTable_Item.forEach(item => {
             //　入力した項目だけ更新する
             if(item.UPDATE_ST)
             {
+                UP_check = true;
                 if(item.AUTH_TYPE == "2")
                 {
                     req[item.FIELD_NAME] = item.FIELD_VALUE;
@@ -8928,24 +8928,31 @@ export default  {
             
         })
 
-        if(req !== {})
+        if(UP_check)
         {
+            const Today =(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString();
+            const UPD_WHEN =     Today.substr(0,4)+Today.substr(5,2)+Today.substr(8,2) +Today.substr(11,2)+Today.substr(14,2)+Today.substr(17,2);
             //  プライマリーキー
             req["PART_NO"] = this.Header_Data[this.Header_Data.length-1].PART_NO;
             req["PLANT_NO"] = this.Edit_Combobox_1_select.substr(0,1);
             req["SG_CODE"] = this.Koubai_SG_CODE;
-            req["VENDOR_CODE"] = this.Koubai_PRIORITY;
-            req["PRIORITY"] = this.Koubai_VENDOR_CODE;
+            req["VENDOR_CODE"] = this.Koubai_VENDOR_CODE;
+            req["PRIORITY"] = this.Koubai_PRIORITY;
+            //  ユーザー名更新日
+            req["UPD_WHO"] = this.Test_userID; //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+            req["UPD_WHEN"] = UPD_WHEN;
             this.Koubai_EditTable_Item=this.Koubai_EditTable_Item.map(item =>{
                 item.UPDATE_ST = false;
                 return item;
             })
             const params =req;
+            /*
             this.$axios.post(url,params).then(
             
             ).catch(err=>{
                 
             })
+            */
         }
     },
     //詳細検索クリアパラメータ
