@@ -2,6 +2,9 @@
  * シングルサインオン(middleware)
  */
 export default async ({ store, route, redirect }) => {
+  console.log("In Middlewave ");
+  console.log(process.client);
+  if (process.client) {
   // SSO初期セット(権限なし. SSOあり)
   store.dispatch('initSso')
   // 初期処理(localStrageから戻す)
@@ -45,4 +48,5 @@ export default async ({ store, route, redirect }) => {
   // SSO有効期限延長(無効にすると規定時間でSSO認証が必要となる)
   store.dispatch('fujitecSso/extendExpire')
   return true
+}
 }

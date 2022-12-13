@@ -23,11 +23,11 @@ export const state = () => ({
   /** ログインURL */
   loginUrl: 'http://fj0n0106.fujitec.co.jp/C_login.aspx',
   /** 現URL(SID除去。hashについている場合もあるのでその場合も除去) */
-  currentUrl:
+  currentUrl:process.browser ?(
     location.origin +
     location.pathname +
     location.search.replace(/[?&]SID=[^&]+($|&.*)/g, '$1') +
-    location.hash.replace(/[?&]SID=[^&]+($|&.*)/g, '$1'),
+    location.hash.replace(/[?&]SID=[^&]+($|&.*)/g, '$1')) :"",
   /** SSO期限(秒)
    *  ※システムに応じてセットください。
    *  ※期限が切れると SSO のチェックを行います。
@@ -60,7 +60,8 @@ export const state = () => ({
 export const mutations = {
   /** localStorage から読み込み */
   READ_STORAGE(state) {
-    state.sid = !localStorage.getItem('ssoSid')
+    if (process.client) {
+      state.sid = !localStorage.getItem('ssoSid')
       ? null
       : localStorage.getItem('ssoSid')
     state.userId = !localStorage.getItem('ssoUserId')
@@ -84,9 +85,12 @@ export const mutations = {
     state.authedSid = !localStorage.getItem('ssoAuthedSid')
       ? null
       : localStorage.getItem('ssoAuthedSid')
+    }
+    
   },
   /** localStorage に保存 */
   SAVE_STORAGE(state) {
+    if (process.client) {
     localStorage.setItem('ssoSid', !state.sid ? '' : state.sid)
     localStorage.setItem('ssoUserId', !state.userId ? '' : state.userId)
     localStorage.setItem('ssoUserName', !state.userName ? '' : state.userName)
@@ -104,16 +108,21 @@ export const mutations = {
       'ssoAuthedSid',
       !state.authedSid ? '' : state.authedSid
     )
+    }
   },
   /** SID セット(localStorageにも保存) */
   SET_SID(state, sid) {
+    if (process.client) {
     state.sid = !sid ? null : sid
     localStorage.setItem('ssoSid', !state.sid ? '' : state.sid)
+    }
   },
   /** 期限切れをセット(秒でセット)(localStorageにも保存) */
   SET_EXPIRE(state) {
+    if (process.client) {
     state.expire = new Date().getTime() + state.expireSecond * 1000
     localStorage.setItem('ssoExpire', !state.expire ? '' : state.expire)
+    }
   },
   /** ログイン情報セット */
   SET_LOGIN(state, sso) {
@@ -177,12 +186,13 @@ export const actions = {
           commit('CLEAR_IPINFO')
         })
       // SSOのhttps時
-      if (
-        !/[/]nop[/]/.test(location.pathname) &&
-        /^https:$/.test(location.protocol)
-      ) {
-        commit('SET_BASE_URL', 'https://fj0n0106-s.fujitec.co.jp/')
-      }
+      if (process.browser) {
+        if (
+          !/[/]nop[/]/.test(location.pathname) &&
+          /^https:$/.test(location.protocol)
+        ) {
+          commit('SET_BASE_URL', 'https://fj0n0106-s.fujitec.co.jp/')
+        }
       // GSSOの判定
       if (state.enablesGsso) {
         // GSSO有効の時
@@ -199,6 +209,7 @@ export const actions = {
           }
         }
       }
+    }
     }
   },
   /** 期限を延長する */

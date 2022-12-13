@@ -22,22 +22,23 @@ export default {
 
   // router (ベースURLを指定。middlewareを指定)
   router: {
-    base: '/PartsMaster',
+    base: '/pm',
     middleware: ['dark', 'fujitecSso','headerInfo'],
   },
 
   // server (すべてのIPからアクセス可。)
- /*
+ 
   server: {
     host: '0.0.0.0',
   },
-  */
+
   // ビルドの出力先
   generate: {
     dir: BUILD_DIR,
   },
+
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
-  ssr: false,
+  ssr:true,
 
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
@@ -66,14 +67,14 @@ export default {
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [{
     src: '@/plugins/vue-js-xlsx.js',
-    ssr: false,
+    //ssr: true,
   }
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [{
     src: '@/plugins/vue-js-xlsx.js',
-    ssr: false
+    //ssr: true,
   }],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -95,7 +96,7 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/',
+    baseURL: API_PATH,
     proxy: true,
   },
 
@@ -137,5 +138,8 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    extend(config) {
+      config.performance.maxAssetSize = 300000;
+    }
   }
 }
