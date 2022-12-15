@@ -54,13 +54,13 @@ export const state = () => ({
   ip: null,
   /** クライアント種類 */
   clientKind: '0',
+  /** 実行確認 */
 })
 
 /** 状態変更 */
 export const mutations = {
   /** localStorage から読み込み */
   READ_STORAGE(state) {
-    if (process.client) {
       state.sid = !localStorage.getItem('ssoSid')
       ? null
       : localStorage.getItem('ssoSid')
@@ -85,12 +85,10 @@ export const mutations = {
     state.authedSid = !localStorage.getItem('ssoAuthedSid')
       ? null
       : localStorage.getItem('ssoAuthedSid')
-    }
     
   },
   /** localStorage に保存 */
   SAVE_STORAGE(state) {
-    if (process.client) {
     localStorage.setItem('ssoSid', !state.sid ? '' : state.sid)
     localStorage.setItem('ssoUserId', !state.userId ? '' : state.userId)
     localStorage.setItem('ssoUserName', !state.userName ? '' : state.userName)
@@ -108,21 +106,20 @@ export const mutations = {
       'ssoAuthedSid',
       !state.authedSid ? '' : state.authedSid
     )
-    }
+    
   },
   /** SID セット(localStorageにも保存) */
   SET_SID(state, sid) {
-    if (process.client) {
     state.sid = !sid ? null : sid
     localStorage.setItem('ssoSid', !state.sid ? '' : state.sid)
-    }
+    
   },
   /** 期限切れをセット(秒でセット)(localStorageにも保存) */
   SET_EXPIRE(state) {
-    if (process.client) {
+
     state.expire = new Date().getTime() + state.expireSecond * 1000
     localStorage.setItem('ssoExpire', !state.expire ? '' : state.expire)
-    }
+    
   },
   /** ログイン情報セット */
   SET_LOGIN(state, sso) {
@@ -167,6 +164,7 @@ export const mutations = {
 export const actions = {
   /** 初期処理(localStrageから戻す) */
   async initial({ state, commit }) {
+    if (process.browser) {
     commit('READ_STORAGE')
     if (!state.ip) {
       // IP情報取得
@@ -185,8 +183,8 @@ export const actions = {
           window.console.log(err)
           commit('CLEAR_IPINFO')
         })
+        
       // SSOのhttps時
-      if (process.browser) {
         if (
           !/[/]nop[/]/.test(location.pathname) &&
           /^https:$/.test(location.protocol)
@@ -210,7 +208,7 @@ export const actions = {
         }
       }
     }
-    }
+  }
   },
   /** 期限を延長する */
   extendExpire({ commit }) {
@@ -268,4 +266,9 @@ export const actions = {
     commit('CLEAR_LOGIN')
     commit('SAVE_STORAGE')
   },
+  /** STAGE CHECK */
+  async checkrun({commit})
+  {
+    commit('RUN_ALREADY')
+  }
 }

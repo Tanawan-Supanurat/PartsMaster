@@ -564,6 +564,7 @@
                                     placeholder="最大30文字"
                                     counter="30"
                                     required
+                                    @keyup="buhincode = buhincode.toUpperCase()"
                                 >
                                 </v-text-field>
                                 <p class="ma-0">部品名</p>
@@ -878,6 +879,7 @@
                                         dense
                                         placeholder="最大9文字"
                                         counter="9"
+                                        @keyup="hakkoTsuuchi = hakkoTsuuchi.toUpperCase()"
                                         required
                                         ></v-text-field>
                                     </v-col>
@@ -888,6 +890,7 @@
                                         dense
                                         placeholder="最大9文字"
                                         counter="9"
+                                        @keyup="kirikaeTsuuchi = kirikaeTsuuchi.toUpperCase()"
                                         required
                                         ></v-text-field>
                                     </v-col>
@@ -2812,15 +2815,6 @@
                     <v-tab>代替</v-tab>
                 </v-tabs>
                 <!--  手配画面表示 -->
-                <v-row>
-                    <v-col cols >
-                        <v-text-field
-                            v-model="Test_userID"
-                            label="Enter USER_ID"
-                            >
-                        </v-text-field>
-                    </v-col>
-                </v-row>
                 <v-container fluid>
                     <v-card outlined shaped tile>
                         <v-row no-gutters>
@@ -2959,7 +2953,7 @@
                                             <v-text-field
                                                 :background-color = "item.Setsumei_Error?'red':''"
                                                 :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
-                                                :disabled = "item.AUTH_TYPE == '2' && EditRevDate_Eable ?false:true"
+                                                :disabled = "item.AUTH_TYPE == '2' ?false:true"
                                                 :filled= "item.AUTH_TYPE == '2'?false:true"
                                                 :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
                                                 :rules="item.RULES"
@@ -2994,7 +2988,7 @@
                                             <v-combobox 
                                             v-model="Edit_Combobox_1_select"
                                             :items = "Edit_Combobox_1_item"
-                                            @change="getEditTable2(Edit_Combobox_PART_NO,Edit_Combobox_1_select.substring(0,1))"
+                                            @change="getEditTable2(Header_Data[Header_Data.length-1].PART_NO,Edit_Combobox_1_select.substring(0,1))"
                                             class ="mt-2" 
                                             dense 
                                             outlined>
@@ -3088,8 +3082,8 @@
                                             <v-text-field
                                                 :background-color = "item.Setsumei_Error?'red':''"
                                                 :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
-                                                :disabled = "Edit_Combobox_1_select.substr(0,1) != '-' && item.AUTH_TYPE == '2' && EditRevDate_Eable?false:true"
-                                                :filled= "Edit_Combobox_1_select.substr(0,1) != '-'&& item.AUTH_TYPE == '2' && EditRevDate_Eable?false:true"
+                                                :disabled = "Edit_Combobox_1_select.substr(0,1) != '-' && item.AUTH_TYPE == '2'?false:true"
+                                                :filled= "Edit_Combobox_1_select.substr(0,1) != '-'&& item.AUTH_TYPE == '2' ?false:true"
                                                 :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
                                                 :rules="item.RULES"
                                                 v-model = EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_VALUE
@@ -3972,10 +3966,6 @@
                                                             x-small
                                                             >...</v-btn>
                                                         </template>
-                                                        <!--
-                                                            @keyup="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
-                                                            @change="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
-                                                        -->
                                                         <template v-slot:item.FIELD_VALUE="{item}">
                                                             <v-text-field
                                                                 :background-color = "item.Setsumei_Error?'red':''"
@@ -3985,6 +3975,8 @@
                                                                 :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
                                                                 :rules="item.RULES"
                                                                 v-model = Koubai_PPPMPOSPEC_Item[Koubai_PPPMPOSPEC_Item.indexOf(item)].FIELD_VALUE
+                                                                @keyup="PPPMPOSPEC_UPDATE_CHECK(Koubai_PPPMPOSPEC_Item.indexOf(item))"
+                                                                @change="PPPMPOSPEC_UPDATE_CHECK(Koubai_PPPMPOSPEC_Item.indexOf(item))"
                                                                 outlined
                                                                 dense>
                                                             </v-text-field>
@@ -4207,7 +4199,7 @@
 
 <script>
 import { MAX_VALUE_16BITS } from 'vue-js-xlsx';
-import { mapState } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 import draggable from 'vuedraggable'
 import UniversalCookie from 'universal-cookie'
 
@@ -4217,7 +4209,8 @@ export default  {
     draggable,
   },
   data : () => ({
-    Main_URL : "http://localhost:59272/api/",
+    Main_URL : "http://sa0392.cad.fujitec.co.jp/pmserver/api/",//本番環境用データベースサーバー
+    //Main_URL :"http://localhost:59272/api/",//テスト用データベースサーバー
     //購買画面
     //購買優先テーブル
     Koubai_Torisaki_Header:[
@@ -4620,11 +4613,10 @@ export default  {
     Edit_Combobox_2_select:"",
     Edit_Combobox_2_item:[],
     Edit_checkbox : false,
-    Test_userID : "X520",//"A753",//"2085",
+    //Test_userID : "X520",//"A753",//"2085",
     EditRevDate_Eable : false,
     TODAY:(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
     Pic_Loc:"",
-    Edit_Combobox_PART_NO:"",
     EditInfoDialog_Staus :"",
     HeaderPic_Loc :"",
     EditTableSearch1:"",
@@ -4633,7 +4625,7 @@ export default  {
     TabledialogWidth:"700px",
     KT_CODE_SELECT:"",
     KT_CODE_ITEM:[],
-
+    FT_KOUBA : "",
     /*　フォームのルール */
     formRules:{
         TrueRule: true,
@@ -4656,11 +4648,11 @@ export default  {
         lengthThan100: value => value === null ? true :  value.length <= 100 || "",//"100文字以内で入力下さい。",
         lengthThan200: value => value === null ? true : value.length <= 200 || "",//"200文字以内で入力下さい。",
         lengthThan400: value => value === null ? true : value.length <= 400 ||"",// "400文字以内で入力下さい。",
-        InterOnlyThan2: value => value === null ? true : !value.match(/^\d{0,2}$/) ?true :"",// "2桁以下の数字のみ入力可能です",
-        InterOnlyThan3: value => value === null ? true : !value.match(/^\d{0,3}$/) ?true :"",// "3桁以下の数字のみ入力可能です",
-        InterOnlyThan5: value => value === null ? true : !value.match(/^\d{0,5}$/) ?true :"",// "5桁以下の数字のみ入力可能です",
-        InterOnlyThan6: value => value === null ? true : !value.match(/^\d{0,6}$/) ?true :"",// "6桁以下の数字のみ入力可能です",
-        InterOnlyThan7: value => value === null ? true : !value.match(/^\d{0,7}$/) ?true :"",// "7桁以下の数字のみ入力可能です",
+        InterOnlyThan2: value => value === null ? true : value.match(/^\d{0,2}$/) ?true :"",// "2桁以下の数字のみ入力可能です",
+        InterOnlyThan3: value => value === null ? true : value.match(/^\d{0,3}$/) ?true :"",// "3桁以下の数字のみ入力可能です",
+        InterOnlyThan5: value => value === null ? true : value.match(/^\d{0,5}$/) ?true :"",// "5桁以下の数字のみ入力可能です",
+        InterOnlyThan6: value => value === null ? true : value.match(/^\d{0,6}$/) ?true :"",// "6桁以下の数字のみ入力可能です",
+        InterOnlyThan7: value => value === null ? true : value.match(/^\d{0,7}$/) ?true :"",// "7桁以下の数字のみ入力可能です",
         Range100: value => value == null ? true :value <= 100 && value >=0 ||"",//"０～１００で入力して下さい",
         FloatLess2 : value => value == null ? true : !value.match(/\.\d{3,}/)? true :"",//"少数部分2桁以内で入力して下さい",
         IntegetThan6 : value => value === null ? true :  value.indexOf(".") == -1 ? 
@@ -4770,7 +4762,7 @@ export default  {
       return this.$config.VER
     },
     ...mapState(['authority', 'isSso']),
-    ...mapState('fujitecSso', ['userId', 'userName', 'departmentId','departmentName']),
+    ...mapState('fujitecSso', ['userId', 'userName', 'departmentId','departmentName','IsRunAlready']),
     ...mapState('headerSql',['headerItem']),
     dark: {
       get() {
@@ -4876,12 +4868,66 @@ export default  {
         ]
     },
     
-  },
-  mounted(){
+    },
+    mounted(){
     // ユーザー初期画面を取得
+    this.asyncData();
     this.getFirstPage();
   },
   methods:{
+    //　BROWER用のSSO承認
+    async asyncData () {
+        // SSO 
+        this.$store.dispatch('initSso');//OK
+        // 初期処理(localStrageから戻す)
+        // ログアウトページは権限不要
+        await this.$store.dispatch('fujitecSso/initial');
+        if (this.$route.path.match(/^[/]logout[/]?$/)) return true
+        // ログイン情報なし 又は 期限切れ
+        if (
+            this.$store.state.fujitecSso.userId === null ||
+            this.$store.state.fujitecSso.expire <= new Date().getTime()
+        ) { 
+            console.log("Isnt login now");
+            // query から SID を読み取る
+            let sid = !this.$route.query ? null : this.$route.query.SID
+            // SSO は hash 未対応のため、hash に SID がついていたら読み取る
+            if (!sid && location.hash.match(/[?&]SID=([^&]+)$/)) {
+            sid = location.hash.match(/[?&]SID=([^&]+)$/)[1]
+            }
+            // ログイン情報取得
+            const result = await this.$store.dispatch('fujitecSso/checkLogin', sid)
+            console.log("MID SID",sid);
+            console.log("Result is :",result);
+            
+            if (!result) {
+                console.log("!RESULT",!result)
+                // 未ログイン時、ログイン
+                const url = this.$store.state.fujitecSso.loginUrl
+                // リダイレクト(currentUrlは SID が除去されている)
+                // 20210428 リダイレクトだとencodeした文字列を変な値にするようになったので、location.href に変えた.
+                const currentURL = (location.origin +location.pathname +location.search.replace(/[?&]SID=[^&]+($|&.*)/g, '$1') +location.hash.replace(/[?&]SID=[^&]+($|&.*)/g, '$1'));
+                location.href =
+                url + '?dest=' + encodeURIComponent(currentURL);
+                return false
+            } else if (sid) {
+                // クエリーにSIDが存在
+                // クエリーのSIDを除去
+                const query = {}
+                Object.assign(query, route.query)
+                delete query.SID
+                // リダイレクト(再読み込みしない?)
+                redirect(route.path, query)
+                
+                console.log("SID",sid)
+                return false
+            }
+        }
+        // ログイン済. 権限OKをセット
+        this.$store.dispatch('authorized')
+        // SSO有効期限延長(無効にすると規定時間でSSO認証が必要となる)
+        this.$store.dispatch('fujitecSso/extendExpire')
+    },
     //購買画面
     Panel1_click_event(){
         this.Koubai_Panel1_ST = !this.Koubai_Panel1_ST;
@@ -4961,7 +5007,7 @@ export default  {
         const params = {
             PART_NO : this.Header_Data[this.Header_Data.length-1].PART_NO,
             PLANT_NO : this.Edit_Combobox_1_select.substring(0,1),
-            USER_ID : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+            USER_ID : this.userId, 
             SG_CODE : ITEM.SG_CODE,
             VENDOR_CODE : ITEM.VENDOR_CODE,
             PRIORITY :ITEM.PRIORITY,
@@ -5019,7 +5065,7 @@ export default  {
         const params = {
             PART_NO : this.Header_Data[this.Header_Data.length-1].PART_NO,
             WORK_CODE : this.Koubai_SGCODE_Select.substr(0,2),
-            USER_ID : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+            USER_ID : this.userId, 
         }
         this.$axios.get(url,{params}).then(res =>{
             this.Koubai_PPPMPOSPEC_Item = res.data.map(item => {
@@ -5031,14 +5077,6 @@ export default  {
                 item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
                 return item;
             });
-            //　説明と入力ルールの追加
-            /*
-            this.Koubai_PPPMPOSPEC_Item.forEach(Row =>{
-                var index = this.Koubai_PPPMPOSPEC_Item.indexOf(Row);
-                this.getSTD_Setsumei(index,Row.FIELD_NAME);
-                this.getSTD_RULE(index,Row.FIELD_NAME);
-            })
-            */ 
         }).catch(err =>{
 
         })
@@ -5066,7 +5104,7 @@ export default  {
     GetUserAUTH_ST(){
         const url = this.Main_URL + "KensakuBtnGet/AUTH_ST";
         const params = {
-            USER_ID  : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+            USER_ID  : this.userId,
         }
         this.$axios.get(url,{params}).then(res =>{
             //返信されたデータをUser_Visionable_Listに保存
@@ -5128,6 +5166,19 @@ export default  {
             });
             
         }).catch(err=>{
+
+        })
+    },
+    Get_FT_KOUBA(){
+        this.FT_KOUBA = "";
+        const url = this.Main_URL + "KensakuBtnGet/KOUBA";
+        const params = {
+            departmentId : this.departmentId
+        }
+        this.$axios.get(url,{params}).then(res=>{
+           this.FT_KOUBA = res.data[0].DATA1;
+           
+        }).catch(err =>{
 
         })
     },
@@ -5220,7 +5271,7 @@ export default  {
 
         if(DBGRID_NAME != "")
         {
-            this.getUser_VisList(this.Test_userID,DBGRID_NAME);
+            this.getUser_VisList(this.userId,DBGRID_NAME);
         }
 
     },
@@ -5269,10 +5320,10 @@ export default  {
                             +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(8,10)
             const params_FT ={
                     //  プライマリーキー
-                    USER_ID           : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+                    USER_ID           : this.userId,
                     DBGRID_NAME       : DBGRIDNAME,
                     //  更新する値
-                    UPD_WHO           : this.Test_userID,
+                    UPD_WHO           : this.userId,
                     UPD_WHEN          : Today,
             }
             this.$axios.post(url_FT,params_FT).then(res =>{
@@ -5283,14 +5334,14 @@ export default  {
             this.Draggable_list_2.forEach((item,index)=>{
                 const params = {
                     //  プライマリーキー
-                    USER_ID           : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+                    USER_ID           : this.userId, 
                     DBGRID_NAME       : DBGRIDNAME,
                     FIELD_NAME        : item.FIELD_NAME,
                     //  更新する値
                     FIELD_NAME_J      : item.FIELD_NAME_J,
                     SEQ_NO            : item.SEQ_NO,
                     COL_VISIBLE       : '',
-                    UPD_WHO           : this.Test_userID,
+                    UPD_WHO           : this.userId,
                     UPD_WHEN          : Today,
                 }
                 if(index == 0)
@@ -5311,14 +5362,14 @@ export default  {
                 
                 const params = {
                     //  プライマリーキー
-                    USER_ID           : this.Test_userID, //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+                    USER_ID           : this.userId,
                     DBGRID_NAME       : DBGRIDNAME,
                     FIELD_NAME        : item.FIELD_NAME,
                     //  更新する値
                     FIELD_NAME_J      : item.FIELD_NAME_J,
                     SEQ_NO            : item.SEQ_NO.match(/^\d{3}$/)?item.SEQ_NO:item.SEQ_NO<10 ? '00'+item.SEQ_NO:'0' + item.SEQ_NO,
                     COL_VISIBLE       : '1',
-                    UPD_WHO           : this.Test_userID,
+                    UPD_WHO           : this.userId,
                     UPD_WHEN          : Today,
                 }
                 //console.log(params);
@@ -5420,7 +5471,7 @@ export default  {
         this.settingDialog = true;
         this.userShougiSelect = this.userShougiItems[cookie.get('First_Page')];
         //getUser_VisList(ユーザーID、閲覧したいデータベース名)
-        this.getUser_VisList(this.Test_userID,"PPPMMS");
+        this.getUser_VisList(this.userId,"PPPMMS");
         this.GetUserAUTH_ST();
     },
     getAnotherUserSetting()
@@ -5585,7 +5636,7 @@ export default  {
                 KT_CODE : this.KT_CODE_SELECT,
                 PLANT_NO :this.Edit_Combobox_1_select.substr(0,1),//仮
                 SEQ_NO : item.SEQ_NO,
-                USER_ID : this.Test_userID,
+                USER_ID : this.userId,
                 TABLE_NAME :"KTSTDTIME",
                 CC_CODE : item.CC_CODE,
                 WC_CODE : item.WC_CODE,
@@ -5614,26 +5665,44 @@ export default  {
     LoadTeihaiTable(){
         if(this.Header_Data[this.Header_Data.length-1].PART_NO != "")
         {
-            this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
-            this.getSokoType(false);
+            //初期画面は承認された改訂を表示する
+            this.Header_Data.forEach(item =>{
+                if(item.APP_CUR_TYPE == 1)
+                {
+                    this.getEditTable(item.PART_NO,item.PART_REV_NO);
+                    this.Get_FT_KOUBA();
+                    this.getSokoType(false);
+                    this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
+                    
+                }
+            })
         }
     },
     LoadSeisakuTable(){
         if(this.Header_Data[this.Header_Data.length-1].PART_NO != "")
         {
             this.EditInfo2_Value=[];
-            //this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
+            this.Get_FT_KOUBA();
+            this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
             this.getSokoType(false);
-            //this.getKouteiJunjo(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
+            //this.getKouteiJunjo(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
         }
     },
     LoadKoubaiTable(){
         if(this.Header_Data[this.Header_Data.length-1].PART_NO != "")
         {
             //console.log("購買画面ロード");
-            this.getEditTable(this.Header_Data[0].PART_NO,this.Header_Data[0].PART_REV_NO);
-            this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
-            this.getSokoType(false);
+            //初期画面は承認された改訂を表示する
+            this.Header_Data.forEach(item =>{
+                if(item.APP_CUR_TYPE == 1)
+                {
+                    this.getEditTable(item.PART_NO,item.PART_REV_NO);
+                    this.Get_FT_KOUBA();
+                    this.getSokoType(false);
+                    this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
+                    
+                }
+            })
             //作業コード別注文仕様DropDown取得
             this.GET_SGCODE('G');
         }
@@ -6168,10 +6237,11 @@ export default  {
         {
             this.EditRevDate_Eable = false;
         }
-        this.Edit_Combobox_PART_NO = item.PART_NO;
         this.getEditTable(item.PART_NO,item.PART_REV_NO);
-        this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,1);
+        this.Get_FT_KOUBA();
         this.getSokoType(false);
+        this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
+        
     },
     getKouteiJunjo(Part_no,Plant_no){
         var List_KT =[];
@@ -6212,7 +6282,7 @@ export default  {
         const params = {
             Edit_PART_NO : Part_NO,
             Edit_REV_NO : Rev_NO,
-            USER_ID : this.Test_userID,
+            USER_ID : this.userId,
         }
         this.$axios.get(url,{params}).then(res =>{
             this.EditInfo_Value = res.data.map(item => {
@@ -6584,15 +6654,20 @@ export default  {
             && !((this.EditInfo2_Value[index].FIELD_VALUE == "") && (this.EditInfo2_Value[index].BEFORE_UPDATE_VALUE === null) )? true: this.EditInfo2_Value[index].UPDATE_ST ;
         this.EditInfo2_Value[index].BEFORE_UPDATE_VALUE =this.EditInfo2_Value[index].FIELD_VALUE
     },
-    KTSTDTIME_UPDATE_CHECH(index){
+    KTSTDTIME_UPDATE_CHECK(index){
         this.STD_EditInfo_Item[index].UPDATE_ST = this.STD_EditInfo_Item[index].FIELD_VALUE != this.STD_EditInfo_Item[index].BEFORE_UPDATE_VALUE 
             && !((this.STD_EditInfo_Item[index].FIELD_VALUE == "") && (this.STD_EditInfo_Item[index].BEFORE_UPDATE_VALUE === null) )? true: this.STD_EditInfo_Item[index].UPDATE_ST ;
         this.STD_EditInfo_Item[index].BEFORE_UPDATE_VALUE =this.STD_EditInfo_Item[index].FIELD_VALUE
     },
-    CHMSA_UPDATE_CHECH(index){
+    CHMSA_UPDATE_CHECK(index){
         this.Koubai_EditTable_Item[index].UPDATE_ST = this.Koubai_EditTable_Item[index].FIELD_VALUE != this.Koubai_EditTable_Item[index].BEFORE_UPDATE_VALUE 
             && !((this.Koubai_EditTable_Item[index].FIELD_VALUE == "") && (this.Koubai_EditTable_Item[index].BEFORE_UPDATE_VALUE === null) )? true: this.Koubai_EditTable_Item[index].UPDATE_ST ;
         this.Koubai_EditTable_Item[index].BEFORE_UPDATE_VALUE =this.Koubai_EditTable_Item[index].FIELD_VALUE
+    },
+    PPPMPOSPEC_UPDATE_CHECK(index){
+        this.Koubai_PPPMPOSPEC_Item[index].UPDATE_ST = this.Koubai_PPPMPOSPEC_Item[index].FIELD_VALUE != this.Koubai_PPPMPOSPEC_Item[index].BEFORE_UPDATE_VALUE 
+            && !((this.Koubai_PPPMPOSPEC_Item[index].FIELD_VALUE == "") && (this.Koubai_PPPMPOSPEC_Item[index].BEFORE_UPDATE_VALUE === null) )? true: this.Koubai_PPPMPOSPEC_Item[index].UPDATE_ST ;
+        this.Koubai_PPPMPOSPEC_Item[index].BEFORE_UPDATE_VALUE =this.Koubai_PPPMPOSPEC_Item[index].FIELD_VALUE
     },
     getEditTableSetsumei(index,item){
         var Setsumei ="";
@@ -7227,7 +7302,7 @@ export default  {
             this.STD_EditInfo_Item[index].FIELD_EXPLAIN = Setsumei; 
             this.STD_EditInfo_Item[index].Setsumei_Error =Setsumei_Error;
         }
-        this.KTSTDTIME_UPDATE_CHECH(index)
+        this.KTSTDTIME_UPDATE_CHECK(index)
     },
     getSTD_RULE(index,item){
         if(item=="SETUP_STDTIME")
@@ -7269,10 +7344,13 @@ export default  {
         
     },  
     getEditTable2(Part_NO,PLANT_NO){
+        const Today =((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(0,4)
+                            +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(5,7)
+                            +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(8,10);
         const url = this.Main_URL + "KensakuBtnGet";
         const params = {
           Edit_PART_NO : Part_NO,
-          USER_ID : this.Test_userID,
+          USER_ID : this.userId,
           PLANT_NO : PLANT_NO,
         }
         this.$axios.get(url,{params}).then(res =>{
@@ -7289,6 +7367,91 @@ export default  {
                 this.getEditTableSetsumei2(index,Row.FIELD_NAME);
                 this.getRule2(index,Row.FIELD_NAME);
             })
+            this.getPPPMORDER_COUNT(Part_NO,PLANT_NO);
+        }).catch(err=>{
+
+        })
+    },
+    getPPPMORDER_COUNT(PartNO,PLANTNO)
+    {
+        
+        const url = this.Main_URL + "KensakuBtnGet/CountENT_PPPMMORDER";
+        const params ={
+            PART_NO : PartNO,
+            PLANT_NO : PLANTNO,
+        }
+        this.$axios.get(url,{params}).then(res=>{
+            //データが登録されなかった場合に初期値を入れる
+            if(res.data[0].COUNT == '0')
+            {
+                this.EditInfo2_Value.forEach((Row,index) =>{
+                    if(Row.FIELD_NAME == "PART_NO")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = PartNO;
+                    }
+                    else if(Row.FIELD_NAME == "PLANT_NO")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = PLANTNO;
+                    }
+                    else if(Row.FIELD_NAME == "MFG_TYPE")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "0";
+                    }
+                    else if(Row.FIELD_NAME == "SCRAP_PCNT")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "0";
+                    }
+                    else if(Row.FIELD_NAME == "TRACE_TYPE")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "0";
+                    }
+                    else if(Row.FIELD_NAME == "YEAR_CH_QTY")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "0";
+                    }
+                    else if(Row.FIELD_NAME == "AUTO_ARR_COMP_DATE")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "29991231";
+                    }
+                    else if(Row.FIELD_NAME == "AUTO_CH_REQ_TYPE")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "0";
+                    }
+                    else if(Row.FIELD_NAME == "LOT_PRINT_TYPE")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "2";
+                    }
+                    else if(Row.FIELD_NAME == "MFG_LOT_SIZE")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "0";
+                    }
+                    else if(Row.FIELD_NAME == "MFG_LEADTIME")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "0";
+                    }
+                    else if(Row.FIELD_NAME == "MFG_MIN_LOT_SIZE")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "0";
+                    }
+                    else if(Row.FIELD_NAME == "VENDOR_SUPPLY_TYPE")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "0";
+                    }
+                    else if(Row.FIELD_NAME == "STOP_DATE")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "29991231";
+                    }
+                    else if(Row.FIELD_NAME == "FC_FLAG")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "0";
+                    }
+                    else if(Row.FIELD_NAME == "REPAIR_PSC_TYPE")
+                    {
+                        this.EditInfo2_Value[index].FIELD_VALUE = "0";
+                    }
+                    this.getEditTableSetsumei2(index,Row.FIELD_NAME);
+                })
+            }
             if(this.tab_select == 1 && this.Edit_Combobox_1_select.substr(0,1) != '-')
             {
                 this.getKouteiJunjo(this.Header_Data[this.Header_Data.length-1].PART_NO,this.Edit_Combobox_1_select.substr(0,1));
@@ -7298,10 +7461,10 @@ export default  {
                 this.KouteiJunjoTable_Item =[];
                 this.STD_EditInfo_Item = [];
             }
-        }).catch(err=>{
+            }).catch(err=>{
 
-        })
-    },
+            });
+        },
     getRule2(index,item){
         if(item=="STOCK_CODE")
         {
@@ -7912,7 +8075,7 @@ export default  {
             //this.CHMSACheck_CellType(index);
         }
         //　更新項目をリストに追加
-        this.CHMSA_UPDATE_CHECH(index);
+        this.CHMSA_UPDATE_CHECK(index);
     },
     /*
     GetKoubaiRule(index,item){
@@ -8174,9 +8337,13 @@ export default  {
         }
         if(this.shousaiSokoCodeCheckbox || !value){
             this.$axios.get(url,{params}).then(res =>{
-            JSON_RES = res.data;
-            JSON_RES.forEach(index => {
+                JSON_RES = res.data;
+                JSON_RES.forEach(index => {
                 ITEM.push(index.CM_CODE + "*" +index.CM_CODE_SETUMEI);
+                if(index.CM_CODE == this.FT_KOUBA)
+                {
+                    this.Edit_Combobox_1_select = index.CM_CODE + "*" +index.CM_CODE_SETUMEI;
+                }
             });
             ITEM.push("--*全工房対象");
 
@@ -8427,9 +8594,20 @@ export default  {
       const params = {
           Table_Id : value,
       }
+      
       this.$axios.get(url,{params}).then(res =>{
-          this.Header_Data = res.data;
-          this.showHeader = true;
+            this.Header_Data = res.data;
+            this.showHeader = true;
+            this.Header_Data.forEach(item =>{
+                if(item.APP_CUR_TYPE == 1)
+                {
+                    this.getEditTable(item.PART_NO,item.PART_REV_NO);
+                    this.Get_FT_KOUBA();
+                    this.getSokoType(false);
+                    this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
+                    
+                }
+            })
       }).catch(err=>{
           
       })
@@ -8717,23 +8895,29 @@ export default  {
         })
         //　PM基本情報入力確認
         this.EditInfo_Value.forEach(value =>{
+            //this.getEditTableSetsumei(this.EditInfo_Value.indexOf(value),value.FIELD_NAME)
             Update_check = value.Setsumei_Error || Update_check;
         })
         //  手配情報入力確認
         this.EditInfo2_Value.forEach(value =>{
+            //this.getEditTableSetsumei2(this.EditInfo2_Value.indexOf(value),value.FIELD_NAME)
             Update_check = value.Setsumei_Error || Update_check;
         })
         //  もし、全項目の入力が正しいであれば、データベースにデータ更新開始します。
-        if( !Update_check && this.$refs.CHMSA_FORM.validate() )//&& this.$refs.PPPMORDER_form.validate() && this.$refs.PPPMMS_FORM.validate() )
+        if( !Update_check && this.$refs.CHMSA_FORM.validate() && this.$refs.PPPMORDER_form.validate() && this.$refs.PPPMMS_FORM.validate() )
         {
             //　POST_PPPMMMS()　PM基本情報をデータに更新
-            //　this.POST_PPPMMMS();
+            this.POST_PPPMMMS();
             if(this.Edit_Combobox_1_select.substr(0,1) != '-')
             {
                 // POST_PPPMORDER() PPPMORDERデータベースに更新するメソッド
-                //this.POST_PPPMORDER(); 
+                this.POST_PPPMORDER(); 
                 // POST_CHMSA() CHMSA データベースに更新するメソッド
-                this.POST_CHMSA();
+                this.POST_CHMSA()
+            }
+            if(this.Koubai_SGCODE_Select.substr(0,2) != "")
+            {
+                this.POST_PPPMPOSPEC();
             }
         }
         //　入力が間違っている場合警告画面を表示
@@ -8766,7 +8950,6 @@ export default  {
                     this.convertPMtoNA(item.FIELD_NAME,item.FIELD_VALUE);
                     this.convertPMtoNH(item.FIELD_NAME,item.FIELD_VALUE);
                 }
-                
             }
             if(item.FIELD_NAME == "PART_NO" || item.FIELD_NAME == "PART_REV_NO")
                 {
@@ -8831,11 +9014,8 @@ export default  {
         this.EditInfo2_Value.forEach(item =>{
             if(item.UPDATE_ST)
             {
-                if(item.AUTH_TYPE == "2")
-                {
-                    req_PPPMOREDR[item.FIELD_NAME] = item.FIELD_VALUE;
-                    this.convertPOtoNB(item.FIELD_NAME,item.FIELD_VALUE);
-                }
+                req_PPPMOREDR[item.FIELD_NAME] = item.FIELD_VALUE;
+                this.convertPOtoNB(item.FIELD_NAME,item.FIELD_VALUE);
             }
             if(item.FIELD_NAME == "PART_NO")
             {
@@ -8846,11 +9026,18 @@ export default  {
         
         if(req_PPPMOREDR != {})
         {
+            const Today =(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString();
+            const UPD_WHEN = Today.substr(0,4)+Today.substr(5,2)+Today.substr(8,2) +Today.substr(11,2)+Today.substr(14,2)+Today.substr(17,2);
             req_PPPMOREDR["PART_NO"] =[];
             req_PPPMOREDR["PLANT_NO"] = [];
             req_PPPMOREDR["PART_NO"] = PART_NO;
             req_PPPMOREDR["PLANT_NO"].push(this.Edit_Combobox_1_select.substr(0,1));
+            req_PPPMOREDR["UPD_WHO"] =this.userId;
+            req_PPPMOREDR["UPD_WHEN"] =UPD_WHEN;
             this.NRPMB_POST["PLANT_NO"]=req_PPPMOREDR["PLANT_NO"];
+            this.NRPMB_POST["UPD_WHO"]=req_PPPMOREDR["UPD_WHO"];
+            this.NRPMB_POST["UPD_WHEN"]=req_PPPMOREDR["UPD_WHEN"];
+            this.NRPMB_POST["ENT_DATE"] =Today.substr(0,4)+Today.substr(5,2)+Today.substr(8,2);
             if(this.Edit_checkbox && this.Edit_Combobox_2_select.substr(0,1) != "" &&
             this.Edit_Combobox_2_select.substr(0,1) != "-")
             {
@@ -8868,6 +9055,7 @@ export default  {
                 
             })
             this.POST_NRPMB();
+            
         }
         req_PPPMOREDR ={};
     },
@@ -8923,13 +9111,11 @@ export default  {
                     req[item.FIELD_NAME] = item.FIELD_VALUE;
                 }
             }
-            
         })
-
         if(UP_check)
         {
             const Today =(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString();
-            const UPD_WHEN =     Today.substr(0,4)+Today.substr(5,2)+Today.substr(8,2) +Today.substr(11,2)+Today.substr(14,2)+Today.substr(17,2);
+            const UPD_WHEN = Today.substr(0,4)+Today.substr(5,2)+Today.substr(8,2) +Today.substr(11,2)+Today.substr(14,2)+Today.substr(17,2);
             //  プライマリーキー
             req["PART_NO"] = this.Header_Data[this.Header_Data.length-1].PART_NO;
             req["PLANT_NO"] = this.Edit_Combobox_1_select.substr(0,1);
@@ -8937,20 +9123,59 @@ export default  {
             req["VENDOR_CODE"] = this.Koubai_VENDOR_CODE;
             req["PRIORITY"] = this.Koubai_PRIORITY;
             //  ユーザー名更新日
-            req["UPD_WHO"] = this.Test_userID; //現在テーストのためにthis.Test_userID使用するしています。実際に使用する値はthis.userName
+            req["UPD_WHO"] = this.userId; 
             req["UPD_WHEN"] = UPD_WHEN;
             this.Koubai_EditTable_Item=this.Koubai_EditTable_Item.map(item =>{
                 item.UPDATE_ST = false;
                 return item;
             })
             const params =req;
-            /*
             this.$axios.post(url,params).then(
             
             ).catch(err=>{
                 
             })
-            */
+            
+        }
+    },
+    POST_PPPMPOSPEC(){
+        const url = this.Main_URL + "KensakuBtnPost/PPPMPOSPEC";
+        var UP_check= false;
+        var req ={};
+        //　更新する情報入力
+        this.Koubai_PPPMPOSPEC_Item.forEach( item => {
+            //　入力した項目だけ更新する
+            if(item.UPDATE_ST)
+            {
+                UP_check = true;
+                if(item.AUTH_TYPE == "2")
+                {
+                    req[item.FIELD_NAME] = item.FIELD_VALUE;
+                }
+            }
+        })
+        if(UP_check)
+        {
+            const Today =(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString();
+            const UPD_WHEN =     Today.substr(0,4)+Today.substr(5,2)+Today.substr(8,2) +Today.substr(11,2)+Today.substr(14,2)+Today.substr(17,2);
+            //  プライマリーキー
+            req["PART_NO"] = this.Header_Data[this.Header_Data.length-1].PART_NO;
+            req["WORK_CODE"] = this.Koubai_SGCODE_Select.substr(0,2);
+            //  ユーザー名更新日
+            req["UPD_WHO"] = this.userId;
+            req["UPD_WHEN"] = UPD_WHEN;
+            this.Koubai_PPPMPOSPEC_Item=this.Koubai_PPPMPOSPEC_Item.map(item =>{
+                item.UPDATE_ST = false;
+                return item;
+            })
+            const params =req;
+            this.$axios.post(url,params).then(()=>{
+                this.GET_PPPMPOSPEC();
+            }
+            ).catch(err=>{
+                
+            })
+            
         }
     },
     //詳細検索クリアパラメータ
