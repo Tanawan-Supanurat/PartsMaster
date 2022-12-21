@@ -2797,6 +2797,7 @@
             <!-- 検索テーブル -->
             <v-card
              :width = tab_width
+             color ="#F5F5F5"
             >
                 <v-tabs
                  v-model="tab_select"
@@ -2808,15 +2809,18 @@
                     <v-tab @click="LoadSeisakuTable()">製作</v-tab>
                     <v-tab @click="LoadKoubaiTable()">購買</v-tab>
                     <v-tab>入出庫</v-tab>
-                    <v-tab>在庫</v-tab>
+                    <v-tab @click="LoadZaikoTable()">在庫</v-tab>
                     <v-tab>保守</v-tab>
                     <v-tab>PC/SP</v-tab>
                     <v-tab>P/S</v-tab>
                     <v-tab>代替</v-tab>
                 </v-tabs>
+                <v-btn @click="GetSite()">
+                    TEST BTN
+                </v-btn>
                 <!--  手配画面表示 -->
                 <v-container fluid>
-                    <v-card outlined shaped tile>
+                    <v-card  outlined shaped tile>
                         <v-row no-gutters>
                             <v-col cols="10" sm="10">
                                 <v-card-text v-if ="this.showHeader">
@@ -2865,8 +2869,7 @@
                         <v-card-text v-if ="!this.showHeader"></v-card-text>
                     </v-card>
                 </v-container>
-                <div v-if="tab_select == 0">
-                    
+                <div v-if="tab_select == 0">           
                     <v-container fluid>
                         <v-card>
                             <v-data-table
@@ -3533,34 +3536,34 @@
                             </v-row>
                         </v-col>
                     </v-row>
-                </v-container>    
-                <v-container fluid>
-                        <v-row no-gutters justify="end">
-                            <v-col class="d-flex flex-row-reverse" >
-                                <v-btn class="mr-2" large>
-                                    <v-icon
-                                        left
-                                        dark
-                                        large
+                    </v-container>    
+                    <v-container fluid>
+                            <v-row no-gutters justify="end">
+                                <v-col class="d-flex flex-row-reverse" >
+                                    <v-btn class="mr-2" large>
+                                        <v-icon
+                                            left
+                                            dark
+                                            large
+                                        >
+                                            mdi-close-box-outline
+                                        </v-icon> 
+                                        <h3>閉じる</h3>
+                                    </v-btn>
+                                    <v-btn class="mr-2" large
+                                    @click="seisakuPostReq()"
                                     >
-                                        mdi-close-box-outline
-                                    </v-icon> 
-                                    <h3>閉じる</h3>
-                                </v-btn>
-                                <v-btn class="mr-2" large
-                                @click="seisakuPostReq()"
-                                >
-                                    <v-icon
-                                        left
-                                        dark
-                                        large
-                                    >
-                                    mdi-content-save
-                                    </v-icon>
-                                    <h3>保存</h3>
-                                </v-btn>
-                            </v-col>
-                        </v-row>
+                                        <v-icon
+                                            left
+                                            dark
+                                            large
+                                        >
+                                        mdi-content-save
+                                        </v-icon>
+                                        <h3>保存</h3>
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
                     </v-container>
                 </div>
                 <!-- 購買画面表示 -->
@@ -4016,20 +4019,868 @@
                 </div>
                 <!-- 入出庫画面表示 -->
                 <div v-if="tab_select == 3">
-                    <v-container>
-                        <h1>入出庫画面</h1>
+                    <v-container fluid>
+                        <v-row >
+                            <v-col class="d-flex">
+                                <h3>入出庫予定・予測</h3>
+                                <p class="ml-2 mt-1 " style="font-size :1em;">データ作成【{{((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(0,4)
+                                +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(5,7)
+                                +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(8,10)}}】
+                                始業前現在    
+                            </p>
+                            </v-col>
+                        </v-row>
+                        <v-row no-gutters>
+                            <v-col>
+                                <v-card class="mt-2">
+                                    <v-tabs
+                                    dark
+                                    background-color="cyan"
+                                    align-with-title>
+                                        <v-tab-slider color ="yellow"></v-tab-slider>
+                                        <v-tab >Big Fit</v-tab>
+                                        <v-spacer></v-spacer>
+                                        <v-btn class="mt-3 mr-3" light small elevation ="0"> 製作所切替え </v-btn>
+                                        <v-tab-item>
+                                            <v-card>
+                                                <v-card-text>
+                                                    <v-row class="d-flex" no-gutters>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-4">内外作</h3>
+                                                            <v-text-field v-model="Iride_Naigaisaku" class="mx-2" maxlength="1" style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3>製作ロット</h3>
+                                                            <v-text-field v-model="Iride_SeisakuLot" class="mx-2" style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-2">最小発注</h3>
+                                                            <v-text-field v-model="Iride_SaishouHacchu" class="mx-2" style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-2">バケット</h3>
+                                                            <v-text-field v-model="Iride_Bucket" class="mx-2" maxlength="1" style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-6">管点</h3>
+                                                            <v-text-field v-model="Iride_Kanten" class="mx-2" maxlength="2" style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-6">注点</h3>
+                                                            <v-text-field v-model="Iride_Chuuten" class="mx-2" maxlength="2" style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-6">在管</h3>
+                                                            <v-text-field v-model="Iride_Zaikan" class="mx-2"  style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-6">自オ</h3>
+                                                            <v-text-field v-model="Iride_Jio" class="mx-2"  style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-2">管理基準</h3>
+                                                            <v-text-field v-model="Iride_Kanrikijun" class="mx-2"  style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-4">製作LT</h3>
+                                                            <v-text-field v-model="Iride_SeisakuLT" class="mx-2"  style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-6">ABC</h3>
+                                                            <v-text-field v-model="Iride_ABC" class="mx-2"  style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-6">手担</h3>
+                                                            <v-text-field v-model="Iride_Ninaite" class="mx-2"  style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-6">注担</h3>
+                                                            <v-text-field v-model="Iride_Chuunaite" class="mx-2"  style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <h3 class="mx-6">貯区</h3>
+                                                            <v-text-field v-model="Iride_Chuuku" class="mx-2"  style="width :50px" outlined dense></v-text-field>
+                                                        </div>
+                                                    </v-row>
+                                                    <v-row class="d-flex mb-2" justify="center">
+                                                        <v-data-table
+                                                        mobile-breakpoint='400'
+                                                        :headers="Iride_ZaiyoteiTable_Header"
+                                                        :items="Iride_ZaiyoteiTable_Item"
+                                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                        height="18vh"
+                                                        hide-default-footer
+                                                        fixed-header
+                                                        ></v-data-table>
+                                                    </v-row>
+                                                </v-card-text>
+                                            </v-card>
+                                        </v-tab-item>
+                                    </v-tabs>
+                                </v-card>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                    <v-container fluid>
+                        <v-card>
+                            <v-row class="d-flex" justify="start">
+                            <div class=" mt-2 mx-3 ml-5 mb-2">
+                                <h3 class="mb-1 ">固定</h3>
+                                <v-combobox v-model="Iride_Koutei_Select" :items="Iride_Koutei_Item" style="width : 150px;" class="mb-n4" dense outlined></v-combobox>
+                                <h3 class="mb-1 mt-3">レンジ（単位）</h3>
+                                <v-combobox v-model="Iride_Tani_Select" :items="Iride_Tani_Item" style="width : 150px;" class="mb-n6" dense outlined></v-combobox>
+                                <p >日単位で計算します。</p>
+                            </div>
+                            <v-col class="mt-2" :cols="this.$vuetify.breakpoint.xsOnly?'6':'3'">
+                                <v-row>
+                                    <div class="d-flex">
+                                        <h3 class="mr-2">伝票</h3>
+                                        <v-spacer></v-spacer>
+                                        <v-btn @click="Iride_shuukou()" class="ml-5 mx-2" small>出庫</v-btn>
+                                        <v-btn @click="Iride_nyuukou()" class="mx-2" small>入庫</v-btn>
+                                    </div>
+                                </v-row>
+                                <v-row>
+                                    <v-card class="mt-2" width="100vh">
+                                        <v-row class="ml-2">
+                                            <v-col cols="6">
+                                                <v-checkbox
+                                                dense
+                                                label="出庫"
+                                                hide-details
+                                                v-model="Ireide_checkbox_0"
+                                                ></v-checkbox>
+                                            </v-col>
+                                            <v-col cols="6">
+                                                <v-checkbox
+                                                dense
+                                                label="入庫(注文)"
+                                                v-model="Ireide_checkbox_1"
+                                                hide-details
+                                                ></v-checkbox>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row class="ml-2 mt-n6">
+                                            <v-col cols="6">
+                                                <v-checkbox
+                                                dense
+                                                label="出庫(他)"
+                                                v-model="Ireide_checkbox_2"
+                                                hide-details
+                                                ></v-checkbox>
+                                            </v-col>
+                                            <v-col cols="6">
+                                                <v-checkbox
+                                                dense
+                                                label="入庫(見込)"
+                                                v-model="Ireide_checkbox_3"
+                                                hide-details
+                                                ></v-checkbox>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row class="ml-2 mt-n6 mb-1">
+                                            <v-col cols="6">
+                                                <v-checkbox
+                                                dense
+                                                label="出庫(予測)"
+                                                v-model="Ireide_checkbox_4"
+                                                hide-details
+                                                ></v-checkbox>
+                                            </v-col>
+                                            <v-col cols="6">
+                                                <v-checkbox
+                                                dense
+                                                label="入庫(振替)"
+                                                v-model="Ireide_checkbox_5"
+                                                hide-details
+                                                ></v-checkbox>
+                                            </v-col>
+                                        </v-row>
+                                    </v-card>
+                                </v-row>
+                            </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="5">
+                                    <v-card  class="ml-2">
+                                        <v-row class="mb-2">
+                                            <v-col cols="12">
+                                                <v-data-table 
+                                                class="mx-2"
+                                                mobile-breakpoint='400'
+                                                :headers="Iride_ZaikouIride_Header"
+                                                :items="Iride_ZaiyoteiTable_Item"
+                                                :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                height="30vh"
+                                                hide-default-footer
+                                                fixed-header
+                                                ></v-data-table>
+                                            </v-col>
+                                        </v-row>
+                                    </v-card>
+                                </v-col>
+                                <v-col cols="7">
+                                    <v-card  class="mx-2">
+                                        <v-row class="mb-2">
+                                            <v-col cols="12">
+                                                <v-data-table 
+                                                class="mx-2"
+                                                mobile-breakpoint='400'
+                                                :headers="Iride_ZaikouIride_Header"
+                                                :items="Iride_ZaiyoteiTable_Item"
+                                                :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                height="30vh"
+                                                hide-default-footer
+                                                fixed-header
+                                                ></v-data-table>
+                                            </v-col>
+                                        </v-row>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+                        </v-card>
+                    </v-container>
+                    <v-container fluid>
+                        <v-btn></v-btn>
                     </v-container>
                 </div>
                 <!-- 在庫画面表示 -->
                 <div v-if="tab_select == 4">
-                    <v-container>
-                        <h1>在庫画面</h1>
+                    <v-container fluid>
+                        <v-row >
+                            <v-col :cols="$vuetify.breakpoint.smAndDown?'12':'6'">
+                                <v-card height="77vh">
+                                    <v-row no-gutters class="d-flex" justify="space-between">
+                                        <h3 class="mt-2 ml-2">在庫情報</h3>
+                                        <div class="d-flex mt-2">
+                                            <h3 class="mr-2">倉庫選択</h3>
+                                            <v-combobox v-model="Zaikou_SokoCode_Select" :items ="Zaikou_SokoCode_Item"
+                                             style="width :100px;" dense outlined 
+                                             @change ="GetZKMS(Header_Data[Header_Data.length-1].PART_NO,Zaikou_SokoCode_Select)"
+                                             ></v-combobox>
+                                        </div>
+                                        <h3 class="mt-2 mr-2">2:BW製作所</h3>
+                                    </v-row>
+                                        <v-form ref ="ZKMS_FORM">
+                                            <v-data-table 
+                                            class="mx-2"
+                                            mobile-breakpoint='400'
+                                            fixed-header
+                                            :headers="this.Zaiko_EditTable_Header"
+                                            :items="this.Zaiko_EditTable_Item"
+                                            :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                            hide-default-footer
+                                            height="70vh"
+                                            dense
+                                            >
+                                            <template v-slot:item.CELL_TYPE="{item}">
+                                                <!--  共用マスター -->
+                                                <v-btn 
+                                                v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                                x-small 
+                                                @click="getEditDialogBtn1(Zaiko_EditTable_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
+                                                >...</v-btn>
+                                                <!-- 注文コードマスター  -->
+                                                <v-btn
+                                                v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2'&& item.CELL_TYPE == 'B'"
+                                                @click = "getEditDialogBtn2(Zaiko_EditTable_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
+                                                x-small
+                                                >...</v-btn>
+                                                <!-- 担当コードマスター
+                                                <v-btn
+                                                v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                @click = "getEditDialogBtn3(Zaiko_EditTable_Item.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),1)"
+                                                x-small
+                                                >...</v-btn>
+                                                 -->
+                                                <!--　単位読替マスター　-->
+                                                <v-btn
+                                                v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                x-small
+                                                @click = "getEditDialogBtn4(Zaiko_EditTable_Item.indexOf(item),item.MS_ITEM_NO,2)"
+                                                >...</v-btn>
+                                                
+                                                <v-btn
+                                                v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                @click ="getEditDialogBtn6(Zaiko_EditTable_Item.indexOf(item),item.FIELD_NAME,1)"
+                                                x-small
+                                                >...</v-btn>
+                                                
+                                            </template>
+                                            <template v-slot:item.FIELD_VALUE="{item}">
+                                                <v-text-field
+                                                    :background-color = "item.Setsumei_Error?'red':''"
+                                                    :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                    :disabled = "item.AUTH_TYPE == '2'  ?false:true"
+                                                    :filled= "item.AUTH_TYPE == '2'?false:true"
+                                                    :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                    :rules="item.RULES"
+                                                    v-model = Zaiko_EditTable_Item[Zaiko_EditTable_Item.indexOf(item)].FIELD_VALUE
+                                                    @keyup="GetZaikouSetsumei(Zaiko_EditTable_Item.indexOf(item),item.FIELD_NAME)"
+                                                    @change="GetZaikouSetsumei(Zaiko_EditTable_Item.indexOf(item),item.FIELD_NAME)"
+                                                    dense
+                                                    outlined>
+                                                </v-text-field>
+                                            </template>
+                                            <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                    <p
+                                                    :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                    {{Zaiko_EditTable_Item[Zaiko_EditTable_Item.indexOf(item)].FIELD_EXPLAIN}} 
+                                                    </p>
+                                            </template>
+                                            </v-data-table>
+                                        </v-form>
+                                </v-card>
+                            </v-col>
+                            <v-col :cols="$vuetify.breakpoint.smAndDown?'12':'6'">
+                                <v-row no-gutters class="mb-4">
+                                    <v-expansion-panels v-model="Koubai_Panel" multiple accordion>
+                                        <v-expansion-panel>
+                                            <v-expansion-panel-header @click="Panel1_click_event()"><h3>PM基本情報</h3></v-expansion-panel-header>
+                                            <v-expansion-panel-content>
+                                                <!-- PM基本情報-->
+                                                <v-row no-gutters>
+                                                    <v-spacer></v-spacer>
+                                                    <v-col class="mt-n13 mr-6" cols="4">
+                                                        <!-- EditTableSearch1　P/M基本情報内に検査したいデータ -->
+                                                        <v-text-field
+                                                        class = "mt-2 mr-2"
+                                                        v-model = "EditTableSearch1"
+                                                        label = "フィルター"
+                                                        hide-details
+                                                        dense
+                                                        outlined
+                                                        ></v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                                <!-- P/M基本情報テーブル  -->
+                                                <v-form ref ="PPPMMS_FORM">
+                                                    <v-data-table 
+                                                    mobile-breakpoint='400'
+                                                    fixed-header
+                                                    :headers="this.Editinfo_Header"
+                                                    :items="this.EditInfo_Value"
+                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                    hide-default-footer
+                                                    height="31vh"
+                                                    :search="EditTableSearch1"
+                                                    dense
+                                                    >
+                                                    <template v-slot:item.CELL_TYPE="{item}">
+                                                        <!--  共用マスター -->
+                                                        <v-btn 
+                                                        v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                                        x-small 
+                                                        @click="getEditDialogBtn1(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
+                                                        >...</v-btn>
+                                                        <!-- 注文コードマスター  -->
+                                                        <v-btn
+                                                        v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2'&& item.CELL_TYPE == 'B'"
+                                                        @click = "getEditDialogBtn2(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
+                                                        x-small
+                                                        >...</v-btn>
+                                                        <!-- 担当コードマスター -->
+                                                        <v-btn
+                                                        v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                        @click = "getEditDialogBtn3(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),1)"
+                                                        x-small
+                                                        >...</v-btn>
+                                                        <!--　単位読替マスター　-->
+                                                        <v-btn
+                                                        v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                        x-small
+                                                        @click = "getEditDialogBtn4(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,2)"
+                                                        >...</v-btn>
+                                                        
+                                                        <v-btn
+                                                        v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                        @click ="getEditDialogBtn6(EditInfo_Value.indexOf(item),item.FIELD_NAME,1)"
+                                                        x-small
+                                                        >...</v-btn>
+                                                        
+                                                    </template>
+                                                    <template v-slot:item.FIELD_VALUE="{item}">
+                                                        <v-text-field
+                                                            :background-color = "item.Setsumei_Error?'red':''"
+                                                            :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                            :disabled = "item.AUTH_TYPE == '2' && EditRevDate_Eable ?false:true"
+                                                            :filled= "item.AUTH_TYPE == '2'?false:true"
+                                                            :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                            :rules="item.RULES"
+                                                            v-model = EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_VALUE
+                                                            @keyup="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
+                                                            @change="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
+                                                            dense
+                                                            outlined>
+                                                        </v-text-field>
+                                                    </template>
+                                                    <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                            <p
+                                                            :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                            {{EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_EXPLAIN}} 
+                                                            </p>
+                                                    </template>
+                                                    </v-data-table>
+                                                </v-form>
+                                            </v-expansion-panel-content>
+                                        </v-expansion-panel>
+                                        <v-expansion-panel>
+                                            <v-expansion-panel-header  @click="Panel2_click_event()">
+                                                <h3>手配情報</h3>
+                                            </v-expansion-panel-header>
+                                            <v-expansion-panel-content>
+                                                <!-- 手配情報  -->
+                                                <v-row no-gutters>
+                                                    <v-spacer></v-spacer>
+                                                    <v-col class="mt-n13 mr-6" cols="4">
+                                                        <!-- EditTableSearch2　手配情報内に検査したいデータ -->
+                                                        <v-text-field
+                                                        class = "mt-2 mr-2"
+                                                        v-model = "EditTableSearch2"
+                                                        label = "フィルター"
+                                                        hide-details
+                                                        dense
+                                                        outlined
+                                                        ></v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                                    <!-- PPPMORDER_form 手配情報のテーブル  -->
+                                                    <v-form ref="PPPMORDER_form">
+                                                        <v-data-table
+                                                        mobile-breakpoint='300'
+                                                        fixed-header
+                                                        :headers="this.Editinfo2_Header"
+                                                        :items="this.EditInfo2_Value"
+                                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                        hide-default-footer
+                                                        :search="EditTableSearch2"
+                                                        height="31vh"
+                                                        dense
+                                                        >
+                                                            <template v-slot:item.CELL_TYPE="{item}">
+                                                                <!--  共用マスター -->
+                                                                <v-btn 
+                                                                v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                                                x-small 
+                                                                :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                                @click="getEditDialogBtn1(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                                >...</v-btn>
+                                                                <!-- 注文コードマスター -->
+                                                                <v-btn
+                                                                v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                                x-small
+                                                                :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                                @click = "getEditDialogBtn2(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                                >...</v-btn>
+                                                                <!-- 担当コードマスター -->
+                                                                <v-btn
+                                                                v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                                x-small
+                                                                :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                                @click = "getEditDialogBtn3(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
+                                                                >...</v-btn>
+                                                                <!-- 単位読替マスタ -->
+                                                                <v-btn
+                                                                v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                                @click = "getEditDialogBtn4(EditInfo2_Value.indexOf(item),item.MS_ITEM_NO,2)"
+                                                                :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                                x-small
+                                                                >...</v-btn>
+                                                                <v-btn
+                                                                v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                                :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                                @click ="getEditDialogBtn6(EditInfo2_Value.indexOf(item),item.FIELD_NAME,2)"
+                                                                x-small
+                                                                >...</v-btn>
+                                                            </template>
+                                                            <template v-slot:item.FIELD_VALUE="{item}">
+                                                                <v-text-field
+                                                                    :background-color = "item.Setsumei_Error?'red':''"
+                                                                    :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                                    :disabled = "Edit_Combobox_1_select.substr(0,1) != '-' &&item.AUTH_TYPE == '2'?false:true"
+                                                                    :filled= "Edit_Combobox_1_select.substr(0,1) != '-' &&item.AUTH_TYPE == '2' ?false:true"
+                                                                    :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                                    :rules="item.RULES"
+                                                                    v-model = EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_VALUE
+                                                                    @keyup="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
+                                                                    @change="getEditTableSetsumei2(EditInfo2_Value.indexOf(item),item.FIELD_NAME)"
+                                                                    outlined
+                                                                    dense>
+                                                                </v-text-field>
+                                                            </template>
+                                                            <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                                <p
+                                                                :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                                {{EditInfo2_Value[EditInfo2_Value.indexOf(item)].FIELD_EXPLAIN}}
+                                                                </p>
+                                                            </template>
+                                                        </v-data-table>
+                                                    </v-form>
+                                            </v-expansion-panel-content>
+                                        </v-expansion-panel>
+                                    </v-expansion-panels>
+                                </v-row>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                        <v-container fluid>
+                        <v-row no-gutters justify="end">
+                            <v-col class="d-flex flex-row-reverse" >
+                                <v-btn class="mr-2" large>
+                                    <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                        mdi-close-box-outline
+                                    </v-icon> 
+                                    <h3>閉じる</h3>
+                                </v-btn>
+                                <v-btn class="mr-2" large
+                                >
+                                    <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                    mdi-content-save
+                                    </v-icon>
+                                    <h3>保存</h3>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
                     </v-container>
                 </div>
                 <!-- 保守画面表示 -->
                 <div v-if="tab_select == 5">
-                    <v-container>
-                        <h1>保守画面</h1>
+                    <v-container fluid>
+                        <v-row>
+                            <!-- 保守情報 -->
+                            <v-col :cols = "this.$vuetify.breakpoint.smAndDown?'12':'6'">
+                                <v-card  height ="20Vh">
+                                    <v-row class="d-flex mx-2" justify="space-between">
+                                        <h3 class="mt-2">保守情報</h3>
+                                        <div class="d-flex mt-2">
+                                            <h4>改訂</h4>
+                                            <v-combobox class="ml-2"
+                                             v-model="Hoshu_Dropdown_Select"
+                                             :items = "Hoshu_Dropdown_Item"
+                                             @change="GetHoshu_ChangeDropdown"
+                                             style="width :100px;" dense outlined 
+                                             ></v-combobox>
+                                        </div>
+                                    </v-row>
+                                    <v-data-table class="mx-2 mt-n5"
+                                    mobile-breakpoint='300'
+                                    fixed-header
+                                    :headers="this.Hoshu_Table_Header"
+                                    :items="this.Hoshu_Table_Item"
+                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                    hide-default-footer
+                                    height="14vh"
+                                    dense
+                                    >
+                                    </v-data-table>
+                                </v-card>
+                            </v-col>
+                            <!-- P/M基本情報 -->
+                            <v-col :cols = "this.$vuetify.breakpoint.smAndDown?'12':'6'">
+                                <v-card height ="20Vh">
+                                    <v-row >
+                                        <v-col class="ml-2">
+                                            <h3>P/M基本情報</h3>
+                                        </v-col>
+                                        <v-spacer>
+                                        </v-spacer>
+                                        <v-col class="d-flex">
+                                            <v-text-field
+                                             class = " mr-2"
+                                             v-model = "EditTableSearch1"
+                                             label = "フィルター"
+                                             hide-details
+                                             dense
+                                             outlined
+                                            ></v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                    <v-form ref ="PPPMMS_FORM">
+                                        <v-data-table class="mx-2"
+                                        mobile-breakpoint='400'
+                                        fixed-header
+                                        :headers="this.Editinfo_Header"
+                                        :items="this.EditInfo_Value"
+                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                        hide-default-footer
+                                        height="14vh"
+                                        :search="EditTableSearch1"
+                                        dense
+                                        >
+                                        <template v-slot:item.CELL_TYPE="{item}">
+                                            <!--  共用マスター -->
+                                            <v-btn 
+                                            v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                            x-small 
+                                            @click="getEditDialogBtn1(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
+                                            >...</v-btn>
+                                            <!-- 注文コードマスター  -->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2'&& item.CELL_TYPE == 'B'"
+                                            @click = "getEditDialogBtn2(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
+                                            x-small
+                                            >...</v-btn>
+                                            <!-- 担当コードマスター -->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                            @click = "getEditDialogBtn3(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),1)"
+                                            x-small
+                                            >...</v-btn>
+                                            <!--　単位読替マスター　-->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                            x-small
+                                            @click = "getEditDialogBtn4(EditInfo_Value.indexOf(item),item.MS_ITEM_NO,2)"
+                                            >...</v-btn>
+                                            
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                            @click ="getEditDialogBtn6(EditInfo_Value.indexOf(item),item.FIELD_NAME,1)"
+                                            x-small
+                                            >...</v-btn>
+                                            
+                                        </template>
+                                        <template v-slot:item.FIELD_VALUE="{item}">
+                                            <v-text-field
+                                                :background-color = "item.Setsumei_Error?'red':''"
+                                                :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                :disabled = "item.AUTH_TYPE == '2' ?false:true"
+                                                :filled= "item.AUTH_TYPE == '2'?false:true"
+                                                :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                :rules="item.RULES"
+                                                v-model = EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_VALUE
+                                                @keyup="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
+                                                @change="getEditTableSetsumei(EditInfo_Value.indexOf(item),item.FIELD_NAME)"
+                                                dense
+                                                outlined>
+                                            </v-text-field>
+                                        </template>
+                                        <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                <p
+                                                :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                {{EditInfo_Value[EditInfo_Value.indexOf(item)].FIELD_EXPLAIN}} 
+                                                </p>
+                                        </template>
+                                        </v-data-table>
+                                    </v-form>
+                                </v-card>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <!-- 1次情報 -->
+                            <v-col  :cols = "this.$vuetify.breakpoint.smAndDown?'12':'6'">
+                                <v-card height ="42vh"> 
+                                    <v-row no-gutters>
+                                        <v-col>
+                                            <h3 class="mt-4 ml-6">1次情報</h3>
+                                        </v-col>
+                                    </v-row>
+                                    <v-data-table
+                                    class = "mx-2 mt-5"
+                                    mobile-breakpoint='400'
+                                    fixed-header
+                                    :headers="this.Hoshu_EditTable1_Header"
+                                    :items="this.Hoshu_EditTable1_Item"
+                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                    hide-default-footer
+                                    height="34vh"
+                                    dense
+                                    >
+                                        <template v-slot:item.CELL_TYPE="{item}">
+                                            <!--  共用マスター -->
+                                            <v-btn 
+                                            v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                            x-small 
+                                            @click="getEditDialogBtn1(Hoshu_EditTable1_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                            >...</v-btn>
+                                            <!-- 注文コードマスター -->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                            x-small
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                            @click = "getEditDialogBtn2(Hoshu_EditTable1_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                            >...</v-btn>
+                                            <!-- 担当コードマスター -->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                            x-small
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                            @click = "getEditDialogBtn3(Hoshu_EditTable1_Item.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
+                                            >...</v-btn>
+                                            <!-- 単位読替マスタ -->
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                            @click = "getEditDialogBtn4(Hoshu_EditTable1_Item.indexOf(item),item.MS_ITEM_NO,2)"
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                            x-small
+                                            >...</v-btn>
+                                            <v-btn
+                                            v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                            :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                            @click ="getEditDialogBtn6(Hoshu_EditTable1_Item.indexOf(item),item.FIELD_NAME,2)"
+                                            x-small
+                                            >...</v-btn>
+                                        </template>
+                                        <!-- 
+                                            @keyup="PPPMPOSPEC_UPDATE_CHECK(Hoshu_EditTable2_Item.indexOf(item))"
+                                            @change="PPPMPOSPEC_UPDATE_CHECK(Hoshu_EditTable2_Item.indexOf(item))"
+                                         -->
+                                        <template v-slot:item.FIELD_VALUE="{item}">
+                                            <v-text-field
+                                                :background-color = "item.Setsumei_Error?'red':''"
+                                                :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                :disabled = "item.AUTH_TYPE == '2'?false:true"
+                                                :filled= "item.AUTH_TYPE == '2' ?false:true"
+                                                :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                :rules="item.RULES"
+                                                v-model = Hoshu_EditTable1_Item[Hoshu_EditTable1_Item.indexOf(item)].FIELD_VALUE
+                                                outlined
+                                                dense>
+                                            </v-text-field>
+                                        </template>
+                                        <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                            <p
+                                            :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                            {{Hoshu_EditTable1_Item[Hoshu_EditTable1_Item.indexOf(item)].FIELD_EXPLAIN}}
+                                            </p>
+                                        </template>
+                                    </v-data-table>
+                                </v-card>
+                            </v-col>
+                            <!-- 2次情報 -->
+                            <v-col :cols = "this.$vuetify.breakpoint.smAndDown?'12':'6'">
+                                <v-expansion-panels v-model="Hoshu_Panel" multiple accordion>
+                                    <v-expansion-panel>
+                                        <v-expansion-panel-header><h3>2次情報</h3></v-expansion-panel-header>
+                                        <v-expansion-panel-content>
+                                            <v-data-table
+                                            class = "mx-2"
+                                            mobile-breakpoint='400'
+                                            fixed-header
+                                            :headers="this.Hoshu_EditTable2_Header"
+                                            :items="this.Hoshu_EditTable2_Item"
+                                            :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                            hide-default-footer
+                                            height="35vh"
+                                            dense
+                                            >
+                                                <template v-slot:item.CELL_TYPE="{item}">
+                                                    <!--  共用マスター -->
+                                                    <v-btn 
+                                                    v-if="item.MS_TABLE == '1' && item.CELL_TYPE == 'B' && item.AUTH_TYPE == '2'"
+                                                    x-small 
+                                                    @click="getEditDialogBtn1(Hoshu_EditTable2_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                    >...</v-btn>
+                                                    <!-- 注文コードマスター -->
+                                                    <v-btn
+                                                    v-if ="item.MS_TABLE == '2' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                    x-small
+                                                    :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                    @click = "getEditDialogBtn2(Hoshu_EditTable2_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,2)"
+                                                    >...</v-btn>
+                                                    <!-- 担当コードマスター -->
+                                                    <v-btn
+                                                    v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
+                                                    x-small
+                                                    :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                    @click = "getEditDialogBtn3(Hoshu_EditTable2_Item.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),2)"
+                                                    >...</v-btn>
+                                                    <!-- 単位読替マスタ -->
+                                                    <v-btn
+                                                    v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                    @click = "getEditDialogBtn4(Hoshu_EditTable2_Item.indexOf(item),item.MS_ITEM_NO,2)"
+                                                    :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                    x-small
+                                                    >...</v-btn>
+                                                    <v-btn
+                                                    v-if ="item.MS_TABLE == '6' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
+                                                    :disabled ="Edit_Combobox_1_select.substr(0,1) != '-'?false: true"
+                                                    @click ="getEditDialogBtn6(Hoshu_EditTable2_Item.indexOf(item),item.FIELD_NAME,2)"
+                                                    x-small
+                                                    >...</v-btn>
+                                                </template>
+                                                <!-- 
+                                                    @keyup="PPPMPOSPEC_UPDATE_CHECK(Hoshu_EditTable2_Item.indexOf(item))"
+                                                    @change="PPPMPOSPEC_UPDATE_CHECK(Hoshu_EditTable2_Item.indexOf(item))"
+                                                -->
+                                                <template v-slot:item.FIELD_VALUE="{item}">
+                                                    <v-text-field
+                                                        :background-color = "item.Setsumei_Error?'red':''"
+                                                        :class="item.ALIGNMENT == 'R  '?'mb-n5 right-input':'mb-n5 left-input'"
+                                                        :disabled = "item.AUTH_TYPE == '2'?false:true"
+                                                        :filled= "item.AUTH_TYPE == '2' ?false:true"
+                                                        :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
+                                                        :rules="item.RULES"
+                                                        v-model = Hoshu_EditTable2_Item[Hoshu_EditTable2_Item.indexOf(item)].FIELD_VALUE
+                                                        outlined
+                                                        dense>
+                                                    </v-text-field>
+                                                </template>
+                                                <template v-slot:item.FIELD_EXPLAIN="{ item }">
+                                                    <p
+                                                    :class="(item.Setsumei_Error)?'red--text text--lighten-1':'black--text'">
+                                                    {{Hoshu_EditTable2_Item[Hoshu_EditTable2_Item.indexOf(item)].FIELD_EXPLAIN}}
+                                                    </p>
+                                                </template>
+                                            </v-data-table>
+                                        </v-expansion-panel-content>
+                                    </v-expansion-panel>
+                                </v-expansion-panels>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col>
+                                <v-expansion-panels v-model="Hoshu_EX_Panel" multiple accordion>
+                                    <v-expansion-panel>
+                                        <v-expansion-panel-header><h3>適用条件</h3></v-expansion-panel-header>
+                                        <v-expansion-panel-content>
+                                            <v-row>
+                                                <v-col :col ="this.$vuetify.breakpoint.smAndDown?'12':'6'">
+                                                    <v-data-table
+                                                    :headers ="Hoshu_Teikiyou_Header"
+                                                    :items="Hoshu_Teikiyou_Item"
+                                                    class = "mx-2"
+                                                    mobile-breakpoint='400'
+                                                    fixed-header
+                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                    hide-default-footer
+                                                    height="35vh"
+                                                    dense
+                                                    >
+                                                        <template v-solot:item.DELETE ="{item}">
+                                                            <v-btn x-small icon>
+                                                                <v-icon>
+                                                                    mdi-delete  
+                                                                </v-icon>
+                                                            </v-btn>
+                                                        </template>
+                                                        <template v-solot:item.DATA1 ="{item}">
+                                                            {{item}}
+                                                            <v-btn x-small>tests</v-btn>
+                                                        </template>
+                                                    </v-data-table>
+                                                </v-col>
+                                                <v-col :col ="this.$vuetify.breakpoint.smAndDown?'12':'6'">
+                                                    <h4>項目情報</h4>
+                                                    <v-data-table>
+                                                    </v-data-table>
+                                                    <v-data-table>
+                                                    </v-data-table>
+                                                </v-col>
+                                            </v-row>
+                                        </v-expansion-panel-content>
+                                    </v-expansion-panel>
+                                </v-expansion-panels>
+                            </v-col>
+                        </v-row>
                     </v-container>
                 </div>
                 <!-- PC/SP画面表示 -->
@@ -4209,8 +5060,133 @@ export default  {
     draggable,
   },
   data : () => ({
-    Main_URL : "http://sa0392.cad.fujitec.co.jp/pmserver/api/",//本番環境用データベースサーバー
-    //Main_URL :"http://localhost:59272/api/",//テスト用データベースサーバー
+    TEST_SITE :"",
+    //Main_URL : "http://sa0392.cad.fujitec.co.jp/pmserver/api/",//本番環境用データベースサーバー
+    Main_URL :"http://localhost:59272/api/",//テスト用データベースサーバー
+    // 保守画面
+    // アコーディオン
+    Hoshu_Panel :[0],
+    Hoshu_EX_Panel :[0],
+    // テーブル
+    Hoshu_Table_Item:[],
+    Hoshu_Table_Header:[
+        {text:"ロケーション",value:"PART_LOCATION",width:"150px"},
+        {text:"パターン",value:"COND_PAT_NO",width:"100px"},
+        {text:"優先度",value:"PRIORITY",width:"100px"},
+        {text:"保守判定",value:"MAINT_TYPE",width:"100px"},
+        {text:"交換周期（月）",value:"DSG_LIFE_MONTH",width:"150px"},
+        {text:"交換周期注意（月）",value:"REP_LIFE_CHKMONTH",width:"180px"},
+        {text:"交換周期（稼動値）",value:"REP_LIFE_RUN",width:"180px"},
+        {text:"交換周期注意（稼動値）",value:"REP_LIFE_CHKRUN",width:"200px"},
+        {text:"2次側 稼動値区分",value:"ACT_TYPE_2",width:"200px"},
+        {text:"適用条件",value:"COND_TYPE",width:"100px"},
+        {text:"設計寿命（月）",value:"REP_LIFE_MONTH",width:"200px"},
+        {text:"設計寿命（稼動値）",value:"DSG_LIFE_ACT",width:"200px"},
+        {text:"単位",value:"DSG_UNIT",width:"80px"},
+        {text:"1次側 稼動値区分",value:"ACT_TYPE_1",width:"200px"},
+        {text:"交換条件内容",value:"REP_COND",width:"300px"},
+    ],
+    Hoshu_EditTable1_Header:[
+        {text:"項目名",value:"FIELD_NAME_LOC1",width:"170px" },
+        {text:"値",value:"FIELD_VALUE",width:"170px"},
+        {text:"",value:"CELL_TYPE",width:"10px"},
+        {text:"説明",value:"FIELD_EXPLAIN",width:"200px"}
+    ],
+    Hoshu_EditTable1_Item:[],
+    Hoshu_EditTable2_Header:[
+        {text:"項目名",value:"FIELD_NAME_LOC1",width:"170px" },
+        {text:"値",value:"FIELD_VALUE",width:"170px"},
+        {text:"",value:"CELL_TYPE",width:"10px"},
+        {text:"説明",value:"FIELD_EXPLAIN",width:"200px"}
+    ],
+    Hoshu_EditTable2_Item:[],
+    Hoshu_Teikiyou_Header:[
+        {text:"",value:"DELETE"},
+        {text:"項目番号",value:"COND_SPEC_ITEM_NO"},
+        {text:"判定",value:"DATA1"},
+        {text:"仕様コード",value:"COND_CODE"},
+        {text:"",value:""}
+    ],
+    Hoshu_Teikiyou_Item:[],
+    // ドロップダウン
+    Hoshu_Dropdown_Select :"",
+    Hoshu_Dropdown_Item :[],
+    // 保守画面
+    // 在庫画面
+    //アコーディオン
+    Zaiko_Panel :[],
+    Zaiko_Panel1_ST :false,
+    Zaiko_Panel2_ST :false,
+    Zaikou_SokoCode_Item :[],
+    Zaikou_SokoCode_Select :"",
+    Zaiko_EditTable_Header :[
+        {text:"項目名",value:"FIELD_NAME_LOC1",width:"170px" },
+        {text:"値",value:"FIELD_VALUE",width:"170px"},
+        {text:"",value:"CELL_TYPE",width:"10px"},
+        {text:"説明",value:"FIELD_EXPLAIN",width:"200px"}
+    ],
+    Zaiko_EditTable_Item:[],
+    // 在庫画面
+    // 入出庫画面
+    // 製作所切替えTEXT_FIELD
+    Iride_Naigaisaku:"",
+    Iride_SeisakuLot:"",
+    Iride_SaishouHacchu:"",
+    Iride_Bucket:"",
+    Iride_Kanten:"",
+    Iride_Chuuten:"",
+    Iride_Zaikan:"",
+    Iride_Jio:"",
+    Iride_Kanrikijun:"",
+    Iride_SeisakuLT:"",
+    Iride_ABC:"",
+    Iride_Ninaite:"",
+    Iride_Chuunaite:"",
+    Iride_Chuuku:"",
+    // テーブル
+    Iride_ZaiyoteiTable_Header:[
+        {text:"倉庫",value:"",width:"80px"},
+        {text:"在庫数",value:"",width:"100px"},
+        {text:"置場",value:"",width:"80px"},
+        {text:"自動購入指示",value:"",width:"150px"},
+        {text:"安全在庫",value:"",width:"120px"},
+        {text:"発注点",value:"",width:"100px"},
+        {text:"当月出庫",value:"",width:"120px"},
+        {text:"当月入庫",value:"",width:"120px"},
+        {text:"手配情報",value:"",width:"120px"},
+        {text:"中止",value:"",width:"80px"},
+        {text:"貯蔵開始",value:"",width:"120px"},
+    ],
+    Iride_ZaiyoteiTable_Item:[],
+    Iride_ZaikouIride_Header:[
+        {text:"購LT",value:"",width:"150px"},
+        {text:"出庫",value:"",width:"100px"},
+        {text:"入庫",value:"",width:"100px"},
+        {text:"残数",value:"",width:"100px"},
+
+    ],
+    Iride_ZaikouIride_Item:[],
+    // ドロップダウン
+    Iride_Koutei_Select :"固定",
+    Iride_Koutei_Item:["固定","全て"],
+    Iride_Tani_Select:"全て",
+    Iride_Tani_Item:["日","週","月/2","月"],
+    // チェックボックス
+    Ireide_checkbox_0:true,//出庫
+    Ireide_checkbox_1:true,//入庫(注文)
+    Ireide_checkbox_2:true,//出庫(他)
+    Ireide_checkbox_3:true,//入庫(見込)
+    Ireide_checkbox_4:true,//出庫(予測)
+    Ireide_checkbox_5:true,//入庫(振替)
+    // 在庫情報
+    Ireide_EditTable_Header:[
+        {text:"項目名",value:"FIELD_NAME_LOC1",width:"170px" },
+        {text:"値",value:"FIELD_VALUE",width:"170px"},
+        {text:"",value:"CELL_TYPE",width:"10px"},
+        {text:"説明",value:"FIELD_EXPLAIN",width:"200px"}
+    ],
+    Ireide_EditTable_Item:[],
+    // 入出庫画面
     //購買画面
     //購買優先テーブル
     Koubai_Torisaki_Header:[
@@ -4246,7 +5222,7 @@ export default  {
     Koubai_PPPMPOSPEC_TableHeight :"12vh",
     Koubai_CHMSB_ST:false,
     //アコーディオン
-    Koubai_Panel :[],
+    Koubai_Panel :[0,1],
     Koubai_Panel1_ST :false,
     Koubai_Panel2_ST :false,
     //作業コード別注文仕様DROPDOWN
@@ -4535,7 +5511,7 @@ export default  {
     userKoumokuSelect:"P/M基本情報",
     userKoumokuItems:["P/M基本情報","手配情報","標準時間マスタ","購買情報","在庫情報"],
     userShougiSelect:"手配情報",
-    userShougiItems:["手配情報","製作情報","購買情報","在庫情報","保守情報","販売価格情報","P/S情報","代替部品情報"],
+    userShougiItems:["手配情報","製作情報","購買情報","入出庫","在庫情報","保守情報","販売価格情報","P/S情報","代替部品情報"],
     APIJSON: [{ 
     SOUSA: "", 
     PART_NO: "", 
@@ -4875,6 +5851,144 @@ export default  {
     this.getFirstPage();
   },
   methods:{
+    GetSite(){
+        const url = "https://www.google.com/";
+        this.$axios.$get(url,{withCredentials: true}).then(res=>{
+            console.log(res.data);
+        }).catch(err=>{
+            console.log(err)
+        })
+    },
+    // 保守画面
+    GetHoshu(PARTNO,PARTREVNO)
+    {
+        this.Zaikou_SokoCode_Item =[];
+        const url = this.Main_URL + "KensakuBtnGet/PPPMMAINTMS";
+        const params = {
+            PART_NO :PARTNO,
+            PART_REV_NO : PARTREVNO,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.Hoshu_Table_Item = res.data;
+            const PART_NO = res.data[0].PART_NO;
+            const PART_REV_NO = res.data[0].PART_REV_NO;
+            const COND_PAT_NO = res.data[0].COND_PAT_NO;
+            console.log(PART_NO,PART_REV_NO,COND_PAT_NO);
+            this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,1);
+            this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,2);
+        }).catch(err =>{
+
+        });
+    },
+    GetHoshu_ChangeDropdown(){
+        this.Hoshu_Dropdown_Select= this.Hoshu_Dropdown_Select.substr(0,3);
+        this.GetHoshu(this.Header_Data[this.Header_Data.length-1].PART_NO,this.Hoshu_Dropdown_Select);
+        this.getEditTable(this.Header_Data[this.Header_Data.length-1].PART_NO,this.Hoshu_Dropdown_Select);
+    },
+    GetHoshu_MAINTMS(PARTNO,PARTREVNO,CONDPATNO,MAINTMS){
+        const url = this.Main_URL + "KensakuBtnGet/PPPMMAINTMS_MAINTMS";
+        const params = {
+            PART_NO :PARTNO,
+            PART_REV_NO : PARTREVNO,
+            COND_PAT_NO : CONDPATNO,
+            WHICH_MAINTMS : MAINTMS,
+            USER_ID :this.userId,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            console.log("MAINTMS",MAINTMS);
+            if(MAINTMS =="1")
+            {
+                this.Hoshu_EditTable1_Item =res.data;
+                this.Hoshu_EditTable1_Item =res.data.map(item =>{
+                item.RULES = [];
+                item.Setsumei_Error = false;
+                item.CHECK_LIST = [];
+                item.UPDATE_ST = false;
+                item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
+                return item;
+            });
+            }
+            else if(MAINTMS =="2")
+            {
+                this.Hoshu_EditTable2_Item =res.data.map(item =>{
+                item.RULES = [];
+                item.Setsumei_Error = false;
+                item.CHECK_LIST = [];
+                item.UPDATE_ST = false;
+                item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
+                return item;
+                })
+            }
+        }).catch(err =>{
+
+        });
+    },
+    // 保守画面
+    // 在庫画面
+    GetZKMS(PARTNO,SOKOCODE)
+    {
+        if(SOKOCODE !== undefined)
+        {
+            const url = this.Main_URL + "KensakuBtnGet/ZKMS";
+            const params = {
+                PART_NO  : PARTNO, //部品コード
+                SOKO_CODE : SOKOCODE,//倉庫コード
+                USER_ID : this.userId, //ユーザーID
+            }
+            this.$axios.get(url,{params}).then(res =>{
+                //もし、検査情報があればテーブルに格納する
+                this.Zaiko_EditTable_Item =res.data.map(item =>{
+                    item.RULES = [];
+                    item.Setsumei_Error = false;
+                    item.CHECK_LIST = [];
+                    item.UPDATE_ST = false;
+                    item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
+                    return item;
+                });
+                this.Zaiko_EditTable_Item.forEach(Row =>{
+                    var index = this.Zaiko_EditTable_Item(Row);
+                    this.GetZaikouSetsumei(index,Row.FIELD_NAME);  
+                })
+            }).catch(err =>{
+
+            })
+        }
+        
+    },
+    //  在庫ドロップダウン
+    GetZKMS_SOKOCODE()
+    {
+        this.Zaikou_SokoCode_Item =[];
+        const url = this.Main_URL + "KensakuBtnGet/ZKMS_SOKOCODE";
+        const params ={
+            PART_NO :this.Header_Data[this.Header_Data.length-1].PART_NO,
+        };
+        this.$axios.get(url,{params}).then(res =>{
+            res.data.forEach(item =>{
+                this.Zaikou_SokoCode_Item.push(item.SOKO_CODE);
+            });
+            this.Zaikou_SokoCode_Select = this.Zaikou_SokoCode_Item[0];
+             // 在庫情報テーブル取得
+            this.GetZKMS(this.Header_Data[this.Header_Data.length-1].PART_NO,
+                            this.Zaikou_SokoCode_Select);
+             
+        }).catch(err =>{
+
+        })
+    },
+    // 在庫画面
+    //  入出庫画面
+    Iride_shuukou(){
+        this.Ireide_checkbox_0 = !this.Ireide_checkbox_0;
+        this.Ireide_checkbox_2 = this.Ireide_checkbox_0;
+        this.Ireide_checkbox_4 = this.Ireide_checkbox_0;
+    },
+    Iride_nyuukou(){
+        this.Ireide_checkbox_1 = !this.Ireide_checkbox_1;
+        this.Ireide_checkbox_3 = this.Ireide_checkbox_1;
+        this.Ireide_checkbox_5 = this.Ireide_checkbox_1;
+    },
+    //  入出庫画面
     //　BROWER用のSSO承認
     async asyncData () {
         // SSO 
@@ -4928,7 +6042,7 @@ export default  {
         // SSO有効期限延長(無効にすると規定時間でSSO認証が必要となる)
         this.$store.dispatch('fujitecSso/extendExpire')
     },
-    //購買画面
+    //  購買画面
     Panel1_click_event(){
         this.Koubai_Panel1_ST = !this.Koubai_Panel1_ST;
         this.CheckKoubaiPanel_ST();
@@ -5216,8 +6330,8 @@ export default  {
         }
         else if(this.tab_select == '2')
         {
-            this.LoadKoubaiTable();
             //　購買テーブルを取得
+            this.LoadKoubaiTable();
         }
         else if(this.tab_select == '3')
         {
@@ -5226,10 +6340,12 @@ export default  {
         else if(this.tab_select == '4')
         {
             //　在庫テーブルを取得
+            this.LoadZaikoTable();
         }
         else if(this.tab_select == '5')
         {
             //　保守テーブルを取得
+            this.LoadHoshuTable();
         }
         else if(this.tab_select == '6')
         {
@@ -5705,6 +6821,49 @@ export default  {
             })
             //作業コード別注文仕様DropDown取得
             this.GET_SGCODE('G');
+        }
+    },
+    //  在庫初期ページを取得
+    LoadZaikoTable()
+    {
+        // もし部品コードが既に選択している場合
+        if(this.Header_Data[this.Header_Data.length-1].PART_NO != "")
+        {
+            // 在庫情報ドロップダウン+テーブル取得
+            this.GetZKMS_SOKOCODE();
+            // PM基本情報テーブル取得
+            this.Header_Data.forEach(item =>{
+                if(item.APP_CUR_TYPE == 1)
+                {
+                    this.getEditTable(item.PART_NO,item.PART_REV_NO);
+                    // 手配情報テーブル取得
+                    this.Get_FT_KOUBA();
+                    this.getSokoType(false);
+                    this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
+                }
+            })
+        }
+    },
+    // 保守初期ページを取得
+    LoadHoshuTable()
+    {
+        this.Hoshu_Dropdown_Item =[];
+        // もし部品コードが既に選択している場合
+        if(this.Header_Data[this.Header_Data.length-1].PART_NO != "")
+        {
+            this.Header_Data.forEach(item =>{
+                // 保守情報ドロップダウン取得
+                var NEW_PART_REV_NO =item.PART_REV_NO +":"+item.REV_START_DATE + " ~ " +item.REV_STOP_DATE;
+                this.Hoshu_Dropdown_Item.push(NEW_PART_REV_NO)
+                if(item.APP_CUR_TYPE == 1)
+                {
+                    // 保守情報テーブル取得
+                    this.GetHoshu(item.PART_NO,item.PART_REV_NO);
+                    this.Hoshu_Dropdown_Select = item.PART_REV_NO;
+                    // P/M基本情報テーブル取得
+                    this.getEditTable(item.PART_NO,item.PART_REV_NO);
+                }
+            })
         }
     },
     //  タブメソッド
@@ -6644,6 +7803,35 @@ export default  {
             })    
         }
     },
+    ZKMS_CellType(index){
+        if(this.Zaiko_EditTable_Item[index].CHECK_LIST == ""){
+            switch(this.Zaiko_EditTable_Item[index].MS_TABLE){
+                /*共用マスター(CMMSB)*/ 
+                case '1':
+                    //console.log("共用マスター(CMMSB)");
+                    this.getCM_CODE("ZKMS",index,this.Zaiko_EditTable_Item[index].MS_ITEM_NO,true)
+                    break;
+                /*注文コードマスタ(CHCDMS) */
+                case '2':
+                    //console.log("注文コードマスタ(CHCDMS)");
+                    break;
+                /*担当コードマスタ(CMTANTOMS) */
+                case'3':
+                    //console.log("単位読替マスタ(NRTANIMS)");
+                    break;
+                /*単位読替マスタ(NRTANIMS) */
+                case'4':
+                    break;
+                /*工程コードマスタ(KTSTDTIME) */
+                case'5':
+                    break;
+            }
+        }
+        else
+        {
+
+        }
+    },
     PPPMMS_UPDATE_CHECK(index){
         this.EditInfo_Value[index].UPDATE_ST = this.EditInfo_Value[index].FIELD_VALUE != this.EditInfo_Value[index].BEFORE_UPDATE_VALUE 
             && !((this.EditInfo_Value[index].FIELD_VALUE == "") && (this.EditInfo_Value[index].BEFORE_UPDATE_VALUE === null) )? true: this.EditInfo_Value[index].UPDATE_ST ;
@@ -6668,6 +7856,11 @@ export default  {
         this.Koubai_PPPMPOSPEC_Item[index].UPDATE_ST = this.Koubai_PPPMPOSPEC_Item[index].FIELD_VALUE != this.Koubai_PPPMPOSPEC_Item[index].BEFORE_UPDATE_VALUE 
             && !((this.Koubai_PPPMPOSPEC_Item[index].FIELD_VALUE == "") && (this.Koubai_PPPMPOSPEC_Item[index].BEFORE_UPDATE_VALUE === null) )? true: this.Koubai_PPPMPOSPEC_Item[index].UPDATE_ST ;
         this.Koubai_PPPMPOSPEC_Item[index].BEFORE_UPDATE_VALUE =this.Koubai_PPPMPOSPEC_Item[index].FIELD_VALUE
+    },
+    ZKMS_UPDATE_CHECK(index){
+        this.Zaiko_EditTable_Item[index].UPDATE_ST = this.Zaiko_EditTable_Item[index].FIELD_VALUE != this.Zaiko_EditTable_Item[index].BEFORE_UPDATE_VALUE 
+            && !((this.Zaiko_EditTable_Item[index].FIELD_VALUE == "") && (this.Zaiko_EditTable_Item[index].BEFORE_UPDATE_VALUE === null) )? true: this.Zaiko_EditTable_Item[index].UPDATE_ST ;
+        this.Zaiko_EditTable_Item[index].BEFORE_UPDATE_VALUE =this.Zaiko_EditTable_Item[index].FIELD_VALUE
     },
     getEditTableSetsumei(index,item){
         var Setsumei ="";
@@ -8077,6 +9270,316 @@ export default  {
         //　更新項目をリストに追加
         this.CHMSA_UPDATE_CHECK(index);
     },
+    GetZaikouSetsumei(index,item)
+    {
+        //  check_change 特定の入力フォーマットの変化を確認するプロパティ
+        //  True  : 入力確認
+        //　False : 入力確認未確認
+        var check_change=false;
+        var Setsumei ="";
+        var Setsumei_Error = false;
+        //  入力確認条件が空だった場合こちらで確認
+        if(this.Zaiko_EditTable_Item[index].FIELD_VALUE === null ||
+        this.Zaiko_EditTable_Item[index].FIELD_VALUE === "" )
+        {
+            //  発注点
+            if(item == "ORDER_POINT")
+            {
+                Setsumei = "入力を省略できません ";
+                Setsumei_Error = true;
+                check_change = true;
+            }
+            // 安全在庫量
+            else if(item == "MIN_SAFETY")
+            {
+                Setsumei = "入力を省略できません";
+                Setsumei_Error = true;
+                check_change = true;
+            }
+            //  貯蔵開始日
+            else if(item =="STOCK_START_DATE")
+            {
+                Setsumei = "入力を省略できません ";
+                Setsumei_Error = true;
+                check_change = true;
+            }
+            //  ＰＳ展開区分
+            else if(item =="PS_FLAG")
+            {
+                Setsumei = "部品展開で出庫になる";
+                Setsumei_Error = false;
+                check_change = true;
+            }
+            //  自動購入依頼判定
+            else if(item == "AUTO_PURCHASE_REQ")
+            {
+                if(this.Zaiko_EditTable_Item[index].FIELD_VALUE === null)
+                {
+                    this.Zaiko_EditTable_Item[index].FIELD_VALUE = '0';
+                    Setsumei = "";
+                    Setsumei_Error = false;
+                    check_change = true;
+                }
+                else
+                {
+                    Setsumei = "0,1,2を入力下さい。";
+                    Setsumei_Error = true;
+                    check_change = true;
+                }
+            }
+            //  補用品在庫判定
+            else if(item == "EZ_STOCK_FLAG")
+            {
+                Setsumei = "";
+                Setsumei_Error = false;
+                check_change = true;
+            }
+            //  店所緊急用在庫
+            else if(item == "EMG_STOCK")
+            {
+                Setsumei = "";
+                Setsumei_Error = false;
+                check_change = true;
+            }
+            //  店所緊急用在庫
+            else if(item == "MAX_VALUE_SET_TYPE")
+            {
+                Setsumei = "";
+                Setsumei_Error = false;
+                check_change = true;
+            }
+            //  上限値自動設定係数
+            else if(item == "MAX_VALUE_CALC_ITEM1")
+            {
+                Setsumei = "";
+                Setsumei_Error = false;
+                check_change = true;
+            }
+            // 安全在庫自動補正判定
+            else if(item == "MIN_SAFETY_SET_TYPE")
+            {
+                Setsumei = "";
+                Setsumei_Error = false;
+                check_change = true;
+            }
+            // 安全在庫自動補正計算式
+            else if(item == "MIN_SAFETY_CALC_METHOD")
+            {
+                Setsumei = "";
+                Setsumei_Error = false;
+                check_change = true;
+            }
+            //  安全在庫自動設定係数
+            else if(item == "MIN_SAFETY_CALC_ITEM1")
+            {
+                Setsumei = "";
+                Setsumei_Error = false;
+                check_change = true;
+            }
+        }
+        else
+        {
+            //  業者部品コード
+            if(item == "ORDER_POINT")
+            {  
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,6}$/) ?
+                        "":"数値6桁以内で入力して下さい。";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,6}$/) ?
+                                false:true;
+                check_change = true;
+            }
+            // 安全在庫量
+            else if(item == "MIN_SAFETY")
+            {
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,6}$/) ?
+                        "":"数値6桁以内で入力して下さい。";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,6}$/) ?
+                                false:true;
+                check_change = true;
+            }
+            //  貯蔵中止判定
+            else if(item == "STOCK_STOP_FLAG")
+            {
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[0]$/) ?
+                        "貯蔵継続":this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[1]$/)?
+                        "貯蔵中止(在庫消化後)":"0(継続),1（中止）を入力下さい。";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[0-1]$/) ?
+                                false:true;
+                check_change = true;
+            }
+            // 貯蔵開始日
+            else if(item == "STOCK_START_DATE")
+            {
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{8}$/) ?
+                        "":"yyyymmdd形式で入力して下さい";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{8}$/) ?
+                        false:true;
+                check_change = true;
+            }
+            // ＰＳ展開区分
+            else if(item == "PS_FLAG")
+            {
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[K]$/)?"K:部品展開で出庫にならない" 
+                        :this.Zaiko_EditTable_Item[index].FIELD_VALUE == "" ?
+                        "' ':部品展開で出庫になる":"'' or 'K' :Kか空白を入力して下さい";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[K]$/) ||
+                                this.Zaiko_EditTable_Item[index].FIELD_VALUE == "" ?
+                                false:true;
+                check_change = true;
+            }
+            // 上限値
+            else if(item == "MAX_VALUE")
+            {
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,6}$/) ?
+                        "":"数値6桁以内で入力して下さい。";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,6}$/) ?
+                                false:true;
+                check_change = true;
+            }
+            //  手配情報
+            else if(item == "REMARKS")
+            {
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\w{0,200}$/) ?
+                        "最大200文字":"最大200文字";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\w{0,200}$/)?
+                        false:true;
+                check_change = true;
+            }
+            // 伝票記事1
+            else if(item == "DENPYO_KIJI1")
+            {
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\w{0,50}$/) ?
+                        "最大50文字":"最大50文字";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\w{0,50}$/)?
+                        false:true;
+                check_change = true;
+            }
+            // 自動購入依頼判定
+            else if(item == "AUTO_PURCHASE_REQ")
+            {
+                if(this.Zaiko_EditTable_Item[index].FIELD_VALUE === null)
+                {
+                    this.Zaiko_EditTable_Item[index].FIELD_VALUE = '0';
+                }
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[0-2]$/) ?
+                        "":"0,1,2を入力下さい。";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[0-2]$/)?
+                        false:true;
+                check_change = true;
+            }
+            //  補用品在庫判定
+            else if(item == "EZ_STOCK_FLAG")
+            {
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[0]$/) ?
+                        "PSC在庫使用不可":this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[1]$/) ?
+                        "PSC在庫使用可":"0(不可),1（可）を入力下さい。"
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[0-1]$/)?
+                        false:true;
+                check_change = true;
+            }
+            //  倉庫コード
+            else if(item == "EMG_STOCK")
+            {
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,6}$/) ?
+                        "":"数値6桁以内で入力して下さい。";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,6}$/) ?
+                                false:true;
+                check_change = true;
+            }
+            // 上限値自動補正判定
+            else if(item == "MAX_VALUE_SET_TYPE")
+            {
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[0]/) ?
+                        "0:手動":this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[1]/) ?
+                        "1:自動":"0(手動),1（自動）を入力下さい。";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[01]$/) ?
+                                false:true;
+                check_change = true;
+            }
+            //  上限値自動設定係数
+            else if(item == "MAX_VALUE_CALC_ITEM1")
+            {
+                if(this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/\./))
+                {
+                    var Point_value = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/\./)?
+                        this.Zaiko_EditTable_Item[index].FIELD_VALUE:this.Zaiko_EditTable_Item[index].FIELD_VALUE+".00";
+                    Setsumei =Point_value.match(/^\d{0,2}\.\d{0,2}$/) ?"":"整数部は5桁、少数部は2桁で入力して下さい。";
+                    Setsumei_Error = Point_value.match(/^\d{0,2}\.\d{0,2}$/) ?false:true;
+                }
+                else
+                {
+                    Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^100$/)?
+                                "":this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,2}$/)?
+                                "":"100以下で入力して下さい";
+                    Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^100$/) ||
+                                this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,2}$/)?
+                                false:true
+                }
+                check_change = true;
+            }
+            // 安全在庫自動補正判定
+            else if(item == "MIN_SAFETY_SET_TYPE")
+            {
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[0]/) ?
+                        "0:手動":this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[1]/) ?
+                        "1:自動":"0(手動),1（自動）を入力下さい。";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[01]$/) ?
+                                false:true;
+                check_change = true;
+            }
+            //  安全在庫自動補正計算式
+            else if(item == "MIN_SAFETY_CALC_METHOD")
+            {
+                Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[1]/) ?
+                        "1:自動補正する":this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[2]/) ?
+                        "2:自動補正しない":"1,2のいずれかを入力下さい。";
+                Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^[12]$/) ?
+                                false:true;
+                check_change = true;
+            }
+            else if(item == "MIN_SAFETY_CALC_ITEM1")
+            {
+                if(this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/\./))
+                {
+                    var Point_value = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/\./)?
+                        this.Zaiko_EditTable_Item[index].FIELD_VALUE:this.Zaiko_EditTable_Item[index].FIELD_VALUE+".00";
+                    Setsumei =Point_value.match(/^\d{0,2}\.\d{0,2}$/) ?"":"整数部は5桁、少数部は2桁で入力して下さい。";
+                    Setsumei_Error = Point_value.match(/^\d{0,2}\.\d{0,2}$/) ?false:true;
+                }
+                else
+                {
+                    Setsumei = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^100$/)?
+                                "":this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,2}$/)?
+                                "":"100以下で入力して下さい";
+                    Setsumei_Error = this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^100$/) ||
+                                this.Zaiko_EditTable_Item[index].FIELD_VALUE.match(/^\d{0,2}$/)?
+                                false:true
+                }
+                check_change = true;
+            }
+        }
+         //  データベースから説明部を取得必要ある項目はこちらで確認
+         if(this.Zaiko_EditTable_Item[index].MS_TABLE !== null && this.Zaiko_EditTable_Item[index].MS_TABLE.match(/^[1-5]$/) && this.Zaiko_EditTable_Item[index].AUTH_TYPE == 2)
+        {
+            this.ZKMS_CellType(index);
+        }
+        //  check_change　が　Trueであれば　「Setsumei」と「Setsumei_Error」を購買テーブルに保存する
+        if(check_change){
+            this.Zaiko_EditTable_Item[index].FIELD_EXPLAIN = Setsumei; 
+            this.Zaiko_EditTable_Item[index].Setsumei_Error =Setsumei_Error;
+            this.Zaiko_EditTable_Item[index].RULES = [];
+            if(!Setsumei_Error)
+            {
+                this.Zaiko_EditTable_Item[index].RULES.push(this.formRules.TrueRule);
+            }
+            else
+            {
+                this.Zaiko_EditTable_Item[index].RULES.push(this.formRules.FalseRule);
+            }
+        }
+        //　更新項目をリストに追加
+        this.ZKMS_UPDATE_CHECK(index);
+    },
     /*
     GetKoubaiRule(index,item){
         if(item=="VENDOR_PART_NO")
@@ -8319,6 +9822,29 @@ export default  {
                         {
                             this.Koubai_EditTable_Item[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
                             this.Koubai_EditTable_Item[index].Setsumei_Error =true;
+                            return false;
+                        }
+                    }
+                })    
+            }
+            else if(table_name == "ZKMS")
+            {
+                this.Zaiko_EditTable_Item[index].CHECK_LIST = ck_list;
+                /*入力確認開始 */
+                this.Zaiko_EditTable_Item[index].CHECK_LIST.find(item =>{
+                    if(this.Zaiko_EditTable_Item[index].FIELD_VALUE !== null ||this.Zaiko_EditTable_Item[index].FIELD_VALUE == "")
+                    {
+                    /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                        if(this.Zaiko_EditTable_Item[index].FIELD_VALUE == item.CM_CODE){
+                            this.Zaiko_EditTable_Item[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                            this.Zaiko_EditTable_Item[index].Setsumei_Error =false;
+                            return true;
+                        }
+                        /*入力値と一致しない場合、テーブルにエラーを表示する */
+                        else 
+                        {
+                            this.Zaiko_EditTable_Item[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                            this.Zaiko_EditTable_Item[index].Setsumei_Error =true;
                             return false;
                         }
                     }
@@ -8926,6 +10452,45 @@ export default  {
             alert("入力が間違います。")
         }
     },
+    //  ZaikoPostReq()  在庫が画面内のデータをデータベースに更新するメソッド
+    ZaikoPostReq(){
+        //　入力フォーマットの入力正しいを確認
+        var Update_check = false;
+        //　購買情報入力確認
+        this.Zaiko_EditTable_Item.forEach(value =>{
+            this.GetZaikouSetsumei(this.Zaiko_EditTable_Item.indexOf(value),value.FIELD_NAME)
+            Update_check =value.Setsumei_Error || Update_check;
+        })
+        //　PM基本情報入力確認
+        this.EditInfo_Value.forEach(value =>{
+            //this.getEditTableSetsumei(this.EditInfo_Value.indexOf(value),value.FIELD_NAME)
+            Update_check = value.Setsumei_Error || Update_check;
+        })
+        //  手配情報入力確認
+        this.EditInfo2_Value.forEach(value =>{
+            //this.getEditTableSetsumei2(this.EditInfo2_Value.indexOf(value),value.FIELD_NAME)
+            Update_check = value.Setsumei_Error || Update_check;
+        })
+        //  もし、全項目の入力が正しいであれば、データベースにデータ更新開始します。
+        if( !Update_check && this.$refs.ZKMS_FORM.validate() && this.$refs.PPPMORDER_form.validate() && this.$refs.PPPMMS_FORM.validate() )
+        {
+            //　POST_PPPMMMS()　PM基本情報をデータに更新
+            this.POST_PPPMMMS();
+            if(this.Edit_Combobox_1_select.substr(0,1) != '-')
+            {
+                // POST_PPPMORDER() PPPMORDERデータベースに更新するメソッド
+                this.POST_PPPMORDER(); 
+                // POST_CHMSA() CHMSA データベースに更新するメソッド
+                this.POST_CHMSA()
+            }
+        }
+        //　入力が間違っている場合警告画面を表示
+        else
+        {
+            alert("入力が間違います。")
+        }
+    },
+
     POST_PPPMMMS(){
         const url = this.Main_URL + "KensakuBtnPost/PPPMMS";
         this.NRPMA_POST={};
