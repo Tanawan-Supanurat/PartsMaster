@@ -4,11 +4,33 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+export default {
 
+data:()=>({
+    header:{
+        showHeader : true,
+    }
+}),
+mounted(){
+    if(this.$route.query.id !== undefined)
+    {
+        this.Initial_Id_Page();
+    }
+    
+},
+computed:{
+    ...mapState('headerSql',['headerItem']),
+},
+methods:{
+    Initial_Id_Page(){
+        this.$nuxt.$emit('updateHeader',this.header.showHeader)
+    }
+},
+}
 </script>
 
 <style>
-
 .v-text-field .v-input__control .v-input__slot {
     min-height: auto !important;
     display: flex !important;
@@ -16,24 +38,28 @@
     font-size:0.8em;
     height: 25px;
 }
+
 p {
     margin-bottom: -4pt !important ;
     font-size:0.8em;
 }
+
 .v-radio label {
     font-size:0.8em;
 }
+
 .left-input input {
     text-align: left;
-    }
+}
 
-    .center-input input {
+.center-input input {
     text-align: center;
-    }
+}
 
-    .right-input input {
+.right-input input {
     text-align: right;
 }
+
 li{
     margin-bottom: -4pt !important ;
     font-size:0.8em;
@@ -41,5 +67,8 @@ li{
 .v-input .v-label {
   font-size: 0.8em !important;  
 }
+.item-list {
+  height: 60vh;
+  overflow-y: auto;
+}    
 </style>
-

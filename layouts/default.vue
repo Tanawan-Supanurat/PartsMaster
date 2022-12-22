@@ -553,7 +553,7 @@
                                 </v-col>
                             </v-row>
                             <div v-if="!mini" >
-                                <v-content class ="pl-10">
+                                <v-container class ="pl-10">
                                 <!--　基本検索条件1 -->
                                 <p class="ma-0">部品コード</p>
                                 <!-- buhincode 部品コードのプロパティ-->
@@ -2679,7 +2679,7 @@
                                         <!-- 詳細検索条件　-->
                                     </v-container>  
                                 </v-dialog>
-                            </v-content>
+                                </v-container>
                             </div>                     
                         </v-form>
                     </v-list-item-group>
@@ -2810,14 +2810,19 @@
                     <v-tab @click="LoadKoubaiTable()">購買</v-tab>
                     <v-tab>入出庫</v-tab>
                     <v-tab @click="LoadZaikoTable()">在庫</v-tab>
-                    <v-tab>保守</v-tab>
+                    <v-tab @click="LoadHoshuTable()">保守</v-tab>
                     <v-tab>PC/SP</v-tab>
                     <v-tab>P/S</v-tab>
                     <v-tab>代替</v-tab>
                 </v-tabs>
-                <v-btn @click="GetSite()">
-                    TEST BTN
-                </v-btn>
+
+                <v-row class="d-flex my-2 ml-2">
+                    <v-btn @click="GetSiteQuery()">
+                        Get Site Query
+                    </v-btn>
+                    <p>{{ this.test_query }}</p>
+                </v-row>
+                
                 <!--  手配画面表示 -->
                 <v-container fluid>
                     <v-card  outlined shaped tile>
@@ -4571,14 +4576,15 @@
                                         </div>
                                     </v-row>
                                     <v-data-table class="mx-2 mt-n5"
-                                    mobile-breakpoint='300'
-                                    fixed-header
-                                    :headers="this.Hoshu_Table_Header"
-                                    :items="this.Hoshu_Table_Item"
-                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                    hide-default-footer
-                                    height="14vh"
-                                    dense
+                                        mobile-breakpoint='300'
+                                        fixed-header
+                                        :headers="this.Hoshu_Table_Header"
+                                        :items="this.Hoshu_Table_Item"
+                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                        hide-default-footer
+                                        height="14vh"
+                                        dense
+                                        @click:row ="GetHoshu_MAINTMS_ROW"
                                     >
                                     </v-data-table>
                                 </v-card>
@@ -4855,14 +4861,14 @@
                                                     height="35vh"
                                                     dense
                                                     >
-                                                        <template v-solot:item.DELETE ="{item}">
+                                                        <template v-slot:item.DELETE ="{item}">
                                                             <v-btn x-small icon>
                                                                 <v-icon>
                                                                     mdi-delete  
                                                                 </v-icon>
                                                             </v-btn>
                                                         </template>
-                                                        <template v-solot:item.DATA1 ="{item}">
+                                                        <template v-slot:item.DATA1 ="{item}">
                                                             {{item}}
                                                             <v-btn x-small>tests</v-btn>
                                                         </template>
@@ -5060,7 +5066,9 @@ export default  {
     draggable,
   },
   data : () => ({
-    TEST_SITE :"",
+    //TEST
+    test_query :"",
+    //TEST
     //Main_URL : "http://sa0392.cad.fujitec.co.jp/pmserver/api/",//本番環境用データベースサーバー
     Main_URL :"http://localhost:59272/api/",//テスト用データベースサーバー
     // 保守画面
@@ -5851,13 +5859,8 @@ export default  {
     this.getFirstPage();
   },
   methods:{
-    GetSite(){
-        const url = "https://www.google.com/";
-        this.$axios.$get(url,{withCredentials: true}).then(res=>{
-            console.log(res.data);
-        }).catch(err=>{
-            console.log(err)
-        })
+    GetSiteQuery(){
+        this.test_query = this.$route.query.PART_ID;
     },
     // 保守画面
     GetHoshu(PARTNO,PARTREVNO)
@@ -5872,8 +5875,8 @@ export default  {
             this.Hoshu_Table_Item = res.data;
             const PART_NO = res.data[0].PART_NO;
             const PART_REV_NO = res.data[0].PART_REV_NO;
+            const PART_LOCATION = res.data[0].PART_LOCATION;
             const COND_PAT_NO = res.data[0].COND_PAT_NO;
-            console.log(PART_NO,PART_REV_NO,COND_PAT_NO);
             this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,1);
             this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,2);
         }).catch(err =>{
@@ -5885,6 +5888,14 @@ export default  {
         this.GetHoshu(this.Header_Data[this.Header_Data.length-1].PART_NO,this.Hoshu_Dropdown_Select);
         this.getEditTable(this.Header_Data[this.Header_Data.length-1].PART_NO,this.Hoshu_Dropdown_Select);
     },
+    GetHoshu_MAINTMS_ROW(item){
+        const PART_NO = item.PART_NO;
+        const PART_REV_NO = item.PART_REV_NO;
+        const PART_LOCATION = item.PART_LOCATION;
+        const COND_PAT_NO = item.COND_PAT_NO;
+        this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,1);
+        this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,2);
+    },
     GetHoshu_MAINTMS(PARTNO,PARTREVNO,CONDPATNO,MAINTMS){
         const url = this.Main_URL + "KensakuBtnGet/PPPMMAINTMS_MAINTMS";
         const params = {
@@ -5895,28 +5906,26 @@ export default  {
             USER_ID :this.userId,
         }
         this.$axios.get(url,{params}).then(res =>{
-            console.log("MAINTMS",MAINTMS);
             if(MAINTMS =="1")
             {
-                this.Hoshu_EditTable1_Item =res.data;
                 this.Hoshu_EditTable1_Item =res.data.map(item =>{
-                item.RULES = [];
-                item.Setsumei_Error = false;
-                item.CHECK_LIST = [];
-                item.UPDATE_ST = false;
-                item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
+                    item.RULES = [];
+                    item.Setsumei_Error = false;
+                    item.CHECK_LIST = [];
+                    item.UPDATE_ST = false;
+                    item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
                 return item;
             });
             }
             else if(MAINTMS =="2")
             {
                 this.Hoshu_EditTable2_Item =res.data.map(item =>{
-                item.RULES = [];
-                item.Setsumei_Error = false;
-                item.CHECK_LIST = [];
-                item.UPDATE_ST = false;
-                item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
-                return item;
+                    item.RULES = [];
+                    item.Setsumei_Error = false;
+                    item.CHECK_LIST = [];
+                    item.UPDATE_ST = false;
+                    item.BEFORE_UPDATE_VALUE = item.FIELD_VALUE
+                    return item;
                 })
             }
         }).catch(err =>{
@@ -6002,7 +6011,6 @@ export default  {
             this.$store.state.fujitecSso.userId === null ||
             this.$store.state.fujitecSso.expire <= new Date().getTime()
         ) { 
-            console.log("Isnt login now");
             // query から SID を読み取る
             let sid = !this.$route.query ? null : this.$route.query.SID
             // SSO は hash 未対応のため、hash に SID がついていたら読み取る
@@ -6011,11 +6019,8 @@ export default  {
             }
             // ログイン情報取得
             const result = await this.$store.dispatch('fujitecSso/checkLogin', sid)
-            console.log("MID SID",sid);
-            console.log("Result is :",result);
             
             if (!result) {
-                console.log("!RESULT",!result)
                 // 未ログイン時、ログイン
                 const url = this.$store.state.fujitecSso.loginUrl
                 // リダイレクト(currentUrlは SID が除去されている)
@@ -6032,8 +6037,6 @@ export default  {
                 delete query.SID
                 // リダイレクト(再読み込みしない?)
                 redirect(route.path, query)
-                
-                console.log("SID",sid)
                 return false
             }
         }
@@ -6305,19 +6308,7 @@ export default  {
     getFirstPage(){
         const cookie = new UniversalCookie();
         this.tab_select = parseInt(cookie.get('First_Page'));
-        /*
-        ('PPPMORDER','手配情報'),
-        ('PPPMPOSPEC','購買仕様情報'),
-        ('PPPMPOMSB','可変購買情報'),
-        ('ZKMS','在庫情報'),
-        ('MAINTMS','保守情報'),
-        ('MAINTMS2','保守情報'),
-        ('PPPMMS','PM基本情報'),
-        ('CHMSA','購買情報'),
-        ('PPMFGINFO','製品情報'),
-        ('KTSTDTIME','標準時間マスタ'),
-        ('PPPMMAINTCONDMS','保守適用条件マスタ')
-        */ 
+
         if(this.tab_select == '0')
         {
             //　手配テーブルを取得
@@ -7382,7 +7373,7 @@ export default  {
     open_new_tab(url){
       if(url != "")
       {
-        url = "/pm/searchpage/"+url
+        url = "/pm/searchpage/"+"?PART_NO="+url;
         window.open(url,'_blank')
       }
     },
