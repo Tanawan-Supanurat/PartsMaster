@@ -4869,8 +4869,14 @@
                                                             </v-btn>
                                                         </template>
                                                         <template v-slot:item.DATA1 ="{item}">
-                                                            {{item}}
-                                                            <v-btn x-small>tests</v-btn>
+                                                            <v-combobox 
+                                                            class="mt-3 mb-n4"
+                                                            dense outlined
+                                                            v-model ="Hoshu_Teikiyou_Item[Hoshu_Teikiyou_Item.indexOf(item)].DATA1"
+                                                            :items ="Hoshu_Teikiyou_DROPDOWN_ITEM"
+                                                            @change ="showdata(Hoshu_Teikiyou_Item.indexOf(item),Hoshu_Teikiyou_DROPDOWN_ITEM.indexOf(Hoshu_Teikiyou_Item[Hoshu_Teikiyou_Item.indexOf(item)].DATA1))"
+                                                            >
+                                                            </v-combobox>
                                                         </template>
                                                     </v-data-table>
                                                 </v-col>
@@ -5113,9 +5119,12 @@ export default  {
         {text:"項目番号",value:"COND_SPEC_ITEM_NO"},
         {text:"判定",value:"DATA1"},
         {text:"仕様コード",value:"COND_CODE"},
-        {text:"",value:""}
+        {text:"",value:"ITEM_NAME_LOC1"}
     ],
     Hoshu_Teikiyou_Item:[],
+    Hoshu_Teikiyou_DROPDOWN_Select:"",
+    Hoshu_Teikiyou_DROPDOWN_ITEM:[],
+    Hoshu_Teikiyou_DROPDOWN_Data:[],
     // ドロップダウン
     Hoshu_Dropdown_Select :"",
     Hoshu_Dropdown_Item :[],
@@ -5863,6 +5872,11 @@ export default  {
         this.test_query = this.$route.query.PART_ID;
     },
     // 保守画面
+    showdata(index_CB,index_DATA)
+    {
+        this.Hoshu_Teikiyou_Item[index_CB].DATA1 = this.Hoshu_Teikiyou_DROPDOWN_Data[index_DATA].DATA1;
+        this.Hoshu_Teikiyou_Item[index_CB].COND_STAT = this.Hoshu_Teikiyou_DROPDOWN_Data[index_DATA].CM_CODE;
+    },
     GetHoshu(PARTNO,PARTREVNO)
     {
         this.Zaikou_SokoCode_Item =[];
@@ -5875,10 +5889,12 @@ export default  {
             this.Hoshu_Table_Item = res.data;
             const PART_NO = res.data[0].PART_NO;
             const PART_REV_NO = res.data[0].PART_REV_NO;
-            const PART_LOCATION = res.data[0].PART_LOCATION;
             const COND_PAT_NO = res.data[0].COND_PAT_NO;
-            this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,1);
-            this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,2);
+            const PART_LOCATION = res.data[0].PART_LOCATION;
+            this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,1,PART_LOCATION);
+            this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,2,PART_LOCATION);
+            this.GetHoshu_COND_DROPDOWN();
+            this.GetHoshu_SPSCCONIDMS(PART_NO,PART_REV_NO,PART_LOCATION,COND_PAT_NO);
         }).catch(err =>{
 
         });
@@ -5891,12 +5907,13 @@ export default  {
     GetHoshu_MAINTMS_ROW(item){
         const PART_NO = item.PART_NO;
         const PART_REV_NO = item.PART_REV_NO;
-        const PART_LOCATION = item.PART_LOCATION;
         const COND_PAT_NO = item.COND_PAT_NO;
-        this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,1);
-        this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,2);
+        const PART_LOCATION = item.PART_LOCATION;
+        this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,1,PART_LOCATION);
+        this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,2,PART_LOCATION);
+        this.GetHoshu_SPSCCONIDMS(PART_NO,PART_REV_NO,PART_LOCATION,COND_PAT_NO);
     },
-    GetHoshu_MAINTMS(PARTNO,PARTREVNO,CONDPATNO,MAINTMS){
+    GetHoshu_MAINTMS(PARTNO,PARTREVNO,CONDPATNO,MAINTMS,PARTLOCATION){
         const url = this.Main_URL + "KensakuBtnGet/PPPMMAINTMS_MAINTMS";
         const params = {
             PART_NO :PARTNO,
@@ -5904,6 +5921,7 @@ export default  {
             COND_PAT_NO : CONDPATNO,
             WHICH_MAINTMS : MAINTMS,
             USER_ID :this.userId,
+            PART_LOCATION: PARTLOCATION,
         }
         this.$axios.get(url,{params}).then(res =>{
             if(MAINTMS =="1")
@@ -5931,6 +5949,38 @@ export default  {
         }).catch(err =>{
 
         });
+    },
+    GetHoshu_COND_DROPDOWN(){
+        //console.log("GET DROPDOWN");
+        this.Hoshu_Teikiyou_DROPDOWN_ITEM =[];
+        this.Hoshu_Teikiyou_DROPDOWN_Data =[];
+        const url = this.Main_URL + "KensakuBtnGet/SPSCCONIDMS_DROPDOWN";
+        this.$axios.get(url).then(res =>{
+            this.Hoshu_Teikiyou_DROPDOWN_Data = res.data;
+            res.data.forEach(item =>{
+                this.Hoshu_Teikiyou_DROPDOWN_ITEM.push(item.DATA1 + item.CM_CODE_SETUMEI);
+            })
+            //console.log(this.Hoshu_Teikiyou_DROPDOWN_ITEM);
+        }).catch(err=>{
+
+        })
+    },
+    GetHoshu_SPSCCONIDMS(PARTNO,PARTREVNO,PARTLOCATION,CONDPATNO){
+        console.log("GetHoshu_SPSCCONIDMS",PARTNO,PARTREVNO,PARTLOCATION,CONDPATNO);
+        const url = this.Main_URL + "KensakuBtnGet/SPSCCONIDMS";
+        const params ={
+            PART_NO : PARTNO,
+            PART_REV_NO : PARTREVNO,
+            PART_LOCATION : PARTLOCATION,
+            COND_PAT_NO :  CONDPATNO,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.Hoshu_Teikiyou_Item = res.data.map(item =>{
+                item.DATA1 = this.Hoshu_Teikiyou_DROPDOWN_Data[parseInt(item.COND_STAT)-1].DATA1;
+                return item;
+            });
+        })
+        
     },
     // 保守画面
     // 在庫画面
