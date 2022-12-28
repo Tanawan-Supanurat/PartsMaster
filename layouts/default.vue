@@ -2693,7 +2693,7 @@
                 mini-variant-width = 3%
                 :floating="$vuetify.breakpoint.mobile ?false:true"
                 :bottom ="$vuetify.breakpoint.mobile ?true:false"
-                :fixed = "$vuetify.breakpoint.mobile ?true:false"
+                :fixed = "$vuetify.breakpoint.mobile ?true:false"   
                 :width = table_width
                 :height="$vuetify.breakpoint.mobile ?this.table_height:'100vh'"
             >
@@ -4254,7 +4254,7 @@
                     <v-container fluid>
                         <v-row >
                             <v-col :cols="$vuetify.breakpoint.smAndDown?'12':'6'">
-                                <v-card height="77vh">
+                                <v-card height="78vh">
                                     <v-row no-gutters class="d-flex" justify="space-between">
                                         <h3 class="mt-2 ml-2">在庫情報</h3>
                                         <div class="d-flex mt-2">
@@ -4264,7 +4264,7 @@
                                              @change ="GetZKMS(Header_Data[Header_Data.length-1].PART_NO,Zaikou_SokoCode_Select)"
                                              ></v-combobox>
                                         </div>
-                                        <h3 class="mt-2 mr-2">2:BW製作所</h3>
+                                        <h3 class="mt-2 mr-2">{{this.FT_ZKMS_KOUBA}}:{{this.FT_ZKMS_KOUBA_SETSUMEI}}</h3>
                                     </v-row>
                                         <v-form ref ="ZKMS_FORM">
                                             <v-data-table 
@@ -4291,13 +4291,12 @@
                                                 @click = "getEditDialogBtn2(Zaiko_EditTable_Item.indexOf(item),item.MS_ITEM_NO,item.FIELD_NAME_LOC1,1)"
                                                 x-small
                                                 >...</v-btn>
-                                                <!-- 担当コードマスター
+                                                <!-- 担当コードマスター -->
                                                 <v-btn
                                                 v-if ="item.MS_TABLE == '3' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B'"
-                                                @click = "getEditDialogBtn3(Zaiko_EditTable_Item.indexOf(item),item.MS_ITEM_NO,Edit_Combobox_1_select.substr(0,1),1)"
+                                                @click = "getEditDialogBtn3(Zaiko_EditTable_Item.indexOf(item),item.MS_ITEM_NO,FT_ZKMS_KOUBA,1)"
                                                 x-small
                                                 >...</v-btn>
-                                                 -->
                                                 <!--　単位読替マスター　-->
                                                 <v-btn
                                                 v-if ="item.MS_TABLE == '4' && item.AUTH_TYPE == '2' && item.CELL_TYPE == 'B' "
@@ -4528,7 +4527,7 @@
                             </v-col>
                         </v-row>
                     </v-container>
-                        <v-container fluid>
+                    <v-container fluid>
                         <v-row no-gutters justify="end">
                             <v-col class="d-flex flex-row-reverse" >
                                 <v-btn class="mr-2" large>
@@ -4542,6 +4541,7 @@
                                     <h3>閉じる</h3>
                                 </v-btn>
                                 <v-btn class="mr-2" large
+                                @click ="ZaikoPostReq()"
                                 >
                                     <v-icon
                                         left
@@ -4768,14 +4768,14 @@
                                         <v-expansion-panel-header><h3>2次情報</h3></v-expansion-panel-header>
                                         <v-expansion-panel-content>
                                             <v-data-table
-                                            class = "mx-2"
+                                            class = "mx-2 mb-1"
                                             mobile-breakpoint='400'
                                             fixed-header
                                             :headers="this.Hoshu_EditTable2_Header"
                                             :items="this.Hoshu_EditTable2_Item"
                                             :footer-props="{'items-per-page-options':[100,200,300,-1]}"
                                             hide-default-footer
-                                            height="35vh"
+                                            height="33vh"
                                             dense
                                             >
                                                 <template v-slot:item.CELL_TYPE="{item}">
@@ -4846,46 +4846,76 @@
                             <v-col>
                                 <v-expansion-panels v-model="Hoshu_EX_Panel" multiple accordion>
                                     <v-expansion-panel>
+                                        <!-- 適用条件 -->
                                         <v-expansion-panel-header><h3>適用条件</h3></v-expansion-panel-header>
                                         <v-expansion-panel-content>
                                             <v-row>
-                                                <v-col :col ="this.$vuetify.breakpoint.smAndDown?'12':'6'">
-                                                    <v-data-table
-                                                    :headers ="Hoshu_Teikiyou_Header"
-                                                    :items="Hoshu_Teikiyou_Item"
-                                                    class = "mx-2"
-                                                    mobile-breakpoint='400'
-                                                    fixed-header
-                                                    :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                                    hide-default-footer
-                                                    height="35vh"
-                                                    dense
-                                                    >
-                                                        <template v-slot:item.DELETE ="{item}">
-                                                            <v-btn x-small icon>
-                                                                <v-icon>
-                                                                    mdi-delete  
-                                                                </v-icon>
-                                                            </v-btn>
-                                                        </template>
-                                                        <template v-slot:item.DATA1 ="{item}">
-                                                            <v-combobox 
-                                                            class="mt-3 mb-n4"
-                                                            dense outlined
-                                                            v-model ="Hoshu_Teikiyou_Item[Hoshu_Teikiyou_Item.indexOf(item)].DATA1"
-                                                            :items ="Hoshu_Teikiyou_DROPDOWN_ITEM"
-                                                            @change ="showdata(Hoshu_Teikiyou_Item.indexOf(item),Hoshu_Teikiyou_DROPDOWN_ITEM.indexOf(Hoshu_Teikiyou_Item[Hoshu_Teikiyou_Item.indexOf(item)].DATA1))"
-                                                            >
-                                                            </v-combobox>
-                                                        </template>
-                                                    </v-data-table>
+                                                <v-col :cols = "this.$vuetify.breakpoint.smAndDown?'12':'6'">
+                                                    <v-card>
+                                                        <v-data-table
+                                                        :headers ="Hoshu_Teikiyou_Header"
+                                                        :items="Hoshu_Teikiyou_Item"
+                                                        class = "mx-2"
+                                                        mobile-breakpoint='400'
+                                                        fixed-header
+                                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                        hide-default-footer
+                                                        height="20vh"
+                                                        dense
+                                                        >
+                                                            <template v-slot:item.DELETE ="{item}">
+                                                                <v-btn x-small icon>
+                                                                    <v-icon>
+                                                                        mdi-delete  
+                                                                    </v-icon>
+                                                                </v-btn>
+                                                            </template>
+                                                            <template v-slot:item.DATA1 ="{item}">
+                                                                <v-combobox 
+                                                                class="mt-3 mb-n4"
+                                                                dense outlined
+                                                                v-model ="Hoshu_Teikiyou_Item[Hoshu_Teikiyou_Item.indexOf(item)].DATA1"
+                                                                :items ="Hoshu_Teikiyou_DROPDOWN_ITEM"
+                                                                @change ="showdata(Hoshu_Teikiyou_Item.indexOf(item),Hoshu_Teikiyou_DROPDOWN_ITEM.indexOf(Hoshu_Teikiyou_Item[Hoshu_Teikiyou_Item.indexOf(item)].DATA1))"
+                                                                >
+                                                                </v-combobox>
+                                                            </template>
+                                                        </v-data-table>
+                                                    </v-card>
+                                                    
                                                 </v-col>
-                                                <v-col :col ="this.$vuetify.breakpoint.smAndDown?'12':'6'">
-                                                    <h4>項目情報</h4>
-                                                    <v-data-table>
-                                                    </v-data-table>
-                                                    <v-data-table>
-                                                    </v-data-table>
+                                                <!-- 項目情報 -->
+                                                <v-col :cols = "this.$vuetify.breakpoint.smAndDown?'12':'6'">
+                                                    <v-card>
+                                                        <h4 class="ml-2">項目情報</h4>
+                                                        <v-data-table
+                                                        :headers="Hoshu_KoumokuA_Header"
+                                                        :items="Hoshu_KoumokuA_Item"
+                                                        class = "mx-2"
+                                                        mobile-breakpoint='400'
+                                                        fixed-header
+                                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                        hide-default-footer
+                                                        @click:row="Hoshu_Check_GetHoshu_SPSCITEMMSB"
+                                                        height="35vh"
+                                                        dense
+                                                        >
+                                                        </v-data-table>
+                                                    </v-card>
+                                                    <v-card>
+                                                        <v-data-table
+                                                        :headers="Hoshu_KoumokuB_Header"
+                                                        :items="Hoshu_KoumokuB_Item"
+                                                        class = "mx-2 mt-2"
+                                                        mobile-breakpoint='400'
+                                                        fixed-header
+                                                        :footer-props="{'items-per-page-options':[100,200,300,-1]}"
+                                                        hide-default-footer
+                                                        height="35vh"
+                                                        dense
+                                                        >
+                                                        </v-data-table>
+                                                    </v-card>
                                                 </v-col>
                                             </v-row>
                                         </v-expansion-panel-content>
@@ -5122,10 +5152,31 @@ export default  {
         {text:"",value:"ITEM_NAME_LOC1"}
     ],
     Hoshu_Teikiyou_Item:[],
+    Hoshu_KoumokuA_Header:[
+        {text:"JobType",value:"PRODUCT_TYPE",width:"120px"},
+        {text:"項目No",value:"SPEC_ITEM_NO",width:"120px"},
+        {text:"項目名",value:"ITEM_NAME_LOC1",width:"220px"},
+        {text:"水平位置区分",value :"PLAN_LOC_TYPE",width:"140px"},
+        {text:"パターンNo区分",value:"PAT_NO_TYPE",width:"140px"},
+    ],
+    Hoshu_KoumokuA_Item:[],
+    Hoshu_KoumokuB_Header:[
+        {text:"項目No",value:"SPEC_ITEM_NO",width:"100px" },
+        {text:"仕様コード",value:"SPEC_CODE",width:"120px" },
+        {text:"仕様名",value:"CODE_NAME_LOC1",width:"100px" },
+        {text:"使用開始日",value:"START_DATE",width:"120px" },
+        {text:"使用止め日",value:"STOP_DATE",width:"120px" },
+        {text:"削除",value:"DEL_TYPE",width:"100px" },
+        {text:"JobType",value:"PRODUCT_TYPE",width:"100px" },
+        {text:"水平位置区分",value:"PLAN_LOC_TYPE",width:"140px" },
+        {text:"パターンNo区分",value:"PAT_NO_TYPE",width:"140px" },
+        {text:"項目名",value:"ITEM_NAME_LOC1",width:"100px" },
+    ],
+    Hoshu_KoumokuB_Item:[],
+    // ドロップダウン
     Hoshu_Teikiyou_DROPDOWN_Select:"",
     Hoshu_Teikiyou_DROPDOWN_ITEM:[],
     Hoshu_Teikiyou_DROPDOWN_Data:[],
-    // ドロップダウン
     Hoshu_Dropdown_Select :"",
     Hoshu_Dropdown_Item :[],
     // 保守画面
@@ -5143,6 +5194,9 @@ export default  {
         {text:"説明",value:"FIELD_EXPLAIN",width:"200px"}
     ],
     Zaiko_EditTable_Item:[],
+    Zaiko_New_Data : false,
+    FT_ZKMS_KOUBA :"",
+    FT_ZKMS_KOUBA_SETSUMEI :"",
     // 在庫画面
     // 入出庫画面
     // 製作所切替えTEXT_FIELD
@@ -5951,7 +6005,7 @@ export default  {
         });
     },
     GetHoshu_COND_DROPDOWN(){
-        //console.log("GET DROPDOWN");
+
         this.Hoshu_Teikiyou_DROPDOWN_ITEM =[];
         this.Hoshu_Teikiyou_DROPDOWN_Data =[];
         const url = this.Main_URL + "KensakuBtnGet/SPSCCONIDMS_DROPDOWN";
@@ -5960,13 +6014,11 @@ export default  {
             res.data.forEach(item =>{
                 this.Hoshu_Teikiyou_DROPDOWN_ITEM.push(item.DATA1 + item.CM_CODE_SETUMEI);
             })
-            //console.log(this.Hoshu_Teikiyou_DROPDOWN_ITEM);
         }).catch(err=>{
 
         })
     },
     GetHoshu_SPSCCONIDMS(PARTNO,PARTREVNO,PARTLOCATION,CONDPATNO){
-        console.log("GetHoshu_SPSCCONIDMS",PARTNO,PARTREVNO,PARTLOCATION,CONDPATNO);
         const url = this.Main_URL + "KensakuBtnGet/SPSCCONIDMS";
         const params ={
             PART_NO : PARTNO,
@@ -5979,8 +6031,38 @@ export default  {
                 item.DATA1 = this.Hoshu_Teikiyou_DROPDOWN_Data[parseInt(item.COND_STAT)-1].DATA1;
                 return item;
             });
-        })
-        
+        })  
+    },
+    GetHoshu_SPSCITEMMSA(PRODUCTTYPE,today){
+        const url = this.Main_URL + "KensakuBtnGet/SPSCITEMMSA";
+        const params = {
+            PRODUCT_TYPE : PRODUCTTYPE,
+            TODAY : today,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.Hoshu_KoumokuA_Item = res.data;
+        }).catch(err=>{
+
+        });
+    },
+    GetHoshu_SPSCITEMMSB(SPECITEMNO,today){
+        const url = this.Main_URL + "KensakuBtnGet/SPSCITEMMSB";
+        const params = {
+            SPEC_ITEM_NO : SPECITEMNO,
+            TODAY : today,
+        }
+        this.$axios.get(url,{params}).then(res =>{
+            this.Hoshu_KoumokuB_Item = res.data;
+        }).catch(err=>{
+
+        });
+    },
+    Hoshu_Check_GetHoshu_SPSCITEMMSB(item){
+        var TODAY_STR = this.TODAY.substr(0,4)+this.TODAY.substr(5,2)+this.TODAY.substr(8,2);
+        if(item.BMS_TYPE == 'Y')
+        {
+            this.GetHoshu_SPSCITEMMSB(item.SPEC_ITEM_NO,TODAY_STR);
+        }
     },
     // 保守画面
     // 在庫画面
@@ -5988,6 +6070,7 @@ export default  {
     {
         if(SOKOCODE !== undefined)
         {
+            console.log("LOADDATA",SOKOCODE)
             const url = this.Main_URL + "KensakuBtnGet/ZKMS";
             const params = {
                 PART_NO  : PARTNO, //部品コード
@@ -6005,9 +6088,17 @@ export default  {
                     return item;
                 });
                 this.Zaiko_EditTable_Item.forEach(Row =>{
-                    var index = this.Zaiko_EditTable_Item(Row);
+                    var index = this.Zaiko_EditTable_Item.indexOf(Row);
+                    if(SOKOCODE =="-新規製作-" && Row.FIELD_NAME == "WH_CODE")
+                    {
+                        this.Zaiko_EditTable_Item[index].AUTH_TYPE ="2";
+                    }
                     this.GetZaikouSetsumei(index,Row.FIELD_NAME);  
                 })
+                if(SOKOCODE =="-新規製作-")
+                {
+                    alert("倉庫コードを入力してください！")
+                }    
             }).catch(err =>{
 
             })
@@ -6026,10 +6117,12 @@ export default  {
             res.data.forEach(item =>{
                 this.Zaikou_SokoCode_Item.push(item.SOKO_CODE);
             });
+            this.Zaikou_SokoCode_Item.push("-新規製作-");
             this.Zaikou_SokoCode_Select = this.Zaikou_SokoCode_Item[0];
              // 在庫情報テーブル取得
             this.GetZKMS(this.Header_Data[this.Header_Data.length-1].PART_NO,
                             this.Zaikou_SokoCode_Select);
+            this.Get_FT_ZKMS_KOUBA();
              
         }).catch(err =>{
 
@@ -6151,7 +6244,6 @@ export default  {
             if(res.data.length != 0)
             {
                 this.Koubai_Torisaki_Item = res.data;
-                //console.log("取引先リスト数: ",this.Koubai_Torisaki_Item.length);
                 this.GetCHMSA_TABLE(this.Koubai_Torisaki_Item[0]);
             }
             //ないであれば、テーブルを空にする
@@ -6344,7 +6436,23 @@ export default  {
         }
         this.$axios.get(url,{params}).then(res=>{
            this.FT_KOUBA = res.data[0].DATA1;
-           
+           this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
+           this.getSokoType(false);
+        }).catch(err =>{
+
+        })
+    },
+    Get_FT_ZKMS_KOUBA(){
+        this.FT_ZKMS_KOUBA = "";
+        this.FT_ZKMS_KOUBA_SETSUMEI ="";
+        const url = this.Main_URL + "KensakuBtnGet/ZKMS_KOUBA";
+        const params = {
+            DATA4 : this.Zaikou_SokoCode_Select
+        }
+        this.$axios.get(url,{params}).then(res=>{
+            this.FT_ZKMS_KOUBA = res.data[0].CM_CODE;
+            this.FT_ZKMS_KOUBA_SETSUMEI = res.data[0].CM_CODE_SETUMEI;
+            this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_ZKMS_KOUBA);
         }).catch(err =>{
 
         })
@@ -6400,7 +6508,6 @@ export default  {
         {
             //　代替テーブルを取得
         }
-        //console.log(this.tab_select);
     },
     getSettingChange(){
         var DBGRID_NAME = "";
@@ -6529,8 +6636,6 @@ export default  {
                     UPD_WHO           : this.userId,
                     UPD_WHEN          : Today,
                 }
-                //console.log(params);
-               
                 this.$axios.post(url,params).then(res =>{
                 }).catch(err=>{
 
@@ -6573,14 +6678,12 @@ export default  {
         //　表示可能な全項目の順番を並び順の通りに並び替え
         // [5,3,2,1] => [1,2,3,5]
         Left_list.sort((a, b) => a - b);
-        //console.log(Left_list);
         var count = 1
         //  表示項目をテーブルの順番通りに並び替え
         this.Draggable_list_2.forEach((item,index) =>{
             //　もし、 表示可能な全項目の順番に一致したらその順番を飛ばします
             while(Left_list[0] == count)
             {
-                //console.log(count);
                 Left_list.shift();
                 count++;
             }
@@ -6681,8 +6784,6 @@ export default  {
         })
     },
     dragList(event,dragId,dragCOL){
-        //console.log("Id :" + dragId);
-        //console.log("COL : " + dragCOL);
         event.dataTransfer.effectAllowed = 'move'
         event.dataTransfer.dropEffect = 'move'
         event.dataTransfer.setData('list-id',dragId)
@@ -6693,7 +6794,6 @@ export default  {
         event.dataTransfer.setData('list-col',dragCOL)
     },
     dropList(event , dragCOL){
-        //console.log("COL_V:" + dragCOL );
         const dragId = event.dataTransfer.getData('list-id');
         const dragCol =event.dataTransfer.getData('list-col');
         const dragList = this.User_All_List.find(list =>  list.SEQ_NO == dragId);
@@ -6828,9 +6928,6 @@ export default  {
                 {
                     this.getEditTable(item.PART_NO,item.PART_REV_NO);
                     this.Get_FT_KOUBA();
-                    this.getSokoType(false);
-                    this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
-                    
                 }
             })
         }
@@ -6840,24 +6937,18 @@ export default  {
         {
             this.EditInfo2_Value=[];
             this.Get_FT_KOUBA();
-            this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
-            this.getSokoType(false);
             //this.getKouteiJunjo(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
         }
     },
     LoadKoubaiTable(){
         if(this.Header_Data[this.Header_Data.length-1].PART_NO != "")
         {
-            //console.log("購買画面ロード");
             //初期画面は承認された改訂を表示する
             this.Header_Data.forEach(item =>{
                 if(item.APP_CUR_TYPE == 1)
                 {
                     this.getEditTable(item.PART_NO,item.PART_REV_NO);
                     this.Get_FT_KOUBA();
-                    this.getSokoType(false);
-                    this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
-                    
                 }
             })
             //作業コード別注文仕様DropDown取得
@@ -6878,9 +6969,6 @@ export default  {
                 {
                     this.getEditTable(item.PART_NO,item.PART_REV_NO);
                     // 手配情報テーブル取得
-                    this.Get_FT_KOUBA();
-                    this.getSokoType(false);
-                    this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
                 }
             })
         }
@@ -6888,6 +6976,7 @@ export default  {
     // 保守初期ページを取得
     LoadHoshuTable()
     {
+        var TODAY_STR = this.TODAY.substr(0,4)+this.TODAY.substr(5,2)+this.TODAY.substr(8,2);
         this.Hoshu_Dropdown_Item =[];
         // もし部品コードが既に選択している場合
         if(this.Header_Data[this.Header_Data.length-1].PART_NO != "")
@@ -6904,8 +6993,11 @@ export default  {
                     // P/M基本情報テーブル取得
                     this.getEditTable(item.PART_NO,item.PART_REV_NO);
                 }
+                
             })
         }
+        // 項目情報テーブル取得
+        this.GetHoshu_SPSCITEMMSA('1',TODAY_STR);
     },
     //  タブメソッド
     check_date(value)
@@ -7439,9 +7531,6 @@ export default  {
         }
         this.getEditTable(item.PART_NO,item.PART_REV_NO);
         this.Get_FT_KOUBA();
-        this.getSokoType(false);
-        this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
-        
     },
     getKouteiJunjo(Part_no,Plant_no){
         var List_KT =[];
@@ -7774,12 +7863,13 @@ export default  {
         else
         {
             this.EditInfo2_Value[index].CHECK_LIST.find(item =>{
-        
-                /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
                 if(this.EditInfo2_Value[index].FIELD_VALUE !== null ||this.EditInfo2_Value[index].FIELD_VALUE == "")
+                {
+                    if(this.EditInfo2_Value[index].FIELD_NAME.indexOf("MATL_BRANCH_CODE") == '0')
                     {
-                    /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
-                        if(this.EditInfo2_Value[index].FIELD_VALUE == item.CM_CODE || this.EditInfo2_Value[index].FIELD_VALUE ==""){
+                        /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                        if(this.EditInfo2_Value[index].FIELD_VALUE.substr(0,2) == item.CM_CODE){
+                            
                             this.EditInfo2_Value[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
                             this.EditInfo2_Value[index].Setsumei_Error =false;
                             return true;
@@ -7792,6 +7882,27 @@ export default  {
                             return false;
                         }
                     }
+                    else
+                    {
+                        /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                        if(this.EditInfo2_Value[index].FIELD_VALUE == item.CM_CODE){
+                            this.EditInfo2_Value[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                            this.EditInfo2_Value[index].Setsumei_Error =false;
+                            return true;
+                        }
+                        /*入力値と一致しない場合、テーブルにエラーを表示する */
+                        else 
+                        {
+                            this.EditInfo2_Value[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                            this.EditInfo2_Value[index].Setsumei_Error =true;
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    return false;
+                }
             })    
         }
     },
@@ -7801,16 +7912,13 @@ export default  {
             switch(this.Koubai_EditTable_Item[index].MS_TABLE){
                 /*共用マスター(CMMSB)*/ 
                 case '1':
-                    //console.log("共用マスター(CMMSB)");
                     this.getCM_CODE("CHMSA",index,this.Koubai_EditTable_Item[index].MS_ITEM_NO,true)
                     break;
                 /*注文コードマスタ(CHCDMS) */
                 case '2':
-                    //console.log("注文コードマスタ(CHCDMS)");
                     break;
                 /*担当コードマスタ(CMTANTOMS) */
                 case'3':
-                    //console.log("単位読替マスタ(NRTANIMS)");
                     break;
                 /*単位読替マスタ(NRTANIMS) */
                 case'4':
@@ -7849,16 +7957,13 @@ export default  {
             switch(this.Zaiko_EditTable_Item[index].MS_TABLE){
                 /*共用マスター(CMMSB)*/ 
                 case '1':
-                    //console.log("共用マスター(CMMSB)");
                     this.getCM_CODE("ZKMS",index,this.Zaiko_EditTable_Item[index].MS_ITEM_NO,true)
                     break;
                 /*注文コードマスタ(CHCDMS) */
                 case '2':
-                    //console.log("注文コードマスタ(CHCDMS)");
                     break;
                 /*担当コードマスタ(CMTANTOMS) */
                 case'3':
-                    //console.log("単位読替マスタ(NRTANIMS)");
                     break;
                 /*単位読替マスタ(NRTANIMS) */
                 case'4':
@@ -8115,7 +8220,7 @@ export default  {
             }
             else if (item=="CERT_CONFORM")
             {
-                Setsumei =is.EditInfo_Value[index].FIELD_VALUE.length =="" ||
+                Setsumei =this.EditInfo_Value[index].FIELD_VALUE.length =="" ||
                             this.EditInfo_Value[index].FIELD_VALUE.length =="1" ?
                             "空白=不要 1=要":"空白か1を入力下さい";
                 Setsumei_Error = this.EditInfo_Value[index].FIELD_VALUE == "" || 
@@ -9002,7 +9107,6 @@ export default  {
         var check_change=false;
         var Setsumei ="";
         var Setsumei_Error = false;
-        //console.log("Index :" +index + ", Item :"+ item);
         //  入力確認条件が空だった場合こちらで確認
         if(this.Koubai_EditTable_Item[index].FIELD_VALUE === null)
         {
@@ -9829,19 +9933,43 @@ export default  {
                 this.EditInfo2_Value[index].CHECK_LIST.find(item =>{
                     if(this.EditInfo2_Value[index].FIELD_VALUE !== null ||this.EditInfo2_Value[index].FIELD_VALUE == "")
                     {
-                    /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
-                        if(this.EditInfo2_Value[index].FIELD_VALUE == item.CM_CODE){
-                            this.EditInfo2_Value[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
-                            this.EditInfo2_Value[index].Setsumei_Error =false;
-                            return true;
-                        }
-                        /*入力値と一致しない場合、テーブルにエラーを表示する */
-                        else 
+                        if(this.EditInfo2_Value[index].FIELD_NAME.indexOf("MATL_BRANCH_CODE") == '0')
                         {
-                            this.EditInfo2_Value[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
-                            this.EditInfo2_Value[index].Setsumei_Error =true;
-                            return false;
+                            /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                            if(this.EditInfo2_Value[index].FIELD_VALUE.substr(0,2) == item.CM_CODE){
+                                
+                                this.EditInfo2_Value[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                                this.EditInfo2_Value[index].Setsumei_Error =false;
+                                return true;
+                            }
+                            /*入力値と一致しない場合、テーブルにエラーを表示する */
+                            else 
+                            {
+                                this.EditInfo2_Value[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                                this.EditInfo2_Value[index].Setsumei_Error =true;
+                                return false;
+                            }
                         }
+                        else
+                        {
+                            /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                            if(this.EditInfo2_Value[index].FIELD_VALUE == item.CM_CODE){
+                                this.EditInfo2_Value[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                                this.EditInfo2_Value[index].Setsumei_Error =false;
+                                return true;
+                            }
+                            /*入力値と一致しない場合、テーブルにエラーを表示する */
+                            else 
+                            {
+                                this.EditInfo2_Value[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                                this.EditInfo2_Value[index].Setsumei_Error =true;
+                                return false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return false;
                     }
                 })    
             }
@@ -10064,7 +10192,7 @@ export default  {
     getdialogTantou(TANTO_KUBUN,PLANT_NO){
         const url = this.Main_URL + "KensakuBtnGet";
         this.TableHeight ="500px"
-        this.TabledialogWidth ="700px"
+        this.TabledialogWidth ="600px"
         const params ={
             TANTO_KUBUN: TANTO_KUBUN,
             PLANT_NO: PLANT_NO,
@@ -10170,9 +10298,6 @@ export default  {
                 {
                     this.getEditTable(item.PART_NO,item.PART_REV_NO);
                     this.Get_FT_KOUBA();
-                    this.getSokoType(false);
-                    this.getEditTable2(this.Header_Data[this.Header_Data.length-1].PART_NO,this.FT_KOUBA);
-                    
                 }
             })
       }).catch(err=>{
@@ -10223,10 +10348,21 @@ export default  {
     getEditInfoDialog(){
         switch(this.EditdialogStatus){
             case '1':
-                this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogKoumokuTableSelected[0].CM_CODE;
-                this.EditInfo_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogKoumokuTableSelected[0].CM_CODE_SETUMEI;
-                this.EditInfo_Value[this.EditIndex].UPDATE_ST=true;
-                this.dialogKoumokuTableSelected =[];
+                if(this.tab_select == "4")
+                {
+                    this.Zaiko_EditTable_Item[this.EditIndex].FIELD_VALUE = this.dialogKoumokuTableSelected[0].CM_CODE;
+                    this.Zaiko_EditTable_Item[this.EditIndex].FIELD_EXPLAIN = this.dialogKoumokuTableSelected[0].CM_CODE_SETUMEI;
+                    this.Zaiko_EditTable_Item[this.EditIndex].UPDATE_ST=true;
+                    this.dialogKoumokuTableSelected =[];
+                }
+                else
+                {
+                    this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogKoumokuTableSelected[0].CM_CODE;
+                    this.EditInfo_Value[this.EditIndex].FIELD_EXPLAIN = this.dialogKoumokuTableSelected[0].CM_CODE_SETUMEI;
+                    this.EditInfo_Value[this.EditIndex].UPDATE_ST=true;
+                    this.dialogKoumokuTableSelected =[];
+                }
+                
                 break;
             case '2':
                 this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogChoumonSelected[0].CH_CODE;
@@ -10235,10 +10371,21 @@ export default  {
                 this.dialogChoumonSelected =[];
                 break;
             case '3':
-                this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogTantouSelected[0].TANTO_CODE;
-                this.EditInfo_Value[this.EditIndex].FIELD_EXPLAIN = "[" + this.dialogTantouSelected[0].USER_ID + "]"+this.dialogTantouSelected[0].USER_NAME;
-                this.EditInfo_Value[this.EditIndex].UPDATE_ST=true;
-                this.dialogTantouSelected =[];
+                if(this.tab_select == "4")
+                {
+                    this.Zaiko_EditTable_Item[this.EditIndex].FIELD_VALUE = this.dialogTantouSelected[0].TANTO_CODE;
+                    this.Zaiko_EditTable_Item[this.EditIndex].FIELD_EXPLAIN = "[" + this.dialogTantouSelected[0].USER_ID + "]"+this.dialogTantouSelected[0].USER_NAME;
+                    this.Zaiko_EditTable_Item[this.EditIndex].UPDATE_ST=true;
+                    this.dialogTantouSelected =[];
+                }
+                else
+                {
+                    this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogTantouSelected[0].TANTO_CODE;
+                    this.EditInfo_Value[this.EditIndex].FIELD_EXPLAIN = "[" + this.dialogTantouSelected[0].USER_ID + "]"+this.dialogTantouSelected[0].USER_NAME;
+                    this.EditInfo_Value[this.EditIndex].UPDATE_ST=true;
+                    this.dialogTantouSelected =[];
+                }
+                
                 break;
             case '4':
                 this.EditInfo_Value[this.EditIndex].FIELD_VALUE = this.dialogTantaiSelected[0].TANI;
@@ -10497,19 +10644,20 @@ export default  {
     ZaikoPostReq(){
         //　入力フォーマットの入力正しいを確認
         var Update_check = false;
-        //　購買情報入力確認
+        //　在庫情報入力確認
         this.Zaiko_EditTable_Item.forEach(value =>{
             this.GetZaikouSetsumei(this.Zaiko_EditTable_Item.indexOf(value),value.FIELD_NAME)
             Update_check =value.Setsumei_Error || Update_check;
         })
         //　PM基本情報入力確認
         this.EditInfo_Value.forEach(value =>{
-            //this.getEditTableSetsumei(this.EditInfo_Value.indexOf(value),value.FIELD_NAME)
+            
+            this.getEditTableSetsumei(this.EditInfo_Value.indexOf(value),value.FIELD_NAME)
             Update_check = value.Setsumei_Error || Update_check;
         })
         //  手配情報入力確認
         this.EditInfo2_Value.forEach(value =>{
-            //this.getEditTableSetsumei2(this.EditInfo2_Value.indexOf(value),value.FIELD_NAME)
+            this.getEditTableSetsumei2(this.EditInfo2_Value.indexOf(value),value.FIELD_NAME)
             Update_check = value.Setsumei_Error || Update_check;
         })
         //  もし、全項目の入力が正しいであれば、データベースにデータ更新開始します。
@@ -10517,13 +10665,10 @@ export default  {
         {
             //　POST_PPPMMMS()　PM基本情報をデータに更新
             this.POST_PPPMMMS();
-            if(this.Edit_Combobox_1_select.substr(0,1) != '-')
-            {
-                // POST_PPPMORDER() PPPMORDERデータベースに更新するメソッド
-                this.POST_PPPMORDER(); 
-                // POST_CHMSA() CHMSA データベースに更新するメソッド
-                this.POST_CHMSA()
-            }
+            // POST_PPPMORDER() PPPMORDERデータベースに更新するメソッド
+            this.POST_PPPMORDER(); 
+            // POST_ZKMS() ZKMS データベースに更新するメソッド
+            this.POST_ZKMS();
         }
         //　入力が間違っている場合警告画面を表示
         else
@@ -10537,6 +10682,7 @@ export default  {
         this.NRPMA_POST={};
         this.NRPMHIS_POST={};
         var req ={};
+        var Check_POST = false;
         //  入力フォームで変更したデータの確認
         this.EditInfo_Value.forEach(item =>{
             // item.UPDATE_ST　こちらのデータが変更状態を表示するプロパティ
@@ -10556,6 +10702,7 @@ export default  {
                     this.convertPMtoNA(item.FIELD_NAME,item.FIELD_VALUE);
                     this.convertPMtoNH(item.FIELD_NAME,item.FIELD_VALUE);
                 }
+                Check_POST = true;
             }
             if(item.FIELD_NAME == "PART_NO" || item.FIELD_NAME == "PART_REV_NO")
                 {
@@ -10568,17 +10715,21 @@ export default  {
             item.UPDATE_ST = false;
             return item;
         })
-        const params =req;
-        if(req != {})
+        if(Check_POST)
         {
-            this.$axios.post(url,params).then(
-            
-            ).catch(err=>{
+            const params =req;
+            if(req != {})
+            {
+                this.$axios.post(url,params).then(
                 
-            })
-            this.POST_NRPMA();
-            this.POST_NRPHIS();
+                ).catch(err=>{
+                    
+                })
+                this.POST_NRPMA();
+                this.POST_NRPHIS();
+            }
         }
+        
         
     },
     POST_NRPMA(){
@@ -10617,9 +10768,12 @@ export default  {
         this.NRPMB_POST={};
         var PART_NO ="";
         var req_PPPMOREDR ={};
+        var Check_UPLOAD = false;
         this.EditInfo2_Value.forEach(item =>{
+            
             if(item.UPDATE_ST)
             {
+                Check_UPLOAD = true;
                 req_PPPMOREDR[item.FIELD_NAME] = item.FIELD_VALUE;
                 this.convertPOtoNB(item.FIELD_NAME,item.FIELD_VALUE);
             }
@@ -10630,14 +10784,21 @@ export default  {
             }
         });
         
-        if(req_PPPMOREDR != {})
+        if(Check_UPLOAD)
         {
             const Today =(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString();
             const UPD_WHEN = Today.substr(0,4)+Today.substr(5,2)+Today.substr(8,2) +Today.substr(11,2)+Today.substr(14,2)+Today.substr(17,2);
             req_PPPMOREDR["PART_NO"] =[];
             req_PPPMOREDR["PLANT_NO"] = [];
             req_PPPMOREDR["PART_NO"] = PART_NO;
-            req_PPPMOREDR["PLANT_NO"].push(this.Edit_Combobox_1_select.substr(0,1));
+            if(this.tab_select == '4')
+            {
+                req_PPPMOREDR["PLANT_NO"].push(this.FT_ZKMS_KOUBA);
+            }
+            else
+            {
+                req_PPPMOREDR["PLANT_NO"].push(this.Edit_Combobox_1_select.substr(0,1));
+            }
             req_PPPMOREDR["UPD_WHO"] =this.userId;
             req_PPPMOREDR["UPD_WHEN"] =UPD_WHEN;
             this.NRPMB_POST["PLANT_NO"]=req_PPPMOREDR["PLANT_NO"];
@@ -10654,9 +10815,10 @@ export default  {
                 item.UPDATE_ST = false;
                 return item;
             })
+            
             const params =req_PPPMOREDR;
             this.$axios.post(url,params).then(
-            
+        
             ).catch(err=>{
                 
             })
@@ -10763,7 +10925,7 @@ export default  {
         if(UP_check)
         {
             const Today =(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString();
-            const UPD_WHEN =     Today.substr(0,4)+Today.substr(5,2)+Today.substr(8,2) +Today.substr(11,2)+Today.substr(14,2)+Today.substr(17,2);
+            const UPD_WHEN = Today.substr(0,4)+Today.substr(5,2)+Today.substr(8,2) +Today.substr(11,2)+Today.substr(14,2)+Today.substr(17,2);
             //  プライマリーキー
             req["PART_NO"] = this.Header_Data[this.Header_Data.length-1].PART_NO;
             req["WORK_CODE"] = this.Koubai_SGCODE_Select.substr(0,2);
@@ -10782,6 +10944,52 @@ export default  {
                 
             })
             
+        }
+    },
+    POST_ZKMS(){
+        const url = this.Main_URL + "KensakuBtnPost/ZKMS";
+        var UP_check = false;
+        var req = {};
+        var req_new_data = {};
+        this.Zaiko_EditTable_Item.forEach(item =>{
+            if(item.UPDATE_ST)
+            {
+                UP_check = true;
+                if(item.AUTH_TYPE == "2")
+                {
+                    req[item.FIELD_NAME] = item.FIELD_VALUE;
+                }
+                if(this.Zaiko_New_Data)
+                {
+                    req_new_data[item.FIELD_NAME] = item.FIELD_VALUE;
+                }
+            }
+        })
+        if(UP_check)
+        {
+            const Today =(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString();
+            const UPD_WHEN = Today.substr(0,4)+Today.substr(5,2)+Today.substr(8,2) +Today.substr(11,2)+Today.substr(14,2)+Today.substr(17,2);
+            //  プライマリーキー
+            req["PART_NO"] = this.Header_Data[this.Header_Data.length-1].PART_NO;
+            req["SOKO_CODE"] = this.Zaikou_SokoCode_Select;
+            //  ユーザー名更新日
+            req["UPD_WHO"] = this.userId;
+            req["UPD_WHEN"] = UPD_WHEN;
+            this.Koubai_PPPMPOSPEC_Item=this.Koubai_PPPMPOSPEC_Item.map(item =>{
+                item.UPDATE_ST = false;
+                return item;
+            })
+            this.Zaiko_New_Data = false;
+            const params =req;
+            console.log(params);
+            /*
+            this.$axios.post(url,params).then(()=>{
+                //this.GetZKMS(req["PART_NO"],req["SOKO_CODE"]);
+            }
+            ).catch(err=>{
+                
+            })
+            */
         }
     },
     //詳細検索クリアパラメータ
