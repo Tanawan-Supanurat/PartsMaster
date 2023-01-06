@@ -1,4 +1,5 @@
 export default async ({ store, route })=>{
+    console.log("HEADER MID",route.query.PART_NO);
     //IDのページだけ対応
     if(route.name == "searchpage")
     {

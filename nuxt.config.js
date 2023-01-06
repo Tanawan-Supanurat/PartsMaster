@@ -96,16 +96,18 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: API_PATH,
+    //baseURL: API_PATH,
     proxy: true,
-    credentials: true
+    //credentials: true
   },
 
   proxy: {
+    '/api2/':"http://sa0150.fujitec.co.jp/product",
     '/api/':{
       target:'http://localhost:59272',
       pathRewrite:{'^/api':'/'}
     },
+    
   },
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {

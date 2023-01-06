@@ -2817,7 +2817,7 @@
                 </v-tabs>
 
                 <v-row class="d-flex my-2 ml-2">
-                    <v-btn @click="GetSiteQuery()">
+                    <v-btn @click="GetSiteQuery('TEST')">
                         Get Site Query
                     </v-btn>
                     <p>{{ this.test_query }}</p>
@@ -4735,10 +4735,6 @@
                                             x-small
                                             >...</v-btn>
                                         </template>
-                                        <!-- 
-                                            @keyup="PPPMPOSPEC_UPDATE_CHECK(Hoshu_EditTable2_Item.indexOf(item))"
-                                            @change="PPPMPOSPEC_UPDATE_CHECK(Hoshu_EditTable2_Item.indexOf(item))"
-                                         -->
                                         <template v-slot:item.FIELD_VALUE="{item}">
                                             <v-text-field
                                                 :background-color = "item.Setsumei_Error?'red':''"
@@ -4748,6 +4744,8 @@
                                                 :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
                                                 :rules="item.RULES"
                                                 v-model = Hoshu_EditTable1_Item[Hoshu_EditTable1_Item.indexOf(item)].FIELD_VALUE
+                                                @keyup="GetPPPMMAINTMS1Setsumei(Hoshu_EditTable1_Item.indexOf(item),Hoshu_EditTable1_Item[Hoshu_EditTable1_Item.indexOf(item)].FIELD_NAME)"
+                                                @change="GetPPPMMAINTMS1Setsumei(Hoshu_EditTable1_Item.indexOf(item),Hoshu_EditTable1_Item[Hoshu_EditTable1_Item.indexOf(item)].FIELD_NAME)"
                                                 outlined
                                                 dense>
                                             </v-text-field>
@@ -4814,8 +4812,7 @@
                                                     >...</v-btn>
                                                 </template>
                                                 <!-- 
-                                                    @keyup="PPPMPOSPEC_UPDATE_CHECK(Hoshu_EditTable2_Item.indexOf(item))"
-                                                    @change="PPPMPOSPEC_UPDATE_CHECK(Hoshu_EditTable2_Item.indexOf(item))"
+                                                    
                                                 -->
                                                 <template v-slot:item.FIELD_VALUE="{item}">
                                                     <v-text-field
@@ -4826,6 +4823,8 @@
                                                         :maxlength ="item.CELL_LENGTH == null ? false: item.CELL_LENGTH"
                                                         :rules="item.RULES"
                                                         v-model = Hoshu_EditTable2_Item[Hoshu_EditTable2_Item.indexOf(item)].FIELD_VALUE
+                                                        @keyup="GetPPPMMAINTMS2Setsumei(Hoshu_EditTable2_Item.indexOf(item),Hoshu_EditTable2_Item[Hoshu_EditTable2_Item.indexOf(item)].FIELD_NAME)"
+                                                        @change="GetPPPMMAINTMS2Setsumei(Hoshu_EditTable2_Item.indexOf(item),Hoshu_EditTable2_Item[Hoshu_EditTable2_Item.indexOf(item)].FIELD_NAME)"
                                                         outlined
                                                         dense>
                                                     </v-text-field>
@@ -4864,7 +4863,8 @@
                                                         dense
                                                         >
                                                             <template v-slot:item.DELETE ="{item}">
-                                                                <v-btn x-small icon>
+                                                                <v-btn @click = "DeleteCondition(Hoshu_Teikiyou_Item.indexOf(item))"
+                                                                 x-small icon>
                                                                     <v-icon>
                                                                         mdi-delete  
                                                                     </v-icon>
@@ -4895,7 +4895,6 @@
                                                         mobile-breakpoint='400'
                                                         fixed-header
                                                         :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                                        hide-default-footer
                                                         @click:row="Hoshu_Check_GetHoshu_SPSCITEMMSB"
                                                         height="35vh"
                                                         dense
@@ -4908,9 +4907,9 @@
                                                         :items="Hoshu_KoumokuB_Item"
                                                         class = "mx-2 mt-2"
                                                         mobile-breakpoint='400'
+                                                        @click:row = "GetCondition"
                                                         fixed-header
                                                         :footer-props="{'items-per-page-options':[100,200,300,-1]}"
-                                                        hide-default-footer
                                                         height="35vh"
                                                         dense
                                                         >
@@ -4921,6 +4920,34 @@
                                         </v-expansion-panel-content>
                                     </v-expansion-panel>
                                 </v-expansion-panels>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                    <v-container fluid>
+                        <v-row no-gutters justify="end">
+                            <v-col class="d-flex flex-row-reverse" >
+                                <v-btn class="mr-2" large>
+                                    <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                        mdi-close-box-outline
+                                    </v-icon> 
+                                    <h3>閉じる</h3>
+                                </v-btn>
+                                <v-btn class="mr-2" large
+                                @click ="HoshuPostReq()"
+                                >
+                                    <v-icon
+                                        left
+                                        dark
+                                        large
+                                    >
+                                    mdi-content-save
+                                    </v-icon>
+                                    <h3>保存</h3>
+                                </v-btn>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -5095,7 +5122,6 @@ import { MAX_VALUE_16BITS } from 'vue-js-xlsx';
 import { mapState, mapMutations, mapActions } from 'vuex'
 import draggable from 'vuedraggable'
 import UniversalCookie from 'universal-cookie'
-
 export default  {
   name: 'DefaultLayout',
   components:{
@@ -5108,6 +5134,9 @@ export default  {
     //Main_URL : "http://sa0392.cad.fujitec.co.jp/pmserver/api/",//本番環境用データベースサーバー
     Main_URL :"http://localhost:59272/api/",//テスト用データベースサーバー
     // 保守画面
+    // 適用条件値
+    Hoshu_ConditionA_Index:"",
+    Hoshu_ConditionB_Index:"",
     // アコーディオン
     Hoshu_Panel :[0],
     Hoshu_EX_Panel :[0],
@@ -5146,10 +5175,10 @@ export default  {
     Hoshu_EditTable2_Item:[],
     Hoshu_Teikiyou_Header:[
         {text:"",value:"DELETE"},
-        {text:"項目番号",value:"COND_SPEC_ITEM_NO"},
-        {text:"判定",value:"DATA1"},
-        {text:"仕様コード",value:"COND_CODE"},
-        {text:"",value:"ITEM_NAME_LOC1"}
+        {text:"項目番号",value:"COND_SPEC_ITEM_NO",width:"100px" },
+        {text:"判定",value:"DATA1",width:"100px" },
+        {text:"仕様コード",value:"COND_CODE",width:"150px" },
+        {text:"項目名",value:"ITEM_NAME_LOC1",width:"170px" }
     ],
     Hoshu_Teikiyou_Item:[],
     Hoshu_KoumokuA_Header:[
@@ -5917,13 +5946,41 @@ export default  {
     
     },
     mounted(){
-    // ユーザー初期画面を取得
-    this.asyncData();
-    this.getFirstPage();
+        // ユーザー初期画面を取得
+        this.asyncData();
+        this.getFirstPage();
+        // //  Production
+        // const PART_NO = this.$route.query.PART_NO;
+        // const url = "http://sa0392.cad.fujitec.co.jp/pmserver/api/KensakuBtnGet?Table_Id="+PART_NO;
+        // this.$axios.get(url).then(res=>{
+        //     this.Header_Data =res.data;
+        //     this.showHeader = true;
+        //     this.getHeaderPic(this.Header_Data[this.Header_Data.length-1].PART_NO);
+        //     this.asyncData();
+        // this.getFirstPage();
+        // }).catch(err=>{
+
+        // });
+
+        
   },
   methods:{
-    GetSiteQuery(){
-        this.test_query = this.$route.query.PART_ID;
+    GetSiteQuery(PARTNO){
+        const url = "http://sa0150.fujitec.co.jp/product/CMVA2401.aspx?PART_NO=5310A1"
+        const config ={
+            'headers': {
+                "Access-Control-Allow-Origin": '*',
+            },
+        }
+        const params ={
+            PART_NO :'5310A1',
+        }
+        this.$axios.get('http://sa0150.fujitec.co.jp/product/CMVA2401.aspx?PART_NO=5310A1').then(res=>{
+            console.log(res.data);
+        }).catch(err=>{
+
+        })
+        ;
     },
     // 保守画面
     showdata(index_CB,index_DATA)
@@ -6058,11 +6115,72 @@ export default  {
         });
     },
     Hoshu_Check_GetHoshu_SPSCITEMMSB(item){
+        console.log(item);
+        this.Hoshu_ConditionA_Index = this.Hoshu_KoumokuA_Item.indexOf(item);
         var TODAY_STR = this.TODAY.substr(0,4)+this.TODAY.substr(5,2)+this.TODAY.substr(8,2);
+        this.Hoshu_KoumokuB_Item  = [];
         if(item.BMS_TYPE == 'Y')
         {
             this.GetHoshu_SPSCITEMMSB(item.SPEC_ITEM_NO,TODAY_STR);
         }
+    },
+    GetCondition(item)
+    {
+        //  項目番号取得
+        const Condition_Number = item.SPEC_ITEM_NO;
+        this.Hoshu_ConditionB_Index = this.Hoshu_KoumokuB_Item.indexOf(item);
+        //  適用条件の項目番号確認
+        var IsAddAlready = false;
+        var TargetIndex ="";
+        // 追加したいデータは既に保存しているか？を確認
+        // 保存された場合　IsAddAlready　=> true
+        this.Hoshu_Teikiyou_Item.find(item=>{
+            if(item.COND_SPEC_ITEM_NO == Condition_Number)
+            {
+                IsAddAlready = true;
+                TargetIndex = this.Hoshu_Teikiyou_Item.indexOf(item);
+                return true;
+            }
+        })
+        // 既に保存された場合の処理
+        if(IsAddAlready)
+        {
+            var IsValueInclude = false;
+            this.Hoshu_Teikiyou_Item[TargetIndex].COND_CODE.find(Find_item =>{
+                if(Find_item == item.SPEC_CODE)
+                {
+                    IsValueInclude = true;
+                    return true;
+                }
+            })
+            if(!IsValueInclude)
+            {
+                this.Hoshu_Teikiyou_Item[TargetIndex].COND_CODE.push(item.SPEC_CODE);
+                this.Hoshu_Teikiyou_Item[TargetIndex].UPDATE_ST = true;
+            }
+        }
+        // 保存されていない場合の処理
+        else
+        {
+            const AddNewValue = {
+                COND_SPEC_ITEM_NO : Condition_Number,
+                DATA1 : "IN",
+                COND_CODE : [item.SPEC_CODE],
+                ITEM_NAME_LOC1 : this.Hoshu_KoumokuA_Item[this.Hoshu_ConditionA_Index].ITEM_NAME_LOC1,
+                CONDITION_TYPE : "0",
+                PLAN_LOC_TYPE : this.Hoshu_KoumokuA_Item[this.Hoshu_ConditionA_Index].PLAN_LOC_TYPE,
+                PAT_NO_TYPE :  this.Hoshu_KoumokuA_Item[this.Hoshu_ConditionA_Index].PAT_NO_TYPE,
+                PRODUCT_TYPE : this.Hoshu_KoumokuA_Item[this.Hoshu_ConditionA_Index].PRODUCT_TYPE,
+                ISNEW : true,
+                UPDATE_ST :true,
+            }
+            this.Hoshu_Teikiyou_Item.push(AddNewValue);
+        }
+        console.log(this.Hoshu_Teikiyou_Item);
+    },
+    DeleteCondition(index)
+    {
+        this.Hoshu_Teikiyou_Item.splice(index, 1);
     },
     // 保守画面
     // 在庫画面
@@ -7975,7 +8093,103 @@ export default  {
         }
         else
         {
-
+            /*入力確認開始 */
+            this.Zaiko_EditTable_Item[index].CHECK_LIST.find(item =>{
+                if(this.Zaiko_EditTable_Item[index].FIELD_VALUE !== null ||this.Zaiko_EditTable_Item[index].FIELD_VALUE != "")
+                {
+                /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                    if(this.Zaiko_EditTable_Item[index].FIELD_VALUE == item.CM_CODE){
+                        this.Zaiko_EditTable_Item[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                        this.Zaiko_EditTable_Item[index].Setsumei_Error =false;
+                        return true;
+                    }
+                    /*入力値と一致しない場合、テーブルにエラーを表示する */
+                    else 
+                    {
+                        this.Zaiko_EditTable_Item[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                        this.Zaiko_EditTable_Item[index].Setsumei_Error =true;
+                        return false;
+                    }
+                }
+            })  
+        }
+    },
+    MAINTMS1_CellType(index){
+        
+        if(this.Hoshu_EditTable1_Item[index].CHECK_LIST == "")
+        {
+            switch(this.Hoshu_EditTable1_Item[index].MS_TABLE)
+            {
+                /*共用マスター(CMMSB)*/ 
+                case '1':
+                    this.getCM_CODE("MAINTMS1",index,this.Hoshu_EditTable1_Item[index].MS_ITEM_NO,true)
+                    break;
+            }
+        }
+        else 
+        {
+            
+            /*入力確認開始 */
+            this.Hoshu_EditTable1_Item[index].CHECK_LIST.find(item =>{
+                if(this.Hoshu_EditTable1_Item[index].FIELD_VALUE !== null ||this.Hoshu_EditTable1_Item[index].FIELD_VALUE != "")
+                {
+                    /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                    if(this.Hoshu_EditTable1_Item[index].FIELD_VALUE == item.CM_CODE){
+                        this.Hoshu_EditTable1_Item[index].RULES = [];
+                        this.Hoshu_EditTable1_Item[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                        this.Hoshu_EditTable1_Item[index].Setsumei_Error =false;
+                        this.Hoshu_EditTable1_Item[index].RULES.push(this.formRules.TrueRule);
+                        return true;
+                    }
+                    /*入力値と一致しない場合、テーブルにエラーを表示する */
+                    else 
+                    {
+                        this.Hoshu_EditTable1_Item[index].RULES = [];
+                        this.Hoshu_EditTable1_Item[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                        this.Hoshu_EditTable1_Item[index].Setsumei_Error =true;
+                        this.Hoshu_EditTable1_Item[index].RULES.push(this.formRules.FalseRule);
+                        return false;
+                    }
+                }
+            })   
+        }
+    },
+    MAINTMS2_CellType(index){
+        if(this.Hoshu_EditTable2_Item[index].CHECK_LIST == "")
+        {
+            switch(this.Hoshu_EditTable2_Item[index].MS_TABLE)
+            {
+                /*共用マスター(CMMSB)*/ 
+                case '1':
+                    this.getCM_CODE("MAINTMS2",index,this.Hoshu_EditTable2_Item[index].MS_ITEM_NO,true)
+                    break;
+            }
+        }
+        else 
+        {
+            /*入力確認開始 */
+            this.Hoshu_EditTable2_Item[index].CHECK_LIST.find(item =>{
+                if(this.Hoshu_EditTable2_Item[index].FIELD_VALUE !== null ||this.Hoshu_EditTable2_Item!= "")
+                {
+                    /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                    if(this.Hoshu_EditTable2_Item[index].FIELD_VALUE == item.CM_CODE){
+                        this.Hoshu_EditTable2_Item[index].RULES = [];
+                        this.Hoshu_EditTable2_Item[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                        this.Hoshu_EditTable2_Item[index].Setsumei_Error =false;
+                        this.Hoshu_EditTable2_Item[index].RULES.push(this.formRules.TrueRule);
+                        return true;
+                    }
+                    /*入力値と一致しない場合、テーブルにエラーを表示する */
+                    else 
+                    {
+                        this.Hoshu_EditTable2_Item[index].RULES = [];
+                        this.Hoshu_EditTable2_Item[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                        this.Hoshu_EditTable2_Item[index].Setsumei_Error =true;
+                        this.Hoshu_EditTable2_Item[index].RULES.push(this.formRules.FalseRule);
+                        return false;
+                    }
+                }
+            })   
         }
     },
     PPPMMS_UPDATE_CHECK(index){
@@ -8007,6 +8221,18 @@ export default  {
         this.Zaiko_EditTable_Item[index].UPDATE_ST = this.Zaiko_EditTable_Item[index].FIELD_VALUE != this.Zaiko_EditTable_Item[index].BEFORE_UPDATE_VALUE 
             && !((this.Zaiko_EditTable_Item[index].FIELD_VALUE == "") && (this.Zaiko_EditTable_Item[index].BEFORE_UPDATE_VALUE === null) )? true: this.Zaiko_EditTable_Item[index].UPDATE_ST ;
         this.Zaiko_EditTable_Item[index].BEFORE_UPDATE_VALUE =this.Zaiko_EditTable_Item[index].FIELD_VALUE
+    },
+    MAINTMS1_UPDATE_CHECK(index)
+    {
+        this.Hoshu_EditTable1_Item[index].UPDATE_ST = this.Hoshu_EditTable1_Item[index].FIELD_VALUE != this.Hoshu_EditTable1_Item[index].BEFORE_UPDATE_VALUE 
+            && !((this.Hoshu_EditTable1_Item[index].FIELD_VALUE == "") && (this.Hoshu_EditTable1_Item[index].BEFORE_UPDATE_VALUE === null) )? true: this.Hoshu_EditTable1_Item[index].UPDATE_ST ;
+        this.Hoshu_EditTable1_Item[index].BEFORE_UPDATE_VALUE =this.Hoshu_EditTable1_Item[index].FIELD_VALUE
+    },
+    MAINTMS2_UPDATE_CHECK(index)
+    {
+        this.Hoshu_EditTable2_Item[index].UPDATE_ST = this.Hoshu_EditTable2_Item[index].FIELD_VALUE != this.Hoshu_EditTable2_Item[index].BEFORE_UPDATE_VALUE 
+            && !((this.Hoshu_EditTable2_Item[index].FIELD_VALUE == "") && (this.Hoshu_EditTable2_Item[index].BEFORE_UPDATE_VALUE === null) )? true: this.Hoshu_EditTable2_Item[index].UPDATE_ST ;
+        this.Hoshu_EditTable2_Item[index].BEFORE_UPDATE_VALUE =this.Hoshu_EditTable2_Item[index].FIELD_VALUE
     },
     getEditTableSetsumei(index,item){
         var Setsumei ="";
@@ -8803,7 +9029,7 @@ export default  {
             }).catch(err=>{
 
             });
-        },
+    },
     getRule2(index,item){
         if(item=="STOCK_CODE")
         {
@@ -9707,6 +9933,7 @@ export default  {
          if(this.Zaiko_EditTable_Item[index].MS_TABLE !== null && this.Zaiko_EditTable_Item[index].MS_TABLE.match(/^[1-5]$/) && this.Zaiko_EditTable_Item[index].AUTH_TYPE == 2)
         {
             this.ZKMS_CellType(index);
+            check_change = true;
         }
         //  check_change　が　Trueであれば　「Setsumei」と「Setsumei_Error」を購買テーブルに保存する
         if(check_change){
@@ -9781,6 +10008,207 @@ export default  {
         }
     },
     */
+    GetPPPMMAINTMS1Setsumei(index,item){
+        //  check_change 特定の入力フォーマットの変化を確認するプロパティ
+        //  True  : 入力確認
+        //　False : 入力確認未確認
+        var check_change=false;
+        var Setsumei ="";
+        var Setsumei_Error = false;
+        //  入力確認条件が空だった場合こちらで確認
+        if(this.Hoshu_EditTable1_Item[index].FIELD_VALUE === null ||
+        this.Hoshu_EditTable1_Item[index].FIELD_VALUE === "" )
+        {
+            // 保守部品判定
+            if(item =='MAINT_TYPE')
+            {
+                Setsumei = "この項目は必須入力の項目です"
+                Setsumei_Error = true;
+                check_change = true;
+            }
+            //  保全方式(一次判定)
+            else if(item =='MAINT_METHOD_1')
+            {
+                Setsumei = "この項目は必須入力の項目です"
+                Setsumei_Error = true;
+                check_change = true;
+            }
+        }
+        else
+        {
+            // 保守部品判定
+            if(item == 'MAINT_TYPE')
+            {
+                Setsumei = this.Hoshu_EditTable1_Item[index].FIELD_VALUE.match(/^[01]$/)?
+                            "":"0,1を入力下さい。";
+                Setsumei_Error = this.Hoshu_EditTable1_Item[index].FIELD_VALUE.match(/^[01]$/)?
+                            false:true;
+                check_change = true;
+            }
+            
+            //  設計寿命（月）
+            else if(item == "DSG_LIFE_MONTH")
+            {
+                Setsumei = this.Hoshu_EditTable1_Item[index].FIELD_VALUE.match(/^\d{0,3}$/)?
+                            "":"数値を入力して下さい";
+                Setsumei_Error = this.Hoshu_EditTable1_Item[index].FIELD_VALUE.match(/^\d{0,3}$/)?
+                            false:true;
+                check_change = true;
+            }
+            // 設計寿命（稼動値）
+            else if(item == "DSG_LIFE_ACT")
+            {
+                Setsumei = this.Hoshu_EditTable1_Item[index].FIELD_VALUE.match(/^\d{0,10}$/)?
+                            "":"数値を入力して下さい";
+                Setsumei_Error = this.Hoshu_EditTable1_Item[index].FIELD_VALUE.match(/^\d{0,10}$/)?
+                            false:true;
+                check_change = true;
+            }
+            // 単位(設計寿命)
+            else if(item == "DSG_UNIT")
+            {
+                
+            }
+        }
+        //  データベースから説明部を取得必要ある項目はこちらで確認
+        if(this.Hoshu_EditTable1_Item[index].MS_TABLE !== null && this.Hoshu_EditTable1_Item[index].MS_TABLE.match(/^[1-5]$/) && this.Hoshu_EditTable1_Item[index].AUTH_TYPE == 2)
+        {
+            //もしデータベースに見つからない場合説明欄に”マスタに未登録の値が入力されています”を表示する
+            // 保全方式(一次判定)  MAINT_METHOD_1
+            // 稼動値区分1        ACT_TYPE_1
+            this.MAINTMS1_CellType(index);
+        }
+        //  check_change　が　Trueであれば　「Setsumei」と「Setsumei_Error」を購買テーブルに保存する
+        if(check_change){
+            this.Hoshu_EditTable1_Item[index].FIELD_EXPLAIN = Setsumei; 
+            this.Hoshu_EditTable1_Item[index].Setsumei_Error =Setsumei_Error;
+            this.Hoshu_EditTable1_Item[index].RULES = [];
+            if(!Setsumei_Error)
+            {
+                this.Hoshu_EditTable1_Item[index].RULES.push(this.formRules.TrueRule);
+            }
+            else
+            {
+                this.Hoshu_EditTable1_Item[index].RULES.push(this.formRules.FalseRule);
+            }
+        }
+        //　更新項目をリストに追加
+        this.MAINTMS1_UPDATE_CHECK(index);
+    },
+    GetPPPMMAINTMS2Setsumei(index,item){
+        //  check_change 特定の入力フォーマットの変化を確認するプロパティ
+        //  True  : 入力確認
+        //　False : 入力確認未確認
+        var check_change=false;
+        var Setsumei ="";
+        var Setsumei_Error = false;
+        //  入力確認条件が空だった場合こちらで確認
+        if(this.Hoshu_EditTable2_Item[index].FIELD_VALUE === null ||
+            this.Hoshu_EditTable2_Item[index].FIELD_VALUE === "" )
+        {
+            //  優先度
+            if(item =='PRIORITY')
+            {
+                Setsumei = "この項目は必須入力の項目です"
+                Setsumei_Error = true;
+                check_change = true;
+            }
+            // 保全方式（二次判定）
+            else if(item =='MAINT_METHOD_2')
+            {
+                Setsumei = "この項目は必須入力の項目です"
+                Setsumei_Error = true;
+                check_change = true;
+            }
+        }
+        else
+        {
+            //  優先度
+            if(item =='PRIORITY')
+            {
+                Setsumei = this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^\d{0,3}$/)?
+                            "":"数値を入力して下さい";
+                Setsumei_Error = this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^\d{0,3}$/)?
+                            false:true;
+                check_change = true;
+            }
+            // 保全方式（二次判定）
+            else if(item =='MAINT_METHOD_2')
+            {
+                // Setsumei = "この項目は必須入力の項目です"
+                // Setsumei_Error = true;
+                // check_change = true;
+            }
+            // 交換周期（月）
+            else if(item == 'REP_LIFE_MONTH')
+            {
+                Setsumei = this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^\d{0,3}$/)?
+                            "":"数値を入力して下さい";
+                Setsumei_Error = this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^\d{0,3}$/)?
+                            false:true;
+                check_change = true;
+            }
+            // 交換周期注意（月）
+            else if(item == 'REP_LIFE_CHKMONTH')
+            {
+                Setsumei = this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^\d{0,3}$/)?
+                            "":"数値を入力して下さい";
+                Setsumei_Error = this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^\d{0,3}$/)?
+                            false:true;
+                check_change = true;
+            }
+            // 交換周期（稼動値）
+            else if(item == 'REP_LIFE_RUN')
+            {
+                Setsumei = this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^\d{0,15}$/)?
+                            "":"数値を入力して下さい";
+                Setsumei_Error = this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^\d{0,15}$/)?
+                            false:true;
+                check_change = true;
+            }
+            // 交換周期注意（稼動値）
+            else if(item == 'REP_LIFE_CHKRUN')
+            {
+                Setsumei = this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^\d{0,15}$/)?
+                            "":"数値を入力して下さい";
+                Setsumei_Error = this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^\d{0,15}$/)?
+                            false:true;
+                check_change = true;
+            }
+            else if(item == 'COND_TYPE')
+            {
+                Setsumei = this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^[Y]$/)?
+                            "適用条件あり":this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^[N]$/)?
+                            "適用条件なし":"Y(適用条件あり),N(適用条件なし)を入力下さい。";
+                Setsumei_Error = this.Hoshu_EditTable2_Item[index].FIELD_VALUE.match(/^[YN]$/)?
+                            false:true;
+                check_change = true;
+            }
+        }
+        //  データベースから説明部を取得必要ある項目はこちらで確認
+        if(this.Hoshu_EditTable2_Item[index].MS_TABLE !== null && this.Hoshu_EditTable2_Item[index].MS_TABLE.match(/^[1-5]$/) && this.Hoshu_EditTable2_Item[index].AUTH_TYPE == 2)
+            {
+                //もしデータベースに見つからない場合説明欄に”マスタに未登録の値が入力されています”を表示する
+                // 保全方式（二次判定）MAINT_METHOD_2
+                // 稼動値区分2        ACT_TYPE_2
+                this.MAINTMS2_CellType(index);
+        }
+        if(check_change){
+            this.Hoshu_EditTable2_Item[index].FIELD_EXPLAIN = Setsumei; 
+            this.Hoshu_EditTable2_Item[index].Setsumei_Error =Setsumei_Error;
+            this.Hoshu_EditTable2_Item[index].RULES = [];
+            if(!Setsumei_Error)
+            {
+                this.Hoshu_EditTable2_Item[index].RULES.push(this.formRules.TrueRule);
+            }
+            else
+            {
+                this.Hoshu_EditTable2_Item[index].RULES.push(this.formRules.FalseRule);
+            }
+        }
+        //　更新項目をリストに追加
+        this.MAINTMS2_UPDATE_CHECK(index);
+    },
     OpenCloseNav(){
         
         /*Xl～LGの間*/
@@ -10001,7 +10429,7 @@ export default  {
                 this.Zaiko_EditTable_Item[index].CHECK_LIST = ck_list;
                 /*入力確認開始 */
                 this.Zaiko_EditTable_Item[index].CHECK_LIST.find(item =>{
-                    if(this.Zaiko_EditTable_Item[index].FIELD_VALUE !== null ||this.Zaiko_EditTable_Item[index].FIELD_VALUE == "")
+                    if(this.Zaiko_EditTable_Item[index].FIELD_VALUE !== null ||this.Zaiko_EditTable_Item[index].FIELD_VALUE != "")
                     {
                     /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
                         if(this.Zaiko_EditTable_Item[index].FIELD_VALUE == item.CM_CODE){
@@ -10018,6 +10446,56 @@ export default  {
                         }
                     }
                 })    
+            }
+            else if (table_name == "MAINTMS1")
+            {
+                this.Hoshu_EditTable1_Item[index].CHECK_LIST = ck_list;
+                /*入力確認開始 */
+                this.Hoshu_EditTable1_Item[index].CHECK_LIST.find(item =>{
+                    if(this.Hoshu_EditTable1_Item[index].FIELD_VALUE !== null ||this.Hoshu_EditTable1_Item[index].FIELD_VALUE != "")
+                    {
+                    /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                        if(this.Hoshu_EditTable1_Item[index].FIELD_VALUE == item.CM_CODE){
+                            this.Hoshu_EditTable1_Item[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                            this.Hoshu_EditTable1_Item[index].Setsumei_Error =false;
+                            this.Hoshu_EditTable1_Item[index].RULES.push(this.formRules.TrueRule);
+                            return true;
+                        }
+                        /*入力値と一致しない場合、テーブルにエラーを表示する */
+                        else 
+                        {
+                            this.Hoshu_EditTable1_Item[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                            this.Hoshu_EditTable1_Item[index].Setsumei_Error =true;
+                            this.Hoshu_EditTable1_Item[index].RULES.push(this.formRules.FalseRule);
+                            return false;
+                        }
+                    }
+                })   
+            }
+            else if (table_name == "MAINTMS2")
+            {
+                this.Hoshu_EditTable2_Item[index].CHECK_LIST = ck_list;
+                /*入力確認開始 */
+                this.Hoshu_EditTable2_Item[index].CHECK_LIST.find(item =>{
+                    if(this.Hoshu_EditTable2_Item[index].FIELD_VALUE !== null ||this.Hoshu_EditTable2_Item!= "")
+                    {
+                        /*入力値と一致した場合テーブルの説明欄にCM_CODE_SETUMEIを表示*/
+                        if(this.Hoshu_EditTable2_Item[index].FIELD_VALUE == item.CM_CODE){
+                            this.Hoshu_EditTable2_Item[index].FIELD_EXPLAIN = item.CM_CODE_SETUMEI;
+                            this.Hoshu_EditTable2_Item[index].Setsumei_Error =false;
+                            this.Hoshu_EditTable2_Item[index].RULES.push(this.formRules.TrueRule);
+                            return true;
+                        }
+                        /*入力値と一致しない場合、テーブルにエラーを表示する */
+                        else 
+                        {
+                            this.Hoshu_EditTable2_Item[index].FIELD_EXPLAIN ="マスタに未登録の値が入力されています";
+                            this.Hoshu_EditTable2_Item[index].Setsumei_Error =true;
+                            this.Hoshu_EditTable2_Item[index].RULES.push(this.formRules.FalseRule);
+                            return false;
+                        }
+                    }
+                })   
             }
         }).catch(err=>{
 
