@@ -5135,6 +5135,10 @@ export default  {
     Main_URL :"http://localhost:59272/api/",//テスト用データベースサーバー
     // 保守画面
     // 適用条件値
+    Hoshu_Cur_PART_NO:"",
+    Hoshu_Cur_PART_REV_NO:"",
+    Hoshu_Cur_PART_LOCATION:"",
+    Hoshu_Cur_COND_PAT_NO:"",
     Hoshu_ConditionA_Index:"",
     Hoshu_ConditionB_Index:"",
     // アコーディオン
@@ -5181,6 +5185,7 @@ export default  {
         {text:"項目名",value:"ITEM_NAME_LOC1",width:"170px" }
     ],
     Hoshu_Teikiyou_Item:[],
+    Hoshu_Teikiyou_Delitem:[],
     Hoshu_KoumokuA_Header:[
         {text:"JobType",value:"PRODUCT_TYPE",width:"120px"},
         {text:"項目No",value:"SPEC_ITEM_NO",width:"120px"},
@@ -5985,6 +5990,7 @@ export default  {
     // 保守画面
     showdata(index_CB,index_DATA)
     {
+        this.Hoshu_Teikiyou_Item[index_CB].UPDATE_ST = true;
         this.Hoshu_Teikiyou_Item[index_CB].DATA1 = this.Hoshu_Teikiyou_DROPDOWN_Data[index_DATA].DATA1;
         this.Hoshu_Teikiyou_Item[index_CB].COND_STAT = this.Hoshu_Teikiyou_DROPDOWN_Data[index_DATA].CM_CODE;
     },
@@ -6002,10 +6008,14 @@ export default  {
             const PART_REV_NO = res.data[0].PART_REV_NO;
             const COND_PAT_NO = res.data[0].COND_PAT_NO;
             const PART_LOCATION = res.data[0].PART_LOCATION;
+            this.Hoshu_Cur_PART_NO = PART_NO;
+            this.Hoshu_Cur_PART_REV_NO = PART_REV_NO;
+            this.Hoshu_Cur_COND_PAT_NO = COND_PAT_NO;
+            this.Hoshu_Cur_PART_LOCATION = PART_LOCATION;
             this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,1,PART_LOCATION);
             this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,2,PART_LOCATION);
-            this.GetHoshu_COND_DROPDOWN();
-            this.GetHoshu_SPSCCONIDMS(PART_NO,PART_REV_NO,PART_LOCATION,COND_PAT_NO);
+            this.GetHoshu_COND_DROPDOWN(PART_NO,PART_REV_NO,PART_LOCATION,COND_PAT_NO);
+            
         }).catch(err =>{
 
         });
@@ -6016,13 +6026,13 @@ export default  {
         this.getEditTable(this.Header_Data[this.Header_Data.length-1].PART_NO,this.Hoshu_Dropdown_Select);
     },
     GetHoshu_MAINTMS_ROW(item){
-        const PART_NO = item.PART_NO;
-        const PART_REV_NO = item.PART_REV_NO;
-        const COND_PAT_NO = item.COND_PAT_NO;
-        const PART_LOCATION = item.PART_LOCATION;
-        this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,1,PART_LOCATION);
-        this.GetHoshu_MAINTMS(PART_NO,PART_REV_NO,COND_PAT_NO,2,PART_LOCATION);
-        this.GetHoshu_SPSCCONIDMS(PART_NO,PART_REV_NO,PART_LOCATION,COND_PAT_NO);
+        this.Hoshu_Cur_PART_NO = item.PART_NO;
+        this.Hoshu_Cur_PART_REV_NO = item.PART_REV_NO;
+        this.Hoshu_Cur_COND_PAT_NO = item.COND_PAT_NO;
+        this.Hoshu_Cur_PART_LOCATION = item.PART_LOCATION;
+        this.GetHoshu_SPSCCONIDMS(this.Hoshu_Cur_PART_NO,this.Hoshu_Cur_PART_REV_NO,this.Hoshu_Cur_PART_LOCATION,this.Hoshu_Cur_COND_PAT_NO,this.Hoshu_Cur_PART_LOCATION);
+        this.GetHoshu_MAINTMS(this.Hoshu_Cur_PART_NO,this.Hoshu_Cur_PART_REV_NO,this.Hoshu_Cur_COND_PAT_NO,1,this.Hoshu_Cur_PART_LOCATION);
+        this.GetHoshu_MAINTMS(this.Hoshu_Cur_PART_NO,this.Hoshu_Cur_PART_REV_NO,this.Hoshu_Cur_COND_PAT_NO,2,this.Hoshu_Cur_PART_LOCATION);
     },
     GetHoshu_MAINTMS(PARTNO,PARTREVNO,CONDPATNO,MAINTMS,PARTLOCATION){
         const url = this.Main_URL + "KensakuBtnGet/PPPMMAINTMS_MAINTMS";
@@ -6061,7 +6071,7 @@ export default  {
 
         });
     },
-    GetHoshu_COND_DROPDOWN(){
+    GetHoshu_COND_DROPDOWN(PART_NO,PART_REV_NO,PART_LOCATION,COND_PAT_NO){
 
         this.Hoshu_Teikiyou_DROPDOWN_ITEM =[];
         this.Hoshu_Teikiyou_DROPDOWN_Data =[];
@@ -6071,11 +6081,13 @@ export default  {
             res.data.forEach(item =>{
                 this.Hoshu_Teikiyou_DROPDOWN_ITEM.push(item.DATA1 + item.CM_CODE_SETUMEI);
             })
+            this.GetHoshu_SPSCCONIDMS(PART_NO,PART_REV_NO,PART_LOCATION,COND_PAT_NO);
         }).catch(err=>{
 
         })
     },
     GetHoshu_SPSCCONIDMS(PARTNO,PARTREVNO,PARTLOCATION,CONDPATNO){
+        this.Hoshu_Teikiyou_Delitem = [];
         const url = this.Main_URL + "KensakuBtnGet/SPSCCONIDMS";
         const params ={
             PART_NO : PARTNO,
@@ -6085,6 +6097,10 @@ export default  {
         }
         this.$axios.get(url,{params}).then(res =>{
             this.Hoshu_Teikiyou_Item = res.data.map(item =>{
+                var SPLIT_ARR = item.COND_CODE.split(',');
+                item.ORIGIN_DATA = true;
+                item.UPDATE_ST =false,
+                item.COND_CODE = SPLIT_ARR;
                 item.DATA1 = this.Hoshu_Teikiyou_DROPDOWN_Data[parseInt(item.COND_STAT)-1].DATA1;
                 return item;
             });
@@ -6115,7 +6131,6 @@ export default  {
         });
     },
     Hoshu_Check_GetHoshu_SPSCITEMMSB(item){
-        console.log(item);
         this.Hoshu_ConditionA_Index = this.Hoshu_KoumokuA_Item.indexOf(item);
         var TODAY_STR = this.TODAY.substr(0,4)+this.TODAY.substr(5,2)+this.TODAY.substr(8,2);
         this.Hoshu_KoumokuB_Item  = [];
@@ -6146,13 +6161,15 @@ export default  {
         if(IsAddAlready)
         {
             var IsValueInclude = false;
-            this.Hoshu_Teikiyou_Item[TargetIndex].COND_CODE.find(Find_item =>{
+            this.Hoshu_Teikiyou_Item[TargetIndex].COND_CODE.forEach(Find_item =>{
+                console.log(Find_item)
                 if(Find_item == item.SPEC_CODE)
                 {
                     IsValueInclude = true;
                     return true;
                 }
             })
+            //  もし、仕様コードがない場合仕様コードを追加する
             if(!IsValueInclude)
             {
                 this.Hoshu_Teikiyou_Item[TargetIndex].COND_CODE.push(item.SPEC_CODE);
@@ -6163,7 +6180,12 @@ export default  {
         else
         {
             const AddNewValue = {
+                PART_NO : this.Hoshu_Cur_PART_NO,
+                PART_REV_NO : this.Hoshu_Cur_PART_REV_NO,
+                PART_LOCATION : this.Hoshu_Cur_PART_LOCATION,
+                COND_PAT_NO : this.Hoshu_Cur_COND_PAT_NO,
                 COND_SPEC_ITEM_NO : Condition_Number,
+                ORIGIN_DATA : false,
                 DATA1 : "IN",
                 COND_CODE : [item.SPEC_CODE],
                 ITEM_NAME_LOC1 : this.Hoshu_KoumokuA_Item[this.Hoshu_ConditionA_Index].ITEM_NAME_LOC1,
@@ -6171,7 +6193,6 @@ export default  {
                 PLAN_LOC_TYPE : this.Hoshu_KoumokuA_Item[this.Hoshu_ConditionA_Index].PLAN_LOC_TYPE,
                 PAT_NO_TYPE :  this.Hoshu_KoumokuA_Item[this.Hoshu_ConditionA_Index].PAT_NO_TYPE,
                 PRODUCT_TYPE : this.Hoshu_KoumokuA_Item[this.Hoshu_ConditionA_Index].PRODUCT_TYPE,
-                ISNEW : true,
                 UPDATE_ST :true,
             }
             this.Hoshu_Teikiyou_Item.push(AddNewValue);
@@ -6180,6 +6201,11 @@ export default  {
     },
     DeleteCondition(index)
     {
+        if(this.Hoshu_Teikiyou_Item[index].ORIGIN_DATA)
+        {
+            this.Hoshu_Teikiyou_Delitem.push(this.Hoshu_Teikiyou_Item[index]);
+            console.log("TRUE",this.Hoshu_Teikiyou_Delitem);
+        }
         this.Hoshu_Teikiyou_Item.splice(index, 1);
     },
     // 保守画面
@@ -11154,7 +11180,82 @@ export default  {
             alert("入力が間違います。")
         }
     },
+    HoshuPostReq(){
+        //　入力フォーマットの入力正しいを確認
+        var Update_check = false;
+        this.Hoshu_Teikiyou_Item.forEach((item,index) =>{
+            if(item.UPDATE_ST)
+            {
+                if(item.ORIGIN_DATA)
+                {
+                    const url = this.Main_URL + "KensakuBtnPost/SPSCCONDIDMS_UPDATE";
+                    var COND_CODE ="";
+                    const UPD_WHO = this.userId;
+                    const START_DATE = ((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(0,4)
+                            +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(5,7)
+                            +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(8,10)
+                    const UPD_WHEN = START_DATE + ((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 19)).substring(11,13) +
+                                    ((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 19)).substring(14,16) + 
+                                    ((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 19)).substring(17,19)
+                    item.COND_CODE.sort();
+                    item.COND_CODE.forEach(item =>{
+                        if (COND_CODE == "")
+                        {
+                            COND_CODE = item;
+                        }
+                        else
+                        {
+                            COND_CODE += ","+item;
+                        }
+                    })
+                    const params = {
+                        CONDITION_ID :item.CONDITION_ID,
+                        COND_STAT:item.COND_STAT,
+                        COND_CODE: COND_CODE,
+                        UPD_WHO :UPD_WHO,
+                        UPD_WHEN:UPD_WHEN,
+                    }
+                    console.log(params);
+                    this.$axios.post(url,params).then(
 
+                    ).catch(err=>{
+                        alert(err);
+                    })
+                }
+                else
+                {
+                    var COND_CODE ="";
+                    item.COND_CODE.forEach(item =>{
+                        if (COND_CODE == "")
+                        {
+                            COND_CODE = item;
+                        }
+                        else
+                        {
+                            COND_CODE += ","+item;
+                        }
+                    })
+                    const START_DATE = ((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(0,4)
+                            +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(5,7)
+                            +((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)).substring(8,10)
+                    const STOP_DATE = "29991231";
+                    const UPD_WHO = this.userId;
+                    const UPD_WHEN = START_DATE + ((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 19)).substring(11,13) +
+                                    ((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 19)).substring(14,16) + 
+                                    ((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 19)).substring(17,19)
+                    const ENT_WHO = this.userId;
+                    const ENT_WHEN = UPD_WHEN;
+                    console.log("Insert New PPPMMAINTCONDMS");
+                    console.log("INSERT INTO PPPMMAINTCONDMS (PART_NO,PART_REV_NO,PART_LOCATION,COND_PAT_NO,COND_SEQ_NO,COND_SORT_NO,UPD_WHO,UPD_WHEN,ENT_WHO,ENT_WHEN) VALUES ");
+                    console.log(item.PART_NO,item.PART_REV_NO,item.PART_LOCATION,item.COND_PAT_NO,index,index,UPD_WHO,UPD_WHEN,ENT_WHO,ENT_WHEN)
+                }
+            }
+        })
+        if(this.Hoshu_Teikiyou_Delitem.length != 0)
+        {
+            console.log("Delete Item :",this.Hoshu_Teikiyou_Delitem);
+        }
+    },
     POST_PPPMMMS(){
         const url = this.Main_URL + "KensakuBtnPost/PPPMMS";
         this.NRPMA_POST={};
